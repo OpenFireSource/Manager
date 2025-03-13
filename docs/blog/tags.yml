@@ -1,0 +1,9 @@
+community:
+  label: Community
+  permalink: /community
+  description: Community
+
+release:
+  label: Release
+  permalink: /release
+  description: Relesae
