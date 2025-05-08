@@ -1,0 +1,29 @@
+<nz-table nzShowSizeChanger
+          [nzData]="users()"
+          [nzFrontPagination]="false"
+          [nzLoading]="usersLoading()"
+          [nzTotal]="total()"
+          [nzPageSize]="10"
+          [nzPageIndex]="1"
+          (nzQueryParams)="onQueryParamsChange($event)">
+  <thead>
+  <tr>
+    <th nzColumnKey="firstName">Vorname</th>
+    <th nzColumnKey="lastName">Nachname</th>
+    <th nzColumnKey="username">Benutzername</th>
+    <th nzColumnKey="email">E-Mail</th>
+    <th *ofsHasRole="['user.manage']"></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let user of users()" nz-typography [nzDisabled]="!user.enabled">
+    <td>{{ user.firstName }}</td>
+    <td>{{ user.lastName }}</td>
+    <td>{{ user.username }}</td>
+    <td>{{ user.email }}</td>
+    <td *ofsHasRole="['user.manage']">
+      <a nz-button nzType="link" [routerLink]="user.id">Details</a>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>

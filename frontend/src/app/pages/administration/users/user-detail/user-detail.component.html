@@ -1,0 +1,75 @@
+<h1>Benutzer bearbeiten</h1>
+<ng-container *ngIf="notFound() || loadingError()">
+  <h1>Der Benutzer wurde nicht gefunden!</h1>
+</ng-container>
+<ng-container *ngIf="loading()">
+  Benutzer wird geladen...
+</ng-container>
+<ng-container *ngIf="!loading() && !notFound()  && !loadingError()">
+  <form nz-form [formGroup]="form" (ngSubmit)="submit()">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="7" nzRequired>Vorname</nz-form-label>
+      <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="firstNameErrorTpl">
+        <input nz-input formControlName="firstName" placeholder="Vorname"/>
+        <ng-template #firstNameErrorTpl let-control>
+          @if (control.errors?.['required']) {
+            Bitte den Vornamen eingeben.
+          } @if (control.errors?.['minlength']) {
+          Bitte mindestens 1 Zeichen eingeben.
+        } @if (control.errors?.['maxlength']) {
+          Bitte maximal 40 Zeichen eingeben.
+        }
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="7" nzRequired>Nachname</nz-form-label>
+      <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="lastNameErrorTpl">
+        <input nz-input formControlName="lastName" placeholder="Nachname"/>
+        <ng-template #lastNameErrorTpl let-control>
+          @if (control.errors?.['required']) {
+            Bitte den Nachnamen eingeben.
+          } @if (control.errors?.['minlength']) {
+          Bitte mindestens 1 Zeichen eingeben.
+        } @if (control.errors?.['maxlength']) {
+          Bitte maximal 40 Zeichen eingeben.
+        }
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="7" nzRequired>E-Mail</nz-form-label>
+      <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="emailErrorTpl">
+        <input nz-input formControlName="email" placeholder="E-Mail"/>
+        <ng-template #emailErrorTpl let-control>
+          @if (control.errors?.['required']) {
+            Bitte eine E-Mail eingeben.
+          } @if (control.errors?.['email']) {
+          Bitte eine gültige E-Mail-Adresse eingeben.
+        }
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control [nzSpan]="8" [nzOffset]="7">
+        <label nz-checkbox formControlName="emailVerified">E-Mail bestätigt</label>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control [nzSpan]="8" [nzOffset]="7">
+        <label nz-checkbox formControlName="enabled">Benutzer aktiv</label>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control [nzOffset]="7" [nzSpan]="12">
+        <button nz-button nzType="primary" [disabled]="!form.valid" [nzLoading]="updateLoading()">Speichern</button>
+        <button nz-button nzType="primary" nzDanger type="button" [nzLoading]="deleteLoading()" nz-popconfirm nzPopconfirmTitle="Bist du dir sicher?"  (nzOnConfirm)="delete()">Löschen</button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</ng-container>

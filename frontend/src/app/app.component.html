@@ -1,0 +1,74 @@
+<nz-layout>
+  <nz-sider class="menu-sidebar"
+            nzCollapsible
+            nzWidth="256px"
+            nzBreakpoint="md"
+            [(nzCollapsed)]="isCollapsed"
+            [nzTrigger]="null"
+  >
+    <div class="sidebar-logo">
+      <a routerLink="/">
+        <h1>Manager</h1>
+      </a>
+    </div>
+    <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+      <li nz-submenu nzTitle="Administration" nzIcon="setting" *ofsHasRole="['admin']" nzOpen>
+        <ul>
+          <li nz-menu-item nzMatchRouter *ofsHasRole="['user.view']">
+            <a routerLink="/administration/users">Benutzer</a>
+          </li>
+          <li nz-menu-item nzMatchRouter *ofsHasRole="['group.view']">
+            <a routerLink="/administration/groups">Gruppen</a>
+          </li>
+        </ul>
+      </li>
+      <li nz-submenu nzTitle="Allgemein" nzIcon="home" *ofsHasRole="['location.view']" nzOpen>
+        <ul>
+          <li nz-menu-item nzMatchRouter *ofsHasRole="['location.view']">
+            <a routerLink="/base/locations">Orte/Fahrzeuge</a>
+          </li>
+        </ul>
+      </li>
+      <li nz-submenu nzTitle="Geräteverwaltung" nzIcon="home" *ofsHasRole="['device-type.view']" nzOpen>
+        <ul>
+          <li nz-menu-item nzMatchRouter *ofsHasRole="['device-type.view']">
+            <a routerLink="/inventory/devices">Geräte</a>
+          </li>
+          <li nz-menu-item nzMatchRouter *ofsHasRole="['device-type.view']">
+            <a routerLink="/inventory/device-types">Geräte-Typen</a>
+          </li>
+          <li nz-menu-item nzMatchRouter *ofsHasRole="['device-group.view']">
+            <a routerLink="/inventory/device-groups">Geräte-Gruppen</a>
+          </li>
+        </ul>
+      </li>
+      <li nz-submenu nzOpen nzTitle="Account" nzIcon="form">
+        <ul>
+          <li nz-menu-item nzMatchRouter *ofsIsNotAuthenticated>
+            <a (click)="login()">Anmelden</a>
+          </li>
+          <li nz-menu-item nzMatchRouter *ofsIsAuthenticated>
+            <a>{{ name }}</a>
+          </li>
+          <li nz-menu-item nzMatchRouter *ofsIsAuthenticated>
+            <a (click)="logout()">Abmelden</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nz-sider>
+  <nz-layout>
+    <nz-header>
+      <div class="app-header">
+        <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
+          <nz-icon class="trigger" [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"/>
+        </span>
+      </div>
+    </nz-header>
+    <nz-content>
+      <div class="inner-content">
+        <router-outlet></router-outlet>
+      </div>
+    </nz-content>
+  </nz-layout>
+</nz-layout>

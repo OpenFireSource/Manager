@@ -1,0 +1,135 @@
+<h1>Gruppe bearbeiten</h1>
+<ng-container *ngIf="notFound() || loadingError()">
+  <h1>Die Gruppe wurde nicht gefunden!</h1>
+</ng-container>
+<ng-container *ngIf="loading()">
+  Gruppe wird geladen...
+</ng-container>
+<ng-container *ngIf="!loading() && !notFound()  && !loadingError()">
+  <nz-tabset>
+    <nz-tab nzTitle="Allgemein">
+      <form nz-form [formGroup]="form" (ngSubmit)="submit()">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7" nzRequired>Name</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="nameErrorTpl">
+            <input nz-input formControlName="name" placeholder="Name"/>
+            <ng-template #nameErrorTpl let-control>
+              @if (control.errors?.['required']) {
+                Bitte den Gruppen-Namen eingeben.
+              }
+              @if (control.errors?.['minlength']) {
+                Bitte mindestens 1 Zeichen eingeben.
+              }
+              @if (control.errors?.['maxlength']) {
+                Bitte maximal 70 Zeichen eingeben.
+              }
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-control [nzOffset]="7" [nzSpan]="12">
+            <button nz-button nzType="primary" [disabled]="!form.valid" [nzLoading]="updateLoading()">Speichern</button>
+            <button nz-button nzType="primary" nzDanger type="button" [nzLoading]="deleteLoading()" nz-popconfirm
+                    nzPopconfirmTitle="Bist du dir sicher?" (nzOnConfirm)="delete()">Löschen
+            </button>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </nz-tab>
+    <nz-tab nzTitle="Mitglieder">
+      <nz-transfer
+        [nzDataSource]="users()"
+        [nzDisabled]="usersTransferLoading()"
+        [nzShowSearch]="true"
+        [nzShowSelectAll]="true"
+        [nzRenderList]="[renderList, renderList]"
+        (nzChange)="changeMembers($event)"
+      >
+        <ng-template
+          #renderList
+          let-items
+          let-direction="direction"
+          let-stat="stat"
+          let-disabled="disabled"
+          let-onItemSelectAll="onItemSelectAll"
+          let-onItemSelect="onItemSelect"
+        >
+          <nz-table #t [nzData]="$asTransferItems(items)" nzSize="small">
+            <thead>
+            <tr>
+              <th
+                [nzDisabled]="disabled"
+                [nzChecked]="stat.checkAll"
+                [nzIndeterminate]="stat.checkHalf"
+                (nzCheckedChange)="onItemSelectAll($event)"
+              ></th>
+              <th>Name</th>
+            </tr>
+            </thead>
+            <tbody>
+              @for (data of t.data; track data) {
+                <tr (click)="onItemSelect(data)">
+                  <td
+                    [nzChecked]="!!data.checked"
+                    [nzDisabled]="disabled || data.disabled"
+                    (nzCheckedChange)="onItemSelect(data)"
+                  ></td>
+                  <td>{{ data.title }}</td>
+                </tr>
+              }
+            </tbody>
+          </nz-table>
+        </ng-template>
+      </nz-transfer>
+
+    </nz-tab>
+    <nz-tab nzTitle="Berechtigungen">
+      <nz-transfer
+        [nzDataSource]="roles()"
+        [nzDisabled]="rolesTransferLoading()"
+        [nzShowSearch]="true"
+        [nzShowSelectAll]="true"
+        [nzRenderList]="[renderList, renderList]"
+        (nzChange)="changeRole($event)"
+      >
+        <ng-template
+          #renderList
+          let-items
+          let-direction="direction"
+          let-stat="stat"
+          let-disabled="disabled"
+          let-onItemSelectAll="onItemSelectAll"
+          let-onItemSelect="onItemSelect"
+        >
+          <nz-table #t [nzData]="$asTransferItems(items)" nzSize="small">
+            <thead>
+            <tr>
+              <th
+                [nzDisabled]="disabled"
+                [nzChecked]="stat.checkAll"
+                [nzIndeterminate]="stat.checkHalf"
+                (nzCheckedChange)="onItemSelectAll($event)"
+              ></th>
+              <th>Name</th>
+            </tr>
+            </thead>
+            <tbody>
+              @for (data of t.data; track data) {
+                <tr (click)="onItemSelect(data)">
+                  <td
+                    [nzChecked]="!!data.checked"
+                    [nzDisabled]="disabled || data.disabled"
+                    (nzCheckedChange)="onItemSelect(data)"
+                  ></td>
+                  <td>{{ data.title }}</td>
+                </tr>
+              }
+            </tbody>
+          </nz-table>
+        </ng-template>
+      </nz-transfer>
+
+    </nz-tab>
+  </nz-tabset>
+</ng-container>

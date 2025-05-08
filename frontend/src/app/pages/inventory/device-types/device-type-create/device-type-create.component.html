@@ -1,0 +1,79 @@
+<h1>Geräte-Typ erstellen</h1>
+
+<form nz-form [formGroup]="form" (ngSubmit)="submit()">
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>Name</nz-form-label>
+    <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="nameErrorTpl">
+      <input nz-input formControlName="name" placeholder="Name"/>
+      <ng-template #nameErrorTpl let-control>
+        @if (control.errors?.['required']) {
+          Bitte einen Namen eingeben.
+        }
+        @if (control.errors?.['minlength']) {
+          Bitte mindestens 1 Zeichen eingeben.
+        }
+        @if (control.errors?.['maxlength']) {
+          Bitte maximal 100 Zeichen eingeben.
+        }
+      </ng-template>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7">Hersteller</nz-form-label>
+    <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="manufactorErrorTpl">
+      <input nz-input formControlName="manufactor" placeholder="Hersteller"/>
+      <ng-template #manufactorErrorTpl let-control>
+        @if (control.errors?.['maxlength']) {
+          Bitte maximal 100 Zeichen eingeben.
+        }
+      </ng-template>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7">Händler</nz-form-label>
+    <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="dealerErrorTpl">
+      <input nz-input formControlName="dealer" placeholder="Händler"/>
+      <ng-template #dealerErrorTpl let-control>
+        @if (control.errors?.['maxlength']) {
+          Bitte maximal 100 Zeichen eingeben.
+        }
+      </ng-template>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7">Einzelpreis</nz-form-label>
+    <nz-form-control [nzSpan]="12">
+      <nz-input-number formControlName="pricePerUnit" nzStep="0.01">
+        <span nzInputAddonAfter>€</span>
+      </nz-input-number>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-control [nzSpan]="8" [nzOffset]="7">
+      <label nz-checkbox formControlName="visualInspectionAfterUsage">Visuelle Kontrolle nach Verwendung</label>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7">Weitere Informationen</nz-form-label>
+    <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="noticeErrorTpl">
+        <textarea nz-input nzAutosize formControlName="notice"
+                  placeholder="weitere Information (max 2000 Zeichen)"></textarea>
+      <ng-template #noticeErrorTpl let-control>
+        @if (control.errors?.['maxlength']) {
+          Bitte maximal 2000 Zeichen eingeben.
+        }
+      </ng-template>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-control [nzOffset]="7" [nzSpan]="12">
+      <button nz-button nzType="primary" [disabled]="!form.valid" [nzLoading]="createLoading()">Speichern</button>
+    </nz-form-control>
+  </nz-form-item>
+</form>

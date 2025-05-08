@@ -1,0 +1,41 @@
+<nz-table nzShowSizeChanger
+          [nzData]="entities()"
+          [nzFrontPagination]="false"
+          [nzLoading]="entitiesLoading()"
+          [nzTotal]="total()"
+          [nzPageSize]="itemsPerPage"
+          [nzPageIndex]="page"
+          (nzQueryParams)="onQueryParamsChange($event)">
+  <thead>
+  <tr>
+    <th nzColumnKey="name">Name</th>
+    <th nzColumnKey="manufactor">Hersteller</th>
+    <th nzColumnKey="dealer">Händler</th>
+    <th *ofsHasRole="['device-type.manage']"></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let entity of entities()" nz-typography>
+    <td>{{ entity.name }}</td>
+    <td>
+      <ng-container *ngIf="entity.manufactor">
+        {{ entity.manufactor }}
+      </ng-container>
+      <ng-container *ngIf="!entity.manufactor">
+        <i>unbekannt</i>
+      </ng-container>
+    </td>
+    <td>
+      <ng-container *ngIf="entity.dealer">
+        {{ entity.dealer }}
+      </ng-container>
+      <ng-container *ngIf="!entity.dealer">
+        <i>unbekannt</i>
+      </ng-container>
+    </td>
+    <td *ofsHasRole="['device-type.manage']">
+      <a nz-button nzType="link" [routerLink]="entity.id.toString()">Details</a>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>

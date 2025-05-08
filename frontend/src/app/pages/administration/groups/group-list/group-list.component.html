@@ -1,0 +1,23 @@
+<nz-table nzShowSizeChanger
+          [nzData]="groups()"
+          [nzFrontPagination]="false"
+          [nzLoading]="usersLoading()"
+          [nzTotal]="total()"
+          [nzPageSize]="10"
+          [nzPageIndex]="1"
+          (nzQueryParams)="onQueryParamsChange($event)">
+  <thead>
+  <tr>
+    <th nzColumnKey="firstName">Name</th>
+    <th *ofsHasRole="['group.manage']"></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let group of groups()">
+    <td>{{ group.name }}</td>
+    <td *ofsHasRole="['user.manage']">
+      <a nz-button nzType="link" [routerLink]="group.id">Details</a>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>
