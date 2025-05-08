@@ -1,0 +1,1535 @@
+openapi: 3.0.0
+paths:
+  /api/user/count:
+    get:
+      description: Gibt die Anzahl der Benutzer zurück
+      operationId: UserController_getCount
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - User
+  /api/user:
+    get:
+      description: Gibt alle Benutzer zurück
+      operationId: UserController_getUsers
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: offset
+          required: false
+          in: query
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - User
+    post:
+      description: Erstellt einen Benutzer
+      operationId: UserController_createUser
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - User
+  /api/user/{id}:
+    get:
+      description: Gibt einen Benutzer zurück
+      operationId: UserController_getUser
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - User
+    put:
+      description: Aktualisiert einen Benutzer
+      operationId: UserController_updateUser
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - User
+    delete:
+      description: Löscht einen Benutzer
+      operationId: UserController_deleteUser
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - User
+  /api/group/roles:
+    get:
+      description: Gibt alle Rollen zurück
+      operationId: GroupController_getRoles
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoleDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Group
+  /api/group/count:
+    get:
+      description: Gibt die Anzahl der Gruppen zurück
+      operationId: GroupController_getCount
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Group
+  /api/group:
+    get:
+      description: Gibt alle Gruppen zurück
+      operationId: GroupController_getGroups
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: offset
+          required: false
+          in: query
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Group
+    post:
+      description: Erstellt eine Gruppe
+      operationId: GroupController_createGroup
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupCreateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Group
+  /api/group/{id}:
+    get:
+      description: Gibt eine Gruppe zurück
+      operationId: GroupController_getGroup
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Group
+    put:
+      description: Aktualisiert eine Gruppe
+      operationId: GroupController_updateGroup
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupUpdateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Group
+    delete:
+      description: Löscht eine Gruppe
+      operationId: GroupController_deleteGroup
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Group
+  /api/group/{id}/role:
+    post:
+      description: Fügt eine Rolle zu einer Gruppe hinzu
+      operationId: GroupController_addRoleToGroup
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: role
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Group
+    delete:
+      description: Löscht eine Rolle von einer Gruppe
+      operationId: GroupController_removeRoleFromGroup
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: role
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Group
+  /api/group/{id}/member:
+    post:
+      description: Fügt einen Benutzer zu einer Gruppe hinzu
+      operationId: GroupController_addMemberToGroup
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: userId
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Group
+    delete:
+      description: Löscht einen Benutzer von einer Gruppe
+      operationId: GroupController_removeMemberFromGroup
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: userId
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Group
+  /api/group/{id}/members:
+    get:
+      description: Gibt alle Benutzer und die Mitglieder einer Gruppe zurück
+      operationId: GroupController_getMembers
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupMembersDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Group
+  /api/device-type/count:
+    get:
+      description: Gibt die Anzahl aller Device-Typen zurück
+      operationId: DeviceTypeController_getCount
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - DeviceType
+  /api/device-type:
+    get:
+      description: Gibt alle Device-Typen zurück
+      operationId: DeviceTypeController_getAll
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: offset
+          required: false
+          in: query
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeviceTypeDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - DeviceType
+    post:
+      description: Erstellt einen Device-Typen
+      operationId: DeviceTypeController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceTypeCreateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceTypeDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - DeviceType
+  /api/device-type/{id}:
+    get:
+      description: Gibt einen Device-Typen zurück
+      operationId: DeviceTypeController_getOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceTypeDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - DeviceType
+    put:
+      description: Aktualisiert einen  Device-Typen
+      operationId: DeviceTypeController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceTypeUpdateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceTypeDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - DeviceType
+    delete:
+      description: Löscht einen Device-Typen
+      operationId: DeviceTypeController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - DeviceType
+  /api/device-group/count:
+    get:
+      description: Gibt die Anzahl aller Geräte-Gruppen zurück
+      operationId: DeviceGroupController_getCount
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - DeviceGroup
+  /api/device-group:
+    get:
+      description: Gibt alle Geräte-Gruppen zurück
+      operationId: DeviceGroupController_getAll
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: offset
+          required: false
+          in: query
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeviceGroupDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - DeviceGroup
+    post:
+      description: Erstellt eine Geräte-Gruppe
+      operationId: DeviceGroupController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceGroupCreateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceGroupDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - DeviceGroup
+  /api/device-group/{id}:
+    get:
+      description: Gibt eine Geräte-Gruppe zurück
+      operationId: DeviceGroupController_getOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceGroupDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - DeviceGroup
+    put:
+      description: Aktualisiert eine Geräte-Gruppen
+      operationId: DeviceGroupController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceGroupUpdateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceGroupDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - DeviceGroup
+    delete:
+      description: Löscht eine Geräte-Gruppe
+      operationId: DeviceGroupController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - DeviceGroup
+  /api/device/count:
+    get:
+      description: Gibt die Anzahl aller Geräte zurück
+      operationId: DeviceController_getCount
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Device
+  /api/device:
+    get:
+      description: Gibt alle Geräte zurück
+      operationId: DeviceController_getAll
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          schema:
+            nullable: true
+            type: number
+        - name: offset
+          required: false
+          in: query
+          schema:
+            nullable: true
+            type: number
+        - name: typeId
+          required: false
+          in: query
+          schema:
+            nullable: true
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeviceDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Device
+    post:
+      description: Erstellt eine Geräte
+      operationId: DeviceController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceCreateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Device
+  /api/device/{id}:
+    get:
+      description: Gibt eine Geräte zurück
+      operationId: DeviceController_getOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Device
+    put:
+      description: Aktualisiert eine Geräte
+      operationId: DeviceController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceUpdateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Device
+    delete:
+      description: Löscht eine Geräte
+      operationId: DeviceController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Device
+  /api/location/count:
+    get:
+      description: Gibt die Anzahl aller Standorte zurück
+      operationId: LocationController_getCount
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Location
+  /api/location:
+    get:
+      description: Gibt alle Standorte zurück
+      operationId: LocationController_getAll
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: offset
+          required: false
+          in: query
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LocationDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Location
+    post:
+      description: Erstellt einen Standort
+      operationId: LocationController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationCreateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Location
+  /api/location/{id}:
+    get:
+      description: Gibt einen Standort zurück
+      operationId: LocationController_getOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Location
+    put:
+      description: Aktualisiert einen  Standort
+      operationId: LocationController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationUpdateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Location
+    delete:
+      description: Löscht einen Standort
+      operationId: LocationController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Location
+info:
+  title: OFS-Manager
+  description: ''
+  version: '1.0'
+  contact: {}
+tags: []
+servers: []
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: oauth2
+      flows:
+        implicit:
+          scopes:
+            openid: openid
+            profile: profile
+          authorizationUrl: >-
+            https://127.0.0.1:20443/realms/openfiresource/protocol/openid-connect/auth
+          refreshUrl: >-
+            https://127.0.0.1:20443/realms/openfiresource/protocol/openid-connect/token
+          tokenUrl: >-
+            https://127.0.0.1:20443/realms/openfiresource/protocol/openid-connect/token
+  schemas:
+    CountDto:
+      type: object
+      properties:
+        count:
+          type: number
+      required:
+        - count
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        emailVerified:
+          type: boolean
+        enabled:
+          type: boolean
+      required:
+        - id
+        - firstName
+        - lastName
+        - username
+        - email
+        - emailVerified
+        - enabled
+    UserCreateDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        emailVerified:
+          type: boolean
+        enabled:
+          type: boolean
+      required:
+        - firstName
+        - lastName
+        - username
+        - email
+        - emailVerified
+        - enabled
+    UserUpdateDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        emailVerified:
+          type: boolean
+        enabled:
+          type: boolean
+      required:
+        - firstName
+        - lastName
+        - email
+        - emailVerified
+        - enabled
+    RoleDto:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+        - description
+    GroupDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+      required:
+        - id
+        - name
+    GroupCreateDto:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+    GroupUpdateDto:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+    GroupMembersDto:
+      type: object
+      properties:
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserDto'
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserDto'
+      required:
+        - members
+        - users
+    DeviceTypeDto:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        notice:
+          type: string
+          nullable: true
+        pricePerUnit:
+          type: number
+          nullable: true
+        manufactor:
+          type: string
+          nullable: true
+        dealer:
+          type: string
+          nullable: true
+        visualInspectionAfterUsage:
+          type: boolean
+      required:
+        - id
+        - name
+        - visualInspectionAfterUsage
+    DeviceTypeCreateDto:
+      type: object
+      properties:
+        name:
+          type: string
+        notice:
+          type: string
+          nullable: true
+        pricePerUnit:
+          type: number
+          nullable: true
+        manufactor:
+          type: string
+          nullable: true
+        dealer:
+          type: string
+          nullable: true
+        visualInspectionAfterUsage:
+          type: boolean
+      required:
+        - name
+        - visualInspectionAfterUsage
+    DeviceTypeUpdateDto:
+      type: object
+      properties:
+        name:
+          type: string
+        notice:
+          type: string
+          nullable: true
+        pricePerUnit:
+          type: number
+          nullable: true
+        manufactor:
+          type: string
+          nullable: true
+        dealer:
+          type: string
+          nullable: true
+        visualInspectionAfterUsage:
+          type: boolean
+      required:
+        - name
+        - visualInspectionAfterUsage
+    DeviceGroupDto:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        notice:
+          type: string
+          nullable: true
+      required:
+        - id
+        - name
+    DeviceGroupCreateDto:
+      type: object
+      properties:
+        name:
+          type: string
+        notice:
+          type: string
+          nullable: true
+      required:
+        - name
+    DeviceGroupUpdateDto:
+      type: object
+      properties:
+        name:
+          type: string
+        notice:
+          type: string
+          nullable: true
+      required:
+        - name
+    DeviceDto:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+          nullable: true
+        notice:
+          type: string
+          nullable: true
+        manufactor:
+          type: string
+          nullable: true
+        dealer:
+          type: string
+          nullable: true
+        serial:
+          type: string
+          nullable: true
+        serialManufactor:
+          type: string
+          nullable: true
+        barcode1:
+          type: string
+          nullable: true
+        barcode2:
+          type: string
+          nullable: true
+        producedDate:
+          format: date-time
+          type: string
+          nullable: true
+        activeDate:
+          format: date-time
+          type: string
+          nullable: true
+        decomissionDateManufacture:
+          format: date-time
+          type: string
+          nullable: true
+        decomissionDate:
+          format: date-time
+          type: string
+          nullable: true
+        state:
+          type: number
+        typeId:
+          type: number
+          nullable: true
+        type:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/DeviceTypeDto'
+      required:
+        - id
+        - state
+    DeviceCreateDto:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        notice:
+          type: string
+          nullable: true
+        manufactor:
+          type: string
+          nullable: true
+        dealer:
+          type: string
+          nullable: true
+        serial:
+          type: string
+          nullable: true
+        serialManufactor:
+          type: string
+          nullable: true
+        barcode1:
+          type: string
+          nullable: true
+        barcode2:
+          type: string
+          nullable: true
+        producedDate:
+          format: date-time
+          type: string
+          nullable: true
+        activeDate:
+          format: date-time
+          type: string
+          nullable: true
+        decomissionDateManufacture:
+          format: date-time
+          type: string
+          nullable: true
+        decomissionDate:
+          format: date-time
+          type: string
+          nullable: true
+        state:
+          type: number
+        typeId:
+          type: number
+          nullable: true
+      required:
+        - state
+    DeviceUpdateDto:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        notice:
+          type: string
+          nullable: true
+        manufactor:
+          type: string
+          nullable: true
+        dealer:
+          type: string
+          nullable: true
+        serial:
+          type: string
+          nullable: true
+        serialManufactor:
+          type: string
+          nullable: true
+        barcode1:
+          type: string
+          nullable: true
+        barcode2:
+          type: string
+          nullable: true
+        producedDate:
+          format: date-time
+          type: string
+          nullable: true
+        activeDate:
+          format: date-time
+          type: string
+          nullable: true
+        decomissionDateManufacture:
+          format: date-time
+          type: string
+          nullable: true
+        decomissionDate:
+          format: date-time
+          type: string
+          nullable: true
+        state:
+          type: number
+        typeId:
+          type: number
+          nullable: true
+      required:
+        - state
+    LocationDto:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        type:
+          type: number
+        parentId:
+          type: number
+          nullable: true
+          default: null
+        children:
+          nullable: true
+          type: array
+          items:
+            type: string
+        parent:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/LocationDto'
+      required:
+        - id
+        - name
+        - type
+    LocationCreateDto:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        type:
+          type: number
+        parentId:
+          type: number
+          nullable: true
+          default: null
+      required:
+        - name
+        - type
+    LocationUpdateDto:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        type:
+          type: number
+        parentId:
+          type: number
+          nullable: true
+          default: null
+      required:
+        - name
+        - type
+security:
+  - {}

@@ -1,0 +1,37 @@
+<nz-table nzShowSizeChanger
+          [nzData]="locations()"
+          [nzFrontPagination]="false"
+          [nzLoading]="locationsLoading()"
+          [nzTotal]="total()"
+          [nzPageSize]="itemsPerPage"
+          [nzPageIndex]="page"
+          (nzQueryParams)="onQueryParamsChange($event)">
+  <thead>
+  <tr>
+    <th nzColumnKey="name">Name</th>
+    <th nzColumnKey="type">Typ</th>
+    <th nzColumnKey="parent">Vorgänger</th>
+    <th *ofsHasRole="['location.manage']"></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let location of locations()" nz-typography>
+    <td>{{ location.name }}</td>
+    <td>
+      <nz-icon [nzType]="LocationTypes.getById(location.type)?.icon ?? 'question'" nzTheme="outline"/>
+      {{ LocationTypes.getById(location.type)?.name ?? 'unbekannt' }}
+    </td>
+    <td>
+      <ng-container *ngIf="location.parent">
+        <a [routerLink]="location.parent!.id.toString()">{{ location.parent!.name }}</a>
+      </ng-container>
+      <ng-container *ngIf="!location.parent">
+        <i>Kein Vorgänger</i>
+      </ng-container>
+    </td>
+    <td *ofsHasRole="['location.manage']">
+      <a nz-button nzType="link" [routerLink]="location.id.toString()">Details</a>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>

@@ -1,3 +1,21 @@
+# Lizenzinformationen
+Dieses Open-Source-Projekt ist unter einer gemischten Lizenz veröffentlicht.
+
+## Lizenz für Premium-Funktionen  
+
+Zusätzlich enthält die Software Premium-Funktionen, die nur mit einer kommerziellen Lizenz genutzt werden dürfen.  
+
+### 🚀 Folgende Funktionen erfordern eine kommerzielle Lizenz:
+** Folgen noch **
+
+Ohne eine gültige kommerzielle Lizenz ist die Nutzung dieser Features untersagt.  
+Unternehmen, die diese Funktionen nutzen möchten, müssen eine Lizenz erwerben.
+
+# Lizenz für Core-Funktionalitäten
+Alle Funktionen die nicht unter den Premium-Funktionen aufgeführt sind, sind unter der AGPLv3-Lizenz veröffentlicht.
+Ein Welchsel der Lizenz ist möglich.
+
+## GNU Affero General Public License v3.0
                     GNU AFFERO GENERAL PUBLIC LICENSE
                        Version 3, 19 November 2007
 

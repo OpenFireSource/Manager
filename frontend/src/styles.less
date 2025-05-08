@@ -1,0 +1,33 @@
+// Custom Theming for NG-ZORRO
+// For more information: https://ng.ant.design/docs/customize-theme/en
+@import "../node_modules/ng-zorro-antd/ng-zorro-antd.less";
+
+// Override less variables to here
+// View all variables: https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/components/style/themes/default.less
+
+// @primary-color: #1890ff;
+/* You can add global styles to this file, and also import other style files */
+.authenticating-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  font-size: 3rem;
+  background: #fff;
+  opacity: 0.8;
+  margin: 10px;
+  animation: pulsate 0.4s infinite alternate linear;
+}
+
+@keyframes pulsate {
+  from { opacity: 1.0; }
+  to { opacity: 0.2; }
+}
+
+nz-date-picker {
+  width: 100%;
+}

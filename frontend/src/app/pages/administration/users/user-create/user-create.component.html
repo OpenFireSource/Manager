@@ -1,0 +1,85 @@
+<h1>Benutzer erstellen</h1>
+<form nz-form [formGroup]="form" (ngSubmit)="submit()">
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>Benutzername</nz-form-label>
+    <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="usernameErrorTpl">
+      <input nz-input formControlName="username" placeholder="Benutzername"/>
+      <ng-template #usernameErrorTpl let-control>
+        @if (control.errors?.['required']) {
+          Bitte einen Benutzernamen eingeben.
+        } @if (control.errors?.['minlength']) {
+        Bitte mindestens 3 Zeichen eingeben.
+      } @if (control.errors?.['maxlength']) {
+        Bitte maximal 30 Zeichen eingeben.
+      } @if (control.errors?.['pattern']) {
+        Es sind nur Buchstaben, Zahlen und _-. erlaubt.<br>
+        Die erste und letzte Zeichen müssen Buchstaben oder Zahlen sein.
+      }
+      </ng-template>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>Vorname</nz-form-label>
+    <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="firstNameErrorTpl">
+      <input nz-input formControlName="firstName" placeholder="Vorname"/>
+      <ng-template #firstNameErrorTpl let-control>
+        @if (control.errors?.['required']) {
+          Bitte den Vornamen eingeben.
+        } @if (control.errors?.['minlength']) {
+        Bitte mindestens 1 Zeichen eingeben.
+      } @if (control.errors?.['maxlength']) {
+        Bitte maximal 40 Zeichen eingeben.
+      }
+      </ng-template>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>Nachname</nz-form-label>
+    <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="lastNameErrorTpl">
+      <input nz-input formControlName="lastName" placeholder="Nachname"/>
+      <ng-template #lastNameErrorTpl let-control>
+        @if (control.errors?.['required']) {
+          Bitte den Nachnamen eingeben.
+        } @if (control.errors?.['minlength']) {
+        Bitte mindestens 1 Zeichen eingeben.
+      } @if (control.errors?.['maxlength']) {
+        Bitte maximal 40 Zeichen eingeben.
+      }
+      </ng-template>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>E-Mail</nz-form-label>
+    <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="emailErrorTpl">
+      <input nz-input formControlName="email" placeholder="E-Mail"/>
+      <ng-template #emailErrorTpl let-control>
+        @if (control.errors?.['required']) {
+          Bitte eine E-Mail eingeben.
+        } @if (control.errors?.['email']) {
+        Bitte eine gültige E-Mail-Adresse eingeben.
+      }
+      </ng-template>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-control [nzSpan]="8" [nzOffset]="7">
+      <label nz-checkbox formControlName="emailVerified">E-Mail bestätigt</label>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-control [nzSpan]="8" [nzOffset]="7">
+      <label nz-checkbox formControlName="enabled">Benutzer aktiv</label>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-control [nzOffset]="7" [nzSpan]="12">
+      <button nz-button nzType="primary" [disabled]="!form.valid" [nzLoading]="createLoading()">Speichern</button>
+    </nz-form-control>
+  </nz-form-item>
+</form>

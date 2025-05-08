@@ -1,0 +1,75 @@
+<h1>Ort/Fahrzeug erstellen</h1>
+
+<form nz-form [formGroup]="form" (ngSubmit)="submit()">
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>Name</nz-form-label>
+    <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="nameErrorTpl">
+      <input nz-input formControlName="name" placeholder="Name"/>
+      <ng-template #nameErrorTpl let-control>
+        @if (control.errors?.['required']) {
+          Bitte einen Namen eingeben.
+        }
+        @if (control.errors?.['minlength']) {
+          Bitte mindestens 1 Zeichen eingeben.
+        }
+        @if (control.errors?.['maxlength']) {
+          Bitte maximal 100 Zeichen eingeben.
+        }
+      </ng-template>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>Typ</nz-form-label>
+    <nz-form-control [nzSpan]="12">
+      <nz-select
+        formControlName="type"
+        nzPlaceHolder="Typ auswählen"
+        nzAllowClear>
+        @for (item of types; track item) {
+          <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+        }
+      </nz-select>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7">Weitere Informationen</nz-form-label>
+    <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="lastNameErrorTpl">
+        <textarea nz-input nzAutosize formControlName="description"
+                  placeholder="weitere Information (max 2000 Zeichen)"></textarea>
+      <ng-template #lastNameErrorTpl let-control>
+        @if (control.errors?.['maxlength']) {
+          Bitte maximal 2000 Zeichen eingeben.
+        }
+      </ng-template>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7">Übergeordneter Ort/Fahrzeug</nz-form-label>
+    <nz-form-control [nzSpan]="12">
+      <nz-select
+        (nzScrollToBottom)="loadMore()"
+        formControlName="parentId"
+        nzPlaceHolder="Ort/Fahrzeug auswählen"
+        nzAllowClear
+        [nzDropdownRender]="renderTemplate">
+        @for (item of parents(); track item) {
+          <nz-option [nzValue]="item.id" [nzLabel]="(item.parent? item.parent.name+' -> ':'') + item.name"></nz-option>
+        }
+      </nz-select>
+      <ng-template #renderTemplate>
+        @if (parentsIsLoading()) {
+          <nz-spin></nz-spin>
+        }
+      </ng-template>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-control [nzOffset]="7" [nzSpan]="12">
+      <button nz-button nzType="primary" [disabled]="!form.valid" [nzLoading]="createLoading()">Speichern</button>
+    </nz-form-control>
+  </nz-form-item>
+</form>
