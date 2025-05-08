@@ -84,11 +84,7 @@ import { DeviceEntity } from '../inventory/device/device.entity';
     AppLoggerService,
     LoggerContextMiddleware,
   ],
-  exports: [
-    MinioService,
-    KeycloakService,
-    LoggerContextMiddleware,
-  ],
+  exports: [MinioService, KeycloakService, LoggerContextMiddleware],
   controllers: [UserController, GroupController],
 })
 @Global()
