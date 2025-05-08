@@ -30,12 +30,12 @@ export class AppLoggerService implements LoggerService {
     this.winstonLogger.verbose(message, this.getMeta(context));
   }
 
-  private getMeta(context?: any[]) {
+  private getMeta(context: any[]) {
     return {
       timestamp: new Date().toISOString(),
       requestId: this.contextService.get('requestId') || null,
       userId: this.contextService.get('userId') || null,
-      context: context || null,
+      context,
     };
   }
 }
