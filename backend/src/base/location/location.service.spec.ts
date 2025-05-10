@@ -1,26 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LocationService } from './location.service';
 import { LocationCreateDto } from './dto/location-create.dto';
-import { LocationDto } from './dto/location.dto';
 import {
   BadRequestException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { LocationDbService } from './location-db.service';
+import { LocationEntity } from './location.entity';
+import { LocationUpdateDto } from './dto/location-update.dto';
 
 describe('LocationService', () => {
   let service: LocationService;
-  let locationService: LocationDbService;
+  let dbService: LocationDbService;
 
   beforeEach(async () => {
-    locationService = {} as LocationDbService;
+    dbService = {} as LocationDbService;
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LocationService,
         {
           provide: LocationDbService,
-          useValue: locationService,
+          useValue: dbService,
         },
       ],
     }).compile();
@@ -36,96 +37,93 @@ describe('LocationService', () => {
     it('should call findAll with correct parameters', async () => {
       const offset = 0;
       const limit = 10;
-      locationService.findAll = jest.fn().mockResolvedValue([]);
+      dbService.findAll = jest.fn().mockResolvedValue([]);
 
       expect(await service.findAll(offset, limit)).toEqual([]);
 
-      expect(locationService.findAll).toHaveBeenCalledWith(offset, limit);
+      expect(dbService.findAll).toHaveBeenCalledWith(offset, limit);
     });
     it('should call findAll with no parameters', async () => {
-      locationService.findAll = jest.fn().mockResolvedValue([]);
+      dbService.findAll = jest.fn().mockResolvedValue([]);
 
       expect(await service.findAll()).toEqual([]);
 
-      expect(locationService.findAll).toHaveBeenCalledWith(
-        undefined,
-        undefined,
-      );
+      expect(dbService.findAll).toHaveBeenCalledWith(undefined, undefined);
     });
   });
 
   describe('findOne', () => {
     it('should call findOne with correct parameters', async () => {
       const id = 1;
-      const location = new LocationDto();
-      locationService.findOne = jest.fn().mockResolvedValue(location);
+      const location = new LocationEntity();
+      dbService.findOne = jest.fn().mockResolvedValue(location);
 
       expect(await service.findOne(id)).toEqual(location);
 
-      expect(locationService.findOne).toHaveBeenCalledWith(id);
+      expect(dbService.findOne).toHaveBeenCalledWith(id);
     });
     it('should throw NotFoundException if location not found', async () => {
       const id = 1;
-      locationService.findOne = jest.fn().mockResolvedValue(null);
+      dbService.findOne = jest.fn().mockResolvedValue(null);
 
       await expect(service.findOne(id)).rejects.toThrow(
         new NotFoundException(),
       );
 
-      expect(locationService.findOne).toHaveBeenCalledWith(id);
+      expect(dbService.findOne).toHaveBeenCalledWith(id);
     });
   });
 
   describe('delete', () => {
     it('should call delete with correct parameters', async () => {
       const id = 1;
-      locationService.delete = jest.fn().mockResolvedValue(true);
+      dbService.delete = jest.fn().mockResolvedValue(true);
 
       await service.delete(id);
 
-      expect(locationService.delete).toHaveBeenCalledWith(id);
+      expect(dbService.delete).toHaveBeenCalledWith(id);
     });
     it('should throw NotFoundException if location not found', async () => {
       const id = 1;
-      locationService.delete = jest.fn().mockResolvedValue(false);
+      dbService.delete = jest.fn().mockResolvedValue(false);
 
       await expect(service.delete(id)).rejects.toThrow(new NotFoundException());
 
-      expect(locationService.delete).toHaveBeenCalledWith(id);
+      expect(dbService.delete).toHaveBeenCalledWith(id);
     });
   });
 
   it('getCount', async () => {
     const count = 5;
-    locationService.getCount = jest.fn().mockResolvedValue(count);
+    dbService.getCount = jest.fn().mockResolvedValue(count);
 
     expect(await service.getCount()).toEqual({ count });
 
-    expect(locationService.getCount).toHaveBeenCalled();
+    expect(dbService.getCount).toHaveBeenCalled();
   });
 
   describe('create', () => {
     it('should call create with correct parameters', async () => {
       const body = new LocationCreateDto();
       const createdLocation = { id: 1, ...body };
-      locationService.create = jest.fn().mockResolvedValue(createdLocation);
-      locationService.findOne = jest.fn().mockResolvedValue(createdLocation);
+      dbService.create = jest.fn().mockResolvedValue(createdLocation);
+      dbService.findOne = jest.fn().mockResolvedValue(createdLocation);
 
       expect(await service.create(body)).toEqual(createdLocation);
 
-      expect(locationService.create).toHaveBeenCalledWith(body);
+      expect(dbService.create).toHaveBeenCalledWith(body);
     });
 
     it('should throw InternalServerErrorException if location not found', async () => {
       const body = new LocationCreateDto();
-      locationService.create = jest.fn().mockResolvedValue({ id: 1 });
-      locationService.findOne = jest.fn().mockResolvedValue(null);
+      dbService.create = jest.fn().mockResolvedValue({ id: 1 });
+      dbService.findOne = jest.fn().mockResolvedValue(null);
 
       await expect(service.create(body)).rejects.toThrow(
         new InternalServerErrorException(),
       );
 
-      expect(locationService.create).toHaveBeenCalledWith(body);
+      expect(dbService.create).toHaveBeenCalledWith(body);
     });
   });
 
@@ -133,37 +131,37 @@ describe('LocationService', () => {
     it('should call update with correct parameters', async () => {
       const id = 1;
       const body = new LocationCreateDto();
-      locationService.update = jest.fn().mockResolvedValue(true);
-      locationService.findOne = jest.fn().mockResolvedValue({ id, ...body });
+      dbService.update = jest.fn().mockResolvedValue(true);
+      dbService.findOne = jest.fn().mockResolvedValue({ id, ...body });
 
       await service.update(id, body);
 
-      expect(locationService.update).toHaveBeenCalledWith(id, body);
+      expect(dbService.update).toHaveBeenCalledWith(id, body);
     });
 
     it('should throw NotFoundException if location not found', async () => {
       const id = 1;
-      const body = new LocationCreateDto();
-      locationService.update = jest.fn().mockResolvedValue(true);
-      locationService.findOne = jest.fn().mockResolvedValue(null);
+      const body = new LocationUpdateDto();
+      dbService.update = jest.fn().mockResolvedValue(true);
+      dbService.findOne = jest.fn().mockResolvedValue(null);
 
       await expect(service.update(id, body)).rejects.toThrow(
         new NotFoundException(),
       );
 
-      expect(locationService.update).toHaveBeenCalledWith(id, body);
+      expect(dbService.update).toHaveBeenCalledWith(id, body);
     });
     it('should throw BadRequestException if location is a child of the parent', async () => {
       const id = 1;
-      const body = new LocationCreateDto();
+      const body = new LocationUpdateDto();
       body.parentId = 2;
-      locationService.isChildOf = jest.fn().mockResolvedValue(true);
+      dbService.isChildOf = jest.fn().mockResolvedValue(true);
 
       await expect(service.update(id, body)).rejects.toThrow(
         new BadRequestException('Es sind keine Kreise erlaubt.'),
       );
 
-      expect(locationService.isChildOf).toHaveBeenCalledWith(id, body.parentId);
+      expect(dbService.isChildOf).toHaveBeenCalledWith(id, body.parentId);
     });
   });
 });

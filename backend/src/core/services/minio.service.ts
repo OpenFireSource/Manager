@@ -1,13 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  buildARN,
-  Client,
-  NotificationConfig,
-  ObjectCreatedAll,
-  ObjectRemovedAll,
-  QueueConfig,
-} from 'minio';
+import { Client } from 'minio';
 
 @Injectable()
 export class MinioService {
