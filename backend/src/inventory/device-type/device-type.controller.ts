@@ -1,16 +1,16 @@
 import { Body, Controller, Param, Query } from '@nestjs/common';
 import { DeviceTypeService } from './device-type.service';
-import { CountDto } from 'src/shared/dto/count.dto';
 import { Role } from '../../core/auth/role/role';
 import {
   Endpoint,
   EndpointType,
-} from 'src/shared/decorator/endpoint.decorator';
+} from '../../shared/decorator/endpoint.decorator';
 import { IdNumberDto } from '../../shared/dto/id.dto';
 import { DeviceTypeDto } from './dto/device-type.dto';
 import { DeviceTypeCreateDto } from './dto/device-type-create.dto';
 import { DeviceTypeUpdateDto } from './dto/device-type-update.dto';
 import { DeviceTypeGetQueryDto } from './dto/device-type-get-query.dto';
+import { CountDto } from '../../shared/dto/count.dto';
 
 @Controller('device-type')
 export class DeviceTypeController {
