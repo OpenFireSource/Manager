@@ -258,4 +258,121 @@ describe('UserService', () => {
       ).rejects.toThrowError(new InternalServerErrorException());
     });
   });
+
+  describe('addUserToGroup', () => {
+    it('should add a member to a group', async () => {
+      keycloakService.addUserToGroup = jest
+        .fn()
+        .mockReturnValueOnce(of(undefined));
+
+      expect(
+        await firstValueFrom(service.addUserToGroup('1', '2')),
+      ).toBeUndefined();
+    });
+
+    it('should throw NotFoundException', async () => {
+      keycloakService.addUserToGroup = jest.fn().mockReturnValueOnce(
+        of({}).pipe(
+          tap(() => {
+            throw new InternalErrorDto(404, 'Not Found');
+          }),
+        ),
+      );
+
+      await expect(
+        firstValueFrom(service.addUserToGroup('1', '2')),
+      ).rejects.toThrow(new NotFoundException());
+    });
+
+    it('should throw BadRequestException', async () => {
+      keycloakService.addUserToGroup = jest.fn().mockReturnValueOnce(
+        of({}).pipe(
+          tap(() => {
+            throw new InternalErrorDto(400, 'Bad Request');
+          }),
+        ),
+      );
+
+      await expect(
+        firstValueFrom(service.addUserToGroup('1', '2')),
+      ).rejects.toThrow(new BadRequestException('Bad Request'));
+    });
+
+    it('should throw InternalServerErrorException', async () => {
+      keycloakService.addUserToGroup = jest.fn().mockReturnValueOnce(
+        of({}).pipe(
+          tap(() => {
+            throw new InternalErrorDto(500, 'Internal Server Error');
+          }),
+        ),
+      );
+
+      await expect(
+        firstValueFrom(service.addUserToGroup('1', '2')),
+      ).rejects.toThrow(new InternalServerErrorException());
+    });
+  });
+
+  describe('removeUserFromGroup', () => {
+    it('should remove a member to a group', async () => {
+      keycloakService.removeUserFromGroup = jest
+        .fn()
+        .mockReturnValueOnce(of(undefined));
+
+      expect(
+        await firstValueFrom(service.removeUserFromGroup('1', '2')),
+      ).toBeUndefined();
+    });
+
+    it('should throw NotFoundException', async () => {
+      keycloakService.removeUserFromGroup = jest.fn().mockReturnValueOnce(
+        of({}).pipe(
+          tap(() => {
+            throw new InternalErrorDto(404, 'Not Found');
+          }),
+        ),
+      );
+
+      await expect(
+        firstValueFrom(service.removeUserFromGroup('1', '2')),
+      ).rejects.toThrow(new NotFoundException());
+    });
+
+    it('should throw BadRequestException', async () => {
+      keycloakService.removeUserFromGroup = jest.fn().mockReturnValueOnce(
+        of({}).pipe(
+          tap(() => {
+            throw new InternalErrorDto(400, 'Bad Request');
+          }),
+        ),
+      );
+
+      await expect(
+        firstValueFrom(service.removeUserFromGroup('1', '2')),
+      ).rejects.toThrow(new BadRequestException('Bad Request'));
+    });
+
+    it('should throw InternalServerErrorException', async () => {
+      keycloakService.removeUserFromGroup = jest.fn().mockReturnValueOnce(
+        of({}).pipe(
+          tap(() => {
+            throw new InternalErrorDto(500, 'Internal Server Error');
+          }),
+        ),
+      );
+
+      await expect(
+        firstValueFrom(service.removeUserFromGroup('1', '2')),
+      ).rejects.toThrow(new InternalServerErrorException());
+    });
+  });
+
+  it('getGroups', async () => {
+    const members = [{ id: '2' }];
+    keycloakService.getUserGroups = jest.fn().mockReturnValueOnce(of(members));
+    keycloakService.getGroups = jest.fn().mockReturnValueOnce(of(members));
+
+    // TODO better test
+    expect(await firstValueFrom(service.getGroups('1'))).not.toBeNull();
+  });
 });

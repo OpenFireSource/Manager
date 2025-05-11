@@ -1,4 +1,4 @@
-import {Component, effect, OnDestroy, OnInit, Signal} from '@angular/core';
+import {Component, computed, effect, OnDestroy, OnInit, signal, Signal} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {UserDetailService} from './user-detail.service';
 import {NgIf} from '@angular/common';
@@ -10,6 +10,9 @@ import {NzCheckboxModule} from 'ng-zorro-antd/checkbox';
 import {InAppMessageService} from '../../../../shared/services/in-app-message.service';
 import {NzPopconfirmModule} from 'ng-zorro-antd/popconfirm';
 import {Subject, takeUntil} from 'rxjs';
+import {NzTabsModule} from 'ng-zorro-antd/tabs';
+import {NzTableModule} from 'ng-zorro-antd/table';
+import {NzTransferModule, TransferChange, TransferItem} from 'ng-zorro-antd/transfer';
 
 interface UserDetailForm {
   firstName: FormControl<string>;
@@ -21,7 +24,19 @@ interface UserDetailForm {
 
 @Component({
   selector: 'ofs-user-detail',
-  imports: [NgIf, ReactiveFormsModule, NzButtonModule, NzFormModule, NzInputModule, NzCheckboxModule, NzPopconfirmModule],
+  imports:
+    [
+      NgIf,
+      ReactiveFormsModule,
+      NzButtonModule,
+      NzFormModule,
+      NzInputModule,
+      NzCheckboxModule,
+      NzPopconfirmModule,
+      NzTabsModule,
+      NzTableModule,
+      NzTransferModule,
+    ],
   standalone: true,
   templateUrl: './user-detail.component.html',
   styleUrl: './user-detail.component.less'
@@ -32,7 +47,11 @@ export class UserDetailComponent implements OnInit, OnDestroy {
   loadingError: Signal<boolean>;
   updateLoading: Signal<boolean>;
   deleteLoading: Signal<boolean>;
+  groups: Signal<TransferItem[]>
+  groupsTransferLoading: Signal<boolean>;
   private destroy$ = new Subject<void>();
+
+  $asTransferItems = (data: unknown): TransferItem[] => data as TransferItem[];
 
   form = new FormGroup<UserDetailForm>({
     firstName: new FormControl<string>('', {
@@ -74,6 +93,13 @@ export class UserDetailComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.groupsTransferLoading = this.userDetailService.groupsTransferLoading;
+    this.groups = computed(() => this.userDetailService.groups().map((item) => ({
+      title: item.group.name,
+      direction: item.member ? 'right' : 'left',
+      key: item.group.id,
+    } as TransferItem)));
+
     this.userDetailService.deleteLoadingError
       .pipe(takeUntil(this.destroy$))
       .subscribe((x) => this.inAppMessagingService.showError(x));
@@ -97,6 +123,10 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     this.activatedRoute.params.subscribe(params => {
       this.userDetailService.load(params['id']);
     });
+  }
+
+  changeGroups(ret: TransferChange): void {
+    this.userDetailService.updateGroups(ret.from === "left", ret.list.map((item) => item['key']));
   }
 
   submit() {

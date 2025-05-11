@@ -864,4 +864,19 @@ export class KeycloakService {
         new InternalErrorDto(error.status!, error.response!.data.errorMessage),
     );
   }
+
+  getUserGroups(userId: string, offset: number, limit: number) {
+    return from(this.getToken()).pipe(
+      mergeMap((t) =>
+        this.httpService.get<KeycloakGroupDto[]>(
+          `${this.keycloakUrl}/admin/realms/${this.realm}/users/${userId}/groups`,
+          {
+            ...this.generateHeader(t),
+            params: { max: limit ?? 100, first: offset ?? 0 },
+          },
+        ),
+      ),
+      map((x) => x.data),
+    );
+  }
 }
