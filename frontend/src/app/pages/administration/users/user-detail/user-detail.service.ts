@@ -3,8 +3,10 @@ import {UserService} from '@backend/api/user.service';
 import {UserDto} from '@backend/model/userDto';
 import {HttpErrorResponse} from '@angular/common/http';
 import {UserUpdateDto} from '@backend/model/userUpdateDto';
-import {Subject} from 'rxjs';
+import {forkJoin, from, mergeMap, Subject, tap} from 'rxjs';
 import {Router} from '@angular/router';
+import {GroupDto} from '@backend/model/groupDto';
+import {InAppMessageService} from '../../../../shared/services/in-app-message.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,19 +22,29 @@ export class UserDetailService {
   deleteLoadingError = new Subject<string>();
   updateLoadingSuccess = new Subject<void>();
   deleteLoadingSuccess = new Subject<void>();
+  groups = signal<{ group: GroupDto, member: boolean }[]>([]);
+  groupsTransferLoading = signal<boolean>(false);
 
   constructor(
     private readonly userService: UserService,
     private readonly router: Router,
+    private readonly inAppMessagingService: InAppMessageService,
   ) {
   }
 
   load(id: string) {
     this.loading.set(true);
     this.userService.userControllerGetUser(id)
+      .pipe(
+        tap((user) => this.user.set(user)),
+        mergeMap(() => this.userService.userControllerGetGroups(id)),
+        tap((data) => this.groups.set(data.groups.map((group) => ({
+          group,
+          member: data.members.some(x => x.id === group.id)
+        })))),
+      )
       .subscribe({
-        next: (user) => {
-          this.user.set(user);
+        next: () => {
           this.loadingError.set(false);
           this.loading.set(false);
         },
@@ -64,6 +76,33 @@ export class UserDetailService {
           },
         });
     }
+  }
+
+  updateGroups(add: boolean, groups: string[]) {
+    this.groupsTransferLoading.set(true);
+    from([groups]).pipe(
+      mergeMap((users) =>
+        forkJoin(users.map((group) => add ?
+          this.userService.userControllerAddUserToGroup(this.user()!.id, group) :
+          this.userService.userControllerRemoveUserFromGroup(this.user()!.id, group)))
+      ),
+      mergeMap(() => this.userService.userControllerGetUser(this.user()!.id)),
+      tap((user) => this.user.set(user)),
+      mergeMap(() => this.userService.userControllerGetGroups(this.user()!.id)),
+      tap((data) => this.groups.set(data.groups.map((group) => ({
+        group,
+        member: data.members.some(x => x.id === group.id)
+      })))),
+    ).subscribe({
+      next: () => {
+        this.groupsTransferLoading.set(false);
+        this.inAppMessagingService.showSuccess('Benutzer gespeichert');
+      },
+      error: () => {
+        this.groupsTransferLoading.set(false);
+        this.updateLoadingError.next();
+      },
+    });
   }
 
   delete() {

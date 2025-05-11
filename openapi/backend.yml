@@ -146,6 +146,79 @@ paths:
       summary: ''
       tags:
         - User
+  /api/user/{id}/member:
+    delete:
+      description: Löscht einen Benutzer von einer Gruppe
+      operationId: UserController_removeUserFromGroup
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: groupId
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - User
+    post:
+      description: Fügt einen Benutzer zu einer Gruppe hinzu
+      operationId: UserController_addUserToGroup
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: groupId
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - User
+  /api/user/{id}/groups:
+    get:
+      description: Gibt alle Gruppen und die Mitgliederschaften der Gruppen zurück
+      operationId: UserController_getGroups
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserGroupsDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - User
   /api/group/roles:
     get:
       description: Gibt alle Rollen zurück
@@ -1157,16 +1230,6 @@ components:
         - email
         - emailVerified
         - enabled
-    RoleDto:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-      required:
-        - name
-        - description
     GroupDto:
       type: object
       properties:
@@ -1181,6 +1244,30 @@ components:
       required:
         - id
         - name
+    UserGroupsDto:
+      type: object
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupDto'
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupDto'
+      required:
+        - groups
+        - members
+    RoleDto:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+        - description
     GroupCreateDto:
       type: object
       properties:

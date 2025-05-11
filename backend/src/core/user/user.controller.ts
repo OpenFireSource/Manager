@@ -12,6 +12,8 @@ import {
 import { Role } from '../auth/role/role';
 import { CountDto } from '../../shared/dto/count.dto';
 import { UserGetQueryDto } from './dto/user-get-query.dto';
+import { UserGroupQueryDto } from './dto/user-group-query.dto';
+import { UserGroupsDto } from './dto/user-groups.dto';
 
 @Controller('user')
 export class UserController {
@@ -78,6 +80,40 @@ export class UserController {
     return this.userService.deleteUser(params.id);
   }
 
-  // TODO add to group
-  // TODO remove to group
+  @Endpoint(EndpointType.DELETE, {
+    path: ':id/member',
+    description: 'Löscht einen Benutzer von einer Gruppe',
+    roles: [Role.GroupManage],
+    noContent: true,
+  })
+  public removeUserFromGroup(
+    @Param() params: IdGuidDto,
+    @Query() querys: UserGroupQueryDto,
+  ) {
+    return this.userService.removeUserFromGroup(params.id, querys.groupId);
+  }
+
+  @Endpoint(EndpointType.POST, {
+    path: ':id/member',
+    description: 'Fügt einen Benutzer zu einer Gruppe hinzu',
+    roles: [Role.GroupManage],
+    noContent: true,
+  })
+  public addUserToGroup(
+    @Param() params: IdGuidDto,
+    @Query() querys: UserGroupQueryDto,
+  ) {
+    return this.userService.addUserToGroup(params.id, querys.groupId);
+  }
+
+  @Endpoint(EndpointType.GET, {
+    description:
+      'Gibt alle Gruppen und die Mitgliederschaften der Gruppen zurück',
+    roles: [Role.UserView],
+    responseType: UserGroupsDto,
+    path: ':id/groups',
+  })
+  public getGroups(@Param() params: IdGuidDto): Observable<UserGroupsDto> {
+    return this.userService.getGroups(params.id);
+  }
 }

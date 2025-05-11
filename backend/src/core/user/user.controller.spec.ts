@@ -91,4 +91,44 @@ describe('UserController', () => {
 
     expect(service.deleteUser).toHaveBeenCalledWith('1');
   });
+
+  it('addUserToGroup', async () => {
+    const mockBody = { groupId: 'test' };
+    service.addUserToGroup = jest.fn().mockReturnValue(of(undefined));
+
+    expect(
+      await firstValueFrom(
+        controller.addUserToGroup({ id: '1' }, mockBody as any),
+      ),
+    ).toBeUndefined();
+
+    expect(service.addUserToGroup).toHaveBeenCalledWith('1', mockBody.groupId);
+  });
+
+  it('removeUserFromGroup', async () => {
+    const mockBody = { groupId: 'test' };
+    service.removeUserFromGroup = jest.fn().mockReturnValue(of(undefined));
+
+    expect(
+      await firstValueFrom(
+        controller.removeUserFromGroup({ id: '1' }, mockBody as any),
+      ),
+    ).toBeUndefined();
+
+    expect(service.removeUserFromGroup).toHaveBeenCalledWith(
+      '1',
+      mockBody.groupId,
+    );
+  });
+
+  it('getMembers', async () => {
+    const response = ['test'];
+    service.getGroups = jest.fn().mockReturnValue(of(response));
+
+    expect(await firstValueFrom(controller.getGroups({ id: '1' }))).toEqual(
+      response,
+    );
+
+    expect(service.getGroups).toHaveBeenCalledWith('1');
+  });
 });
