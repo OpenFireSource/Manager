@@ -19,6 +19,7 @@ import {NzSpinModule} from 'ng-zorro-antd/spin';
 import {DeviceTypeDto} from '@backend/model/deviceTypeDto';
 import {NzDatePickerModule} from 'ng-zorro-antd/date-picker';
 import {DeviceGroupDto} from '@backend/model/deviceGroupDto';
+import {LocationDto} from '@backend/model/locationDto';
 
 interface DeviceDetailForm {
   name: FormControl<string | null>;
@@ -36,6 +37,7 @@ interface DeviceDetailForm {
   state: FormControl<number>;
   typeId: FormControl<number | null>;
   groupId: FormControl<number | null>;
+  locationId: FormControl<number | null>;
 }
 
 @Component({
@@ -102,6 +104,7 @@ export class DeviceDetailComponent implements OnInit, OnDestroy {
     }),
     typeId: new FormControl<number | null>(null),
     groupId: new FormControl<number | null>(null),
+    locationId: new FormControl<number | null>(null),
   });
 
   deviceTypes: Signal<DeviceTypeDto[]>;
@@ -109,6 +112,9 @@ export class DeviceDetailComponent implements OnInit, OnDestroy {
 
   deviceGroups: Signal<DeviceGroupDto[]>;
   deviceGroupsIsLoading: Signal<boolean>;
+
+  locations: Signal<LocationDto[]>;
+  locationsIsLoading: Signal<boolean>;
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -124,6 +130,8 @@ export class DeviceDetailComponent implements OnInit, OnDestroy {
     this.deviceTypesIsLoading = this.service.deviceTypesIsLoading;
     this.deviceGroups = this.service.deviceGroups;
     this.deviceGroupsIsLoading = this.service.deviceGroupsIsLoading;
+    this.locations = this.service.locations;
+    this.locationsIsLoading = this.service.locationsIsLoading;
 
     effect(() => {
       const entity = this.service.entity();
@@ -193,5 +201,9 @@ export class DeviceDetailComponent implements OnInit, OnDestroy {
 
   loadMoreGroups() {
     this.service.loadMoreGroups();
+  }
+
+  loadMoreLocations() {
+    this.service.loadMoreLocations();
   }
 }

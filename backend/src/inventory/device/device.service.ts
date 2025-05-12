@@ -19,12 +19,14 @@ export class DeviceService {
     limit?: number,
     typeId?: number,
     groupId?: number,
+    locationId?: number,
   ) {
     const entities = await this.dbService.findAll(
       offset,
       limit,
       typeId,
       groupId,
+      locationId,
     );
     return plainToInstance(DeviceDto, entities);
   }

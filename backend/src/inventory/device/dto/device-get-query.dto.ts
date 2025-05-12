@@ -36,4 +36,10 @@ export class DeviceGetQueryDto {
   @IsInt()
   @IsPositive()
   groupId?: number;
+
+  @ApiProperty({ required: false, nullable: true })
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  locationId?: number;
 }

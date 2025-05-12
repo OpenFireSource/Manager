@@ -864,6 +864,12 @@ paths:
           schema:
             nullable: true
             type: number
+        - name: locationId
+          required: false
+          in: query
+          schema:
+            nullable: true
+            type: number
       responses:
         '200':
           description: ''
@@ -1404,6 +1410,35 @@ components:
           nullable: true
       required:
         - name
+    LocationDto:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        type:
+          type: number
+        parentId:
+          type: number
+          nullable: true
+          default: null
+        children:
+          nullable: true
+          type: array
+          items:
+            type: string
+        parent:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/LocationDto'
+      required:
+        - id
+        - name
+        - type
     DeviceDto:
       type: object
       properties:
@@ -1465,6 +1500,13 @@ components:
           nullable: true
           allOf:
             - $ref: '#/components/schemas/DeviceTypeDto'
+        locationId:
+          type: number
+          nullable: true
+        location:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/LocationDto'
       required:
         - id
         - state
@@ -1523,6 +1565,13 @@ components:
           nullable: true
           allOf:
             - $ref: '#/components/schemas/DeviceTypeDto'
+        locationId:
+          type: number
+          nullable: true
+        location:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/LocationDto'
       required:
         - state
     DeviceUpdateDto:
@@ -1580,37 +1629,15 @@ components:
           nullable: true
           allOf:
             - $ref: '#/components/schemas/DeviceTypeDto'
-      required:
-        - state
-    LocationDto:
-      type: object
-      properties:
-        id:
-          type: number
-        name:
-          type: string
-        description:
-          type: string
-          nullable: true
-        type:
-          type: number
-        parentId:
+        locationId:
           type: number
           nullable: true
-          default: null
-        children:
-          nullable: true
-          type: array
-          items:
-            type: string
-        parent:
+        location:
           nullable: true
           allOf:
             - $ref: '#/components/schemas/LocationDto'
       required:
-        - id
-        - name
-        - type
+        - state
     LocationCreateDto:
       type: object
       properties:

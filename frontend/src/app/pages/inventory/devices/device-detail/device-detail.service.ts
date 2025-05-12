@@ -9,6 +9,8 @@ import {DeviceTypeDto} from '@backend/model/deviceTypeDto';
 import {DeviceUpdateDto} from '@backend/model/deviceUpdateDto';
 import {DeviceGroupDto} from '@backend/model/deviceGroupDto';
 import {DeviceGroupService} from '@backend/api/deviceGroup.service';
+import {LocationDto} from '@backend/model/locationDto';
+import {LocationService} from '@backend/api/location.service';
 
 @Injectable({
   providedIn: 'root'
@@ -36,10 +38,16 @@ export class DeviceDetailService {
   private deviceGroupsPage = 0;
   private deviceGroupsItemsPerPage = 10;
 
+  locations = signal<LocationDto[]>([]);
+  locationsIsLoading = signal(false);
+  private locationsPage = 0;
+  private locationsItemsPerPage = 10;
+
   constructor(
     private readonly apiService: DeviceService,
     private readonly apiDeviceTypesService: DeviceTypeService,
     private readonly apiDeviceGroupsService: DeviceGroupService,
+    private readonly apiLocationsService: LocationService,
     private readonly router: Router,
   ) {
   }
@@ -48,8 +56,10 @@ export class DeviceDetailService {
     this.id = id;
     this.deviceTypesPage = 0;
     this.deviceGroupsPage = 0;
+    this.locationsPage = 0;
     this.deviceTypes.set([]);
     this.deviceGroups.set([]);
+    this.locations.set([]);
     this.loading.set(true);
     this.apiService.deviceControllerGetOne(id)
       .subscribe({
@@ -63,8 +73,12 @@ export class DeviceDetailService {
           if (newEntity.group) {
             this.deviceGroups.set([newEntity.group]);
           }
+          if (newEntity.location) {
+            this.locations.set([newEntity.location]);
+          }
           this.loadMoreTypes();
           this.loadMoreGroups();
+          this.loadMoreLocations();
         },
         error: (err: HttpErrorResponse) => {
           if (err.status === 404) {
@@ -124,7 +138,7 @@ export class DeviceDetailService {
           this.deviceTypesIsLoading.set(false);
           const newDeviceTypes = [
             ...this.deviceTypes(),
-            ...deviceTypes.filter(x => x.id != this.entity()?.typeId && x.id != this.id),
+            ...deviceTypes.filter(x => x.id != this.entity()?.typeId),
           ];
           this.deviceTypes.set(newDeviceTypes);
           this.deviceTypesPage += 1;
@@ -146,7 +160,7 @@ export class DeviceDetailService {
           this.deviceGroupsIsLoading.set(false);
           const newDeviceGroups = [
             ...this.deviceGroups(),
-            ...deviceGroups.filter(x => x.id != this.entity()?.groupId && x.id != this.id),
+            ...deviceGroups.filter(x => x.id != this.entity()?.groupId),
           ];
           this.deviceGroups.set(newDeviceGroups);
           this.deviceGroupsPage += 1;
@@ -155,6 +169,28 @@ export class DeviceDetailService {
           this.deviceGroupsIsLoading.set(false);
           this.deviceGroups.set([]);
           this.deviceGroupsPage = 0;
+        }
+      });
+  }
+
+  loadMoreLocations() {
+    this.locationsIsLoading.set(true);
+    this.apiLocationsService
+      .locationControllerGetAll(this.locationsItemsPerPage, this.locationsPage * this.locationsItemsPerPage)
+      .subscribe({
+        next: (locations) => {
+          this.locationsIsLoading.set(false);
+          const newlocations = [
+            ...this.locations(),
+            ...locations.filter(x => x.id != this.entity()?.locationId),
+          ];
+          this.locations.set(newlocations);
+          this.locationsPage += 1;
+        },
+        error: () => {
+          this.locationsIsLoading.set(false);
+          this.locations.set([]);
+          this.locationsPage = 0;
         }
       });
   }

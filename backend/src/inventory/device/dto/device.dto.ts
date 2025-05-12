@@ -12,6 +12,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
+import {LocationDto} from "../../../base/location/dto/location.dto";
 
 export class DeviceDto {
   @ApiProperty()
@@ -134,4 +135,16 @@ export class DeviceDto {
   @Expose()
   @Type(() => DeviceTypeDto)
   group?: DeviceTypeDto;
+
+  @ApiProperty({ required: false, nullable: true })
+  @Expose()
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  locationId?: number;
+
+  @ApiProperty({ required: false, nullable: true })
+  @Expose()
+  @Type(() => LocationDto)
+  location?: LocationDto;
 }

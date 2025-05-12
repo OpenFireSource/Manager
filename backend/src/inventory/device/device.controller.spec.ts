@@ -41,7 +41,7 @@ describe('DeviceController', () => {
 
     const result = await controller.getAll({ offset: 0, limit: 10 });
 
-    expect(service.findAll).toHaveBeenCalledWith(0, 10, undefined, undefined);
+    expect(service.findAll).toHaveBeenCalledWith(0, 10, undefined, undefined, undefined);
     expect(result).toEqual(mockDevices);
   });
 
