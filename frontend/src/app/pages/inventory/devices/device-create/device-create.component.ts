@@ -13,6 +13,7 @@ import {DeviceTypes} from '../device-types';
 import {NzOptionComponent, NzSelectComponent} from 'ng-zorro-antd/select';
 import {DeviceTypeDto} from '@backend/model/deviceTypeDto';
 import {NzSpinComponent} from 'ng-zorro-antd/spin';
+import {DeviceGroupDto} from '@backend/model/deviceGroupDto';
 
 interface DeviceCreateForm {
   name: FormControl<string | null>;
@@ -29,6 +30,7 @@ interface DeviceCreateForm {
   decomissionDate: FormControl<Date | null>;
   state: FormControl<number>;
   typeId: FormControl<number | null>;
+  groupId: FormControl<number | null>;
 }
 
 // TODO Geräte-Typ durch eintippen von filtern
@@ -76,10 +78,13 @@ export class DeviceCreateComponent implements OnInit, OnDestroy {
       validators: [Validators.required]
     }),
     typeId: new FormControl<number | null>(null),
+    groupId: new FormControl<number | null>(null),
   });
 
   deviceTypes: Signal<DeviceTypeDto[]>;
   deviceTypesIsLoading: Signal<boolean>;
+  deviceGroups: Signal<DeviceGroupDto[]>;
+  deviceGroupsIsLoading: Signal<boolean>;
   createLoading: Signal<boolean>;
   private destroy$ = new Subject<void>();
 
@@ -90,6 +95,8 @@ export class DeviceCreateComponent implements OnInit, OnDestroy {
     this.createLoading = this.service.createLoading;
     this.deviceTypes = this.service.deviceTypes;
     this.deviceTypesIsLoading = this.service.deviceTypesIsLoading;
+    this.deviceGroups = this.service.deviceGroups;
+    this.deviceGroupsIsLoading = this.service.deviceGroupsIsLoading;
 
     this.service.createLoadingError
       .pipe(takeUntil(this.destroy$))
@@ -119,12 +126,17 @@ export class DeviceCreateComponent implements OnInit, OnDestroy {
     this.service.create(this.form.getRawValue() as any); // TODO
   }
 
-  loadMore() {
+  loadMoreTypes() {
     this.service.loadMoreTypes();
+  }
+
+  loadMoreGroups() {
+    this.service.loadMoreGroups();
   }
 
   ngOnInit(): void {
     this.service.loadMoreTypes(true);
+    this.service.loadMoreGroups(true);
   }
 
   ngOnDestroy(): void {

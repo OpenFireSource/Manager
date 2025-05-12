@@ -7,6 +7,8 @@ import {Subject} from 'rxjs';
 import {DeviceDto} from '@backend/model/deviceDto';
 import {DeviceTypeDto} from '@backend/model/deviceTypeDto';
 import {DeviceUpdateDto} from '@backend/model/deviceUpdateDto';
+import {DeviceGroupDto} from '@backend/model/deviceGroupDto';
+import {DeviceGroupService} from '@backend/api/deviceGroup.service';
 
 @Injectable({
   providedIn: 'root'
@@ -26,13 +28,18 @@ export class DeviceDetailService {
 
   deviceTypes = signal<DeviceTypeDto[]>([]);
   deviceTypesIsLoading = signal(false);
-
   private deviceTypesPage = 0;
   private deviceTypesItemsPerPage = 10;
+
+  deviceGroups = signal<DeviceGroupDto[]>([]);
+  deviceGroupsIsLoading = signal(false);
+  private deviceGroupsPage = 0;
+  private deviceGroupsItemsPerPage = 10;
 
   constructor(
     private readonly apiService: DeviceService,
     private readonly apiDeviceTypesService: DeviceTypeService,
+    private readonly apiDeviceGroupsService: DeviceGroupService,
     private readonly router: Router,
   ) {
   }
@@ -40,7 +47,9 @@ export class DeviceDetailService {
   load(id: number) {
     this.id = id;
     this.deviceTypesPage = 0;
+    this.deviceGroupsPage = 0;
     this.deviceTypes.set([]);
+    this.deviceGroups.set([]);
     this.loading.set(true);
     this.apiService.deviceControllerGetOne(id)
       .subscribe({
@@ -51,7 +60,11 @@ export class DeviceDetailService {
           if (newEntity.type) {
             this.deviceTypes.set([newEntity.type]);
           }
+          if (newEntity.group) {
+            this.deviceGroups.set([newEntity.group]);
+          }
           this.loadMoreTypes();
+          this.loadMoreGroups();
         },
         error: (err: HttpErrorResponse) => {
           if (err.status === 404) {
@@ -120,6 +133,28 @@ export class DeviceDetailService {
           this.deviceTypesIsLoading.set(false);
           this.deviceTypes.set([]);
           this.deviceTypesPage = 0;
+        }
+      });
+  }
+
+  loadMoreGroups() {
+    this.deviceGroupsIsLoading.set(true);
+    this.apiDeviceGroupsService
+      .deviceGroupControllerGetAll(this.deviceGroupsItemsPerPage, this.deviceGroupsPage * this.deviceGroupsItemsPerPage)
+      .subscribe({
+        next: (deviceGroups) => {
+          this.deviceGroupsIsLoading.set(false);
+          const newDeviceGroups = [
+            ...this.deviceGroups(),
+            ...deviceGroups.filter(x => x.id != this.entity()?.groupId && x.id != this.id),
+          ];
+          this.deviceGroups.set(newDeviceGroups);
+          this.deviceGroupsPage += 1;
+        },
+        error: () => {
+          this.deviceGroupsIsLoading.set(false);
+          this.deviceGroups.set([]);
+          this.deviceGroupsPage = 0;
         }
       });
   }

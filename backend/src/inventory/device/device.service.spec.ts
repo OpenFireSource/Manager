@@ -44,7 +44,12 @@ describe('DeviceService', () => {
 
       expect(await service.findAll(offset, limit)).toEqual([]);
 
-      expect(dbService.findAll).toHaveBeenCalledWith(offset, limit, undefined);
+      expect(dbService.findAll).toHaveBeenCalledWith(
+        offset,
+        limit,
+        undefined,
+        undefined,
+      );
     });
     it('should call findAll with no parameters', async () => {
       dbService.findAll = jest.fn().mockResolvedValue([]);
@@ -52,6 +57,7 @@ describe('DeviceService', () => {
       expect(await service.findAll()).toEqual([]);
 
       expect(dbService.findAll).toHaveBeenCalledWith(
+        undefined,
         undefined,
         undefined,
         undefined,

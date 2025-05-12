@@ -14,8 +14,18 @@ import { DeviceCreateDto } from './dto/device-create.dto';
 export class DeviceService {
   constructor(private readonly dbService: DeviceDbService) {}
 
-  public async findAll(offset?: number, limit?: number, typeId?: number) {
-    const entities = await this.dbService.findAll(offset, limit, typeId);
+  public async findAll(
+    offset?: number,
+    limit?: number,
+    typeId?: number,
+    groupId?: number,
+  ) {
+    const entities = await this.dbService.findAll(
+      offset,
+      limit,
+      typeId,
+      groupId,
+    );
     return plainToInstance(DeviceDto, entities);
   }
 

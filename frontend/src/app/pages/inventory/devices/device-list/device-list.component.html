@@ -12,6 +12,7 @@
     <th nzColumnKey="name">Name</th>
     <th nzColumnKey="state">Zustand</th>
     <th nzColumnKey="type">Typ</th>
+    <th nzColumnKey="group">Gruppe</th>
     <th nzColumnKey="manufactor">Hersteller</th>
     <th nzColumnKey="dealer">Händler</th>
     <th *ofsHasRole="['device.manage']"></th>
@@ -28,6 +29,14 @@
       </ng-container>
       <ng-template #noType>
         <i>kein Typ</i>
+      </ng-template>
+    </td>
+    <td>
+      <ng-container *ngIf="entity.group; else noGroup">
+        {{ entity.group.name }}
+      </ng-container>
+      <ng-template #noGroup>
+        <i>keine Gruppe</i>
       </ng-template>
     </td>
     <td>

@@ -43,26 +43,47 @@
     </nz-form-control>
   </nz-form-item>
 
-  <nz-form-item>
-    <nz-form-label [nzSpan]="7">Geräte-Typ</nz-form-label>
-    <nz-form-control [nzSpan]="12">
-      <nz-select
-        (nzScrollToBottom)="loadMore()"
-        formControlName="typeId"
-        nzPlaceHolder="Geräte-Typ auswählen"
-        nzAllowClear
-        [nzDropdownRender]="renderTemplate">
-        @for (item of deviceTypes(); track item) {
-          <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
-        }
-      </nz-select>
-      <ng-template #renderTemplate>
-        @if (deviceTypesIsLoading()) {
-          <nz-spin></nz-spin>
-        }
-      </ng-template>
-    </nz-form-control>
-  </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="7">Geräte-Typ</nz-form-label>
+      <nz-form-control [nzSpan]="12">
+        <nz-select
+          (nzScrollToBottom)="loadMoreTypes()"
+          formControlName="typeId"
+          nzPlaceHolder="Geräte-Typ auswählen"
+          nzAllowClear
+          [nzDropdownRender]="renderTemplate">
+          @for (item of deviceTypes(); track item) {
+            <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+          }
+        </nz-select>
+        <ng-template #renderTemplate>
+          @if (deviceTypesIsLoading()) {
+            <nz-spin></nz-spin>
+          }
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="7">Geräte-Gruppe</nz-form-label>
+      <nz-form-control [nzSpan]="12">
+        <nz-select
+          (nzScrollToBottom)="loadMoreGroups()"
+          formControlName="groupId"
+          nzPlaceHolder="Geräte-Gruppe auswählen"
+          nzAllowClear
+          [nzDropdownRender]="renderTemplateGroups">
+          @for (item of deviceGroups(); track item) {
+            <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+          }
+        </nz-select>
+        <ng-template #renderTemplateGroups>
+          @if (deviceGroupsIsLoading()) {
+            <nz-spin></nz-spin>
+          }
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
 
   <nz-form-item>
     <nz-form-label [nzSpan]="7">Hersteller</nz-form-label>

@@ -35,7 +35,7 @@ export class DeviceController {
   public async getAll(
     @Query() querys: DeviceGetQueryDto,
   ): Promise<DeviceDto[]> {
-    return this.service.findAll(querys.offset, querys.limit, querys.typeId);
+    return this.service.findAll(querys.offset, querys.limit, querys.typeId, querys.groupId);
   }
 
   @Endpoint(EndpointType.GET, {
