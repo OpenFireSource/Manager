@@ -8,6 +8,8 @@ import {DeviceTypeDto} from '@backend/model/deviceTypeDto';
 import {DeviceTypeService} from '@backend/api/deviceType.service';
 import {DeviceGroupDto} from '@backend/model/deviceGroupDto';
 import {DeviceGroupService} from '@backend/api/deviceGroup.service';
+import {LocationDto} from '@backend/model/locationDto';
+import {LocationService} from '@backend/api/location.service';
 
 @Injectable({
   providedIn: 'root'
@@ -27,10 +29,16 @@ export class DeviceCreateService {
   private deviceGroupsPage = 0;
   private deviceGroupsItemsPerPage = 10;
 
+  locations = signal<LocationDto[]>([]);
+  locationsIsLoading = signal(false);
+  private locationsPage = 0;
+  private locationsItemsPerPage = 10;
+
   constructor(
     private readonly apiService: DeviceService,
     private readonly apiDeviceTypesService: DeviceTypeService,
     private readonly apiDeviceGroupsService: DeviceGroupService,
+    private readonly apiLocationsService: LocationService,
     private readonly router: Router,
   ) {
   }
@@ -99,6 +107,32 @@ export class DeviceCreateService {
           this.deviceGroupsIsLoading.set(false);
           this.deviceGroups.set([]);
           this.deviceGroupsPage = 0;
+        }
+      });
+  }
+
+  loadMoreLocations(init = false) {
+    if (init) {
+      this.locationsPage = 0;
+      this.locations.set([]);
+    }
+    this.locationsIsLoading.set(true);
+    this.apiLocationsService
+      .locationControllerGetAll(this.locationsItemsPerPage, this.locationsPage * this.locationsItemsPerPage)
+      .subscribe({
+        next: (locations) => {
+          this.locationsIsLoading.set(false);
+          const newlocations = [
+            ...this.locations(),
+            ...locations,
+          ];
+          this.locations.set(newlocations);
+          this.locationsPage += 1;
+        },
+        error: () => {
+          this.locationsIsLoading.set(false);
+          this.locations.set([]);
+          this.locationsPage = 0;
         }
       });
   }

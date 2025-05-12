@@ -1,11 +1,12 @@
 import {
   Column,
-  Entity,
+  Entity, OneToMany,
   PrimaryGeneratedColumn,
   Tree,
   TreeChildren,
   TreeParent,
 } from 'typeorm';
+import {DeviceEntity} from "../../inventory/device/device.entity";
 
 export enum LocationType {
   NONE = 0, // Keine Angabe
@@ -52,4 +53,7 @@ export class LocationEntity {
   parentId?: number;
   @TreeParent({ onDelete: 'SET NULL' })
   parent?: LocationEntity | null;
+
+  @OneToMany(() => DeviceEntity, (x) => x.location)
+  devices: DeviceEntity[];
 }

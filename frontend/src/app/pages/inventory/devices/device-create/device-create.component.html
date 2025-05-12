@@ -38,6 +38,27 @@
   </nz-form-item>
 
   <nz-form-item>
+    <nz-form-label [nzSpan]="7">Standort/Fahrzeug</nz-form-label>
+    <nz-form-control [nzSpan]="12">
+      <nz-select
+        (nzScrollToBottom)="loadMoreLocations()"
+        formControlName="locationId"
+        nzPlaceHolder="Standort/Fahrzeug auswählen"
+        nzAllowClear
+        [nzDropdownRender]="renderTemplateLocation">
+        @for (item of locations(); track item) {
+          <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+        }
+      </nz-select>
+      <ng-template #renderTemplateLocation>
+        @if (locationsIsLoading()) {
+          <nz-spin></nz-spin>
+        }
+      </ng-template>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
     <nz-form-label [nzSpan]="7">Geräte-Typ</nz-form-label>
     <nz-form-control [nzSpan]="12">
       <nz-select

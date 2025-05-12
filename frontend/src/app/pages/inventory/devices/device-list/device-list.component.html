@@ -11,6 +11,7 @@
     <th nzColumnKey="id">ID</th>
     <th nzColumnKey="name">Name</th>
     <th nzColumnKey="state">Zustand</th>
+    <th nzColumnKey="location">Standort/Fahrzeug</th>
     <th nzColumnKey="type">Typ</th>
     <th nzColumnKey="group">Gruppe</th>
     <th nzColumnKey="manufactor">Hersteller</th>
@@ -23,6 +24,17 @@
     <td>{{ entity.id }}</td>
     <td>{{ entity.name }}</td>
     <td>{{ DeviceTypes.getById(entity.state)?.name }}</td>
+    <td>
+      <ng-container *ngIf="entity.location; else noLocation">
+        {{ entity.location.name }}
+        <ng-container *ngIf="entity.location.parent">
+          ({{ entity.location.parent.name }})
+        </ng-container>
+      </ng-container>
+      <ng-template #noLocation>
+        <i>kein Standort/Fahrzeug</i>
+      </ng-template>
+    </td>
     <td>
       <ng-container *ngIf="entity.type; else noType">
         {{ entity.type.name }}

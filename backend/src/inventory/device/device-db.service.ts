@@ -20,19 +20,25 @@ export class DeviceDbService {
     limit?: number,
     typeId?: number,
     groupId?: number,
+    locationId?: number,
   ) {
     let query = this.repo
       .createQueryBuilder('d')
       .limit(limit ?? 100)
       .offset(offset ?? 0)
       .leftJoinAndSelect('d.type', 'dt')
-      .leftJoinAndSelect('d.group', 'dg');
+      .leftJoinAndSelect('d.group', 'dg')
+      .leftJoinAndSelect('d.location', 'l')
+      .leftJoinAndSelect('l.parent', 'lp');
 
     if (typeId) {
       query = query.where('d.typeId = :typeId', { typeId });
     }
     if (groupId) {
       query = query.where('d.groupId = :groupId', { groupId });
+    }
+    if (locationId) {
+      query = query.where('d.locationId = :locationId', { locationId });
     }
 
     return query.orderBy('d.name').getMany();
@@ -43,6 +49,8 @@ export class DeviceDbService {
       .createQueryBuilder('d')
       .leftJoinAndSelect('d.type', 'dt')
       .leftJoinAndSelect('d.group', 'dg')
+      .leftJoinAndSelect('d.location', 'l')
+      .leftJoinAndSelect('l.parent', 'lp')
       .where('d.id = :id', { id });
 
     return query.getOne();

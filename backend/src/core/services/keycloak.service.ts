@@ -23,7 +23,7 @@ import { AxiosError } from 'axios';
 import { KeycloakErrorDto } from './dto/keycloak/keycloak-error.dto';
 import { InternalErrorDto } from '../../shared/dto/internal-error.dto';
 import { Role } from '../auth/role/role';
-import { KeycloakGroupCount } from './dto/keycloak/keycloak-group-count';
+import { KeycloakGroupCountDto } from './dto/keycloak/keycloak-group-count.dto';
 import { KeycloakGroupDto } from './dto/keycloak/keycloak-group.dto';
 import { KeycloakRoleDto } from './dto/keycloak/keycloak-role.dto';
 
@@ -524,7 +524,7 @@ export class KeycloakService {
   public getGroupCount(): Observable<number> {
     return from(this.getToken()).pipe(
       mergeMap((t) =>
-        this.httpService.get<KeycloakGroupCount>(
+        this.httpService.get<KeycloakGroupCountDto>(
           `${this.keycloakUrl}/admin/realms/${this.realm}/groups/count`,
           this.generateHeader(t),
         ),
