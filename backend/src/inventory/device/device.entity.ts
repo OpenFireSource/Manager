@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { DeviceTypeEntity } from '../device-type/device-type.entity';
+import {DeviceGroupEntity} from "../device-group/device-group.entity";
 
 export enum EquipmentState {
   ACTIVE = 0,
@@ -57,6 +58,14 @@ export class DeviceEntity {
   })
   type?: DeviceTypeEntity;
 
-  // TODO device-group
+  @Column({ nullable: true })
+  groupId?: number;
+  @ManyToOne(() => DeviceGroupEntity, (x) => x.devices, {
+    nullable: true,
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+  })
+  group?: DeviceGroupEntity;
+
   // TODO location
 }

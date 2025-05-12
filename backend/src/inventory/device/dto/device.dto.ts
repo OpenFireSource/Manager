@@ -122,4 +122,16 @@ export class DeviceDto {
   @Expose()
   @Type(() => DeviceTypeDto)
   type?: DeviceTypeDto;
+
+  @ApiProperty({ required: false, nullable: true })
+  @Expose()
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  groupId?: number;
+
+  @ApiProperty({ required: false, nullable: true })
+  @Expose()
+  @Type(() => DeviceTypeDto)
+  group?: DeviceTypeDto;
 }

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
+import {DeviceEntity} from "../device/device.entity";
 
 @Entity()
 export class DeviceGroupEntity {
@@ -9,4 +10,7 @@ export class DeviceGroupEntity {
   name: string;
   @Column({ type: 'text', nullable: true })
   notice?: string;
+
+  @OneToMany(() => DeviceEntity, (x) => x.group)
+  devices: DeviceEntity[];
 }

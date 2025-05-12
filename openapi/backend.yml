@@ -858,6 +858,12 @@ paths:
           schema:
             nullable: true
             type: number
+        - name: groupId
+          required: false
+          in: query
+          schema:
+            nullable: true
+            type: number
       responses:
         '200':
           description: ''
@@ -1452,6 +1458,13 @@ components:
           nullable: true
           allOf:
             - $ref: '#/components/schemas/DeviceTypeDto'
+        groupId:
+          type: number
+          nullable: true
+        group:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/DeviceTypeDto'
       required:
         - id
         - state
@@ -1503,6 +1516,13 @@ components:
         typeId:
           type: number
           nullable: true
+        groupId:
+          type: number
+          nullable: true
+        group:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/DeviceTypeDto'
       required:
         - state
     DeviceUpdateDto:
@@ -1553,6 +1573,13 @@ components:
         typeId:
           type: number
           nullable: true
+        groupId:
+          type: number
+          nullable: true
+        group:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/DeviceTypeDto'
       required:
         - state
     LocationDto:

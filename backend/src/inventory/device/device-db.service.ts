@@ -15,16 +15,24 @@ export class DeviceDbService {
     return this.repo.count();
   }
 
-  public async findAll(offset?: number, limit?: number, typeId?: number) {
+  public async findAll(
+    offset?: number,
+    limit?: number,
+    typeId?: number,
+    groupId?: number,
+  ) {
     let query = this.repo
       .createQueryBuilder('d')
       .limit(limit ?? 100)
-      .offset(offset ?? 0);
+      .offset(offset ?? 0)
+      .leftJoinAndSelect('d.type', 'dt')
+      .leftJoinAndSelect('d.group', 'dg');
 
     if (typeId) {
       query = query.where('d.typeId = :typeId', { typeId });
-    } else {
-      query = query.leftJoinAndSelect('d.type', 'dt');
+    }
+    if (groupId) {
+      query = query.where('d.groupId = :groupId', { groupId });
     }
 
     return query.orderBy('d.name').getMany();
@@ -34,6 +42,7 @@ export class DeviceDbService {
     const query = this.repo
       .createQueryBuilder('d')
       .leftJoinAndSelect('d.type', 'dt')
+      .leftJoinAndSelect('d.group', 'dg')
       .where('d.id = :id', { id });
 
     return query.getOne();
