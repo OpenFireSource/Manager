@@ -53,6 +53,9 @@
           <li nz-menu-item nzMatchRouter *ofsIsAuthenticated>
             <a (click)="logout()">Abmelden</a>
           </li>
+          <li nz-menu-item nzMatchRouter *ofsIsAuthenticated>
+            <a (click)="openNews(tplTitle, tplContent, tplFooter)">OFS-Manager News</a>
+          </li>
         </ul>
       </li>
     </ul>
@@ -72,3 +75,15 @@
     </nz-content>
   </nz-layout>
 </nz-layout>
+
+<ng-template #tplTitle>
+  <span>OFS-Manager News</span>
+</ng-template>
+<ng-template #tplContent let-params>
+  <ofs-news></ofs-news>
+</ng-template>
+<ng-template #tplFooter let-ref="modalRef">
+  <button nz-button nzType="primary" (click)="ref.destroy()">
+    Schließen
+  </button>
+</ng-template>

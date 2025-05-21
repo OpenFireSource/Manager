@@ -1,0 +1,13 @@
+<p *ngIf="loading()">News Laden...</p>
+<ng-container *ngIf="!loading()">
+  <div nz-row nzJustify="center" nzAlign="top" [nzGutter]="[24, 24]" *ngFor="let newsEle of news()">
+    <div nz-col nzSpan="24">
+      <nz-card [nzTitle]="newsEle.title" [nzExtra]="extraTemplate">
+        <p>{{ newsEle.text }}</p>
+      </nz-card>
+      <ng-template #extraTemplate>
+        <span nz-typography nzDisabled>{{ newsEle.createdDate | date:'dd.MM.yyyy HH:mm' }}</span>
+      </ng-template>
+    </div>
+  </div>
+</ng-container>
