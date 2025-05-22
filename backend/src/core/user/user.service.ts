@@ -13,9 +13,8 @@ import { UserCreateDto } from './dto/user-create.dto';
 import { UserUpdateDto } from './dto/user-update.dto';
 import { InternalErrorDto } from '../../shared/dto/internal-error.dto';
 import { CountDto } from '../../shared/dto/count.dto';
-import { GroupMembersDto } from '../group/dto/group-members.dto';
-import {GroupDto} from "../group/dto/group.dto";
-import {UserGroupsDto} from "./dto/user-groups.dto";
+import { GroupDto } from '../group/dto/group.dto';
+import { UserGroupsDto } from './dto/user-groups.dto';
 
 @Injectable()
 export class UserService {

@@ -8,14 +8,14 @@
           (nzQueryParams)="onQueryParamsChange($event)">
   <thead>
   <tr>
-    <th nzColumnKey="id">ID</th>
-    <th nzColumnKey="name">Name</th>
-    <th nzColumnKey="state">Zustand</th>
-    <th nzColumnKey="location">Standort/Fahrzeug</th>
-    <th nzColumnKey="type">Typ</th>
-    <th nzColumnKey="group">Gruppe</th>
-    <th nzColumnKey="manufactor">Hersteller</th>
-    <th nzColumnKey="dealer">Händler</th>
+    <th nzColumnKey="id" [nzSortFn]="true">ID</th>
+    <th nzColumnKey="name" [nzSortFn]="true">Name</th>
+    <th nzColumnKey="state" [nzSortFn]="true">Zustand</th>
+    <th nzColumnKey="location.name" [nzSortFn]="true">Standort/Fahrzeug</th>
+    <th nzColumnKey="type.name" [nzSortFn]="true">Typ</th>
+    <th nzColumnKey="group.name" [nzSortFn]="true">Gruppe</th>
+    <th nzColumnKey="manufactor" [nzSortFn]="true">Hersteller</th>
+    <th nzColumnKey="dealer" [nzSortFn]="true">Händler</th>
     <th *ofsHasRole="['device.manage']"></th>
   </tr>
   </thead>

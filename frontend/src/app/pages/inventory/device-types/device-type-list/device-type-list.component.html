@@ -8,9 +8,9 @@
           (nzQueryParams)="onQueryParamsChange($event)">
   <thead>
   <tr>
-    <th nzColumnKey="name">Name</th>
-    <th nzColumnKey="manufactor">Hersteller</th>
-    <th nzColumnKey="dealer">Händler</th>
+    <th nzColumnKey="name" [nzSortFn]="true">Name</th>
+    <th nzColumnKey="manufactor" [nzSortFn]="true">Hersteller</th>
+    <th nzColumnKey="dealer" [nzSortFn]="true">Händler</th>
     <th *ofsHasRole="['device-type.manage']"></th>
   </tr>
   </thead>

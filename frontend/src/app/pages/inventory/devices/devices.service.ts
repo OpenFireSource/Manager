@@ -12,6 +12,8 @@ export class DevicesService {
   total = signal(0);
   entitiesLoading = signal(false);
   entitiesLoadError = signal(false);
+  sortCol?: string;
+  sortDir?: string;
 
   constructor(private readonly apiService: DeviceService) {
   }
@@ -20,7 +22,8 @@ export class DevicesService {
     this.entitiesLoading.set(true);
     this.apiService.deviceControllerGetCount()
       .subscribe((count) => this.total.set(count.count));
-    this.apiService.deviceControllerGetAll(this.itemsPerPage, (this.page - 1) * this.itemsPerPage)
+    this.apiService.deviceControllerGetAll(this.itemsPerPage, (this.page - 1) * this.itemsPerPage, undefined,
+      undefined, undefined, this.sortCol, this.sortDir)
       .subscribe({
         next: (entities) => {
           this.entities.set(entities);
@@ -35,9 +38,11 @@ export class DevicesService {
       });
   }
 
-  updatePage(page: number, itemsPerPage: number) {
+  updatePage(page: number, itemsPerPage: number, sortCol?: string, sortDir?: string) {
     this.page = page;
     this.itemsPerPage = itemsPerPage;
+    this.sortCol = sortCol;
+    this.sortDir = this.sortCol ? sortDir : undefined;
     this.load();
   }
 }

@@ -12,6 +12,8 @@ export class LocationsService {
   total = signal(0);
   locationsLoading = signal(false);
   locationsLoadError = signal(false);
+  sortCol?: string;
+  sortDir?: string;
 
   constructor(private readonly locationService: LocationService) {
   }
@@ -20,7 +22,7 @@ export class LocationsService {
     this.locationsLoading.set(true);
     this.locationService.locationControllerGetCount()
       .subscribe((count) => this.total.set(count.count));
-    this.locationService.locationControllerGetAll(this.itemsPerPage, (this.page - 1) * this.itemsPerPage)
+    this.locationService.locationControllerGetAll(this.itemsPerPage, (this.page - 1) * this.itemsPerPage, this.sortCol, this.sortDir)
       .subscribe({
         next: (users) => {
           this.locations.set(users);
@@ -35,9 +37,11 @@ export class LocationsService {
       });
   }
 
-  updatePage(page: number, itemsPerPage: number) {
+  updatePage(page: number, itemsPerPage: number, sortCol?: string, sortDir?: string) {
     this.page = page;
     this.itemsPerPage = itemsPerPage;
+    this.sortCol = sortCol;
+    this.sortDir = this.sortCol ? sortDir : undefined;
     this.load();
   }
 }

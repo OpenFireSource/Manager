@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { DeviceTypeEntity } from '../device-type/device-type.entity';
-import {DeviceGroupEntity} from "../device-group/device-group.entity";
-import {LocationEntity} from "../../base/location/location.entity";
+import { DeviceGroupEntity } from '../device-group/device-group.entity';
+import { LocationEntity } from '../../base/location/location.entity';
 
 export enum EquipmentState {
   ACTIVE = 0,

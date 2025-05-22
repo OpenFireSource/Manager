@@ -8,7 +8,7 @@
           (nzQueryParams)="onQueryParamsChange($event)">
   <thead>
   <tr>
-    <th nzColumnKey="name">Name</th>
+    <th nzColumnKey="name" [nzSortFn]="true">Name</th>
     <th *ofsHasRole="['device-group.manage']"></th>
   </tr>
   </thead>

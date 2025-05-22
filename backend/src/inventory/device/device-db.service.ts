@@ -21,6 +21,8 @@ export class DeviceDbService {
     typeId?: number,
     groupId?: number,
     locationId?: number,
+    sortCol?: string,
+    sortDir?: 'ASC' | 'DESC',
   ) {
     let query = this.repo
       .createQueryBuilder('d')
@@ -30,6 +32,29 @@ export class DeviceDbService {
       .leftJoinAndSelect('d.group', 'dg')
       .leftJoinAndSelect('d.location', 'l')
       .leftJoinAndSelect('l.parent', 'lp');
+
+    if (sortCol) {
+      if (sortCol.startsWith('type.')) {
+        query = query.orderBy(
+          `dt.${sortCol.replaceAll('type.', '')}`,
+          sortDir ?? 'ASC',
+        );
+      } else if (sortCol.startsWith('group.')) {
+        query = query.orderBy(
+          `dg.${sortCol.replaceAll('group.', '')}`,
+          sortDir ?? 'ASC',
+        );
+      } else if (sortCol.startsWith('location.')) {
+        query = query.orderBy(
+          `l.${sortCol.replaceAll('location.', '')}`,
+          sortDir ?? 'ASC',
+        );
+      } else {
+        query = query.orderBy(`d.${sortCol}`, sortDir ?? 'ASC');
+      }
+    } else {
+      query = query.orderBy('d.name');
+    }
 
     if (typeId) {
       query = query.where('d.typeId = :typeId', { typeId });
@@ -41,7 +66,7 @@ export class DeviceDbService {
       query = query.where('d.locationId = :locationId', { locationId });
     }
 
-    return query.orderBy('d.name').getMany();
+    return query.getMany();
   }
 
   public findOne(id: number) {

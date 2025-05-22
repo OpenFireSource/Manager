@@ -11,6 +11,7 @@ import { DeviceDto } from './dto/device.dto';
 import { DeviceGetQueryDto } from './dto/device-get-query.dto';
 import { DeviceUpdateDto } from './dto/device-update.dto';
 import { DeviceCreateDto } from './dto/device-create.dto';
+import { PaginationDto } from '../../shared/dto/pagination.dto';
 
 @Controller('device')
 export class DeviceController {
@@ -33,14 +34,17 @@ export class DeviceController {
     roles: [Role.DeviceView],
   })
   public async getAll(
+    @Query() pagination: PaginationDto,
     @Query() querys: DeviceGetQueryDto,
   ): Promise<DeviceDto[]> {
     return this.service.findAll(
-      querys.offset,
-      querys.limit,
+      pagination.offset,
+      pagination.limit,
       querys.typeId,
       querys.groupId,
       querys.locationId,
+      querys.sortCol,
+      querys.sortDir,
     );
   }
 

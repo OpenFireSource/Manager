@@ -11,6 +11,7 @@ import { DeviceGroupDto } from './dto/device-group.dto';
 import { DeviceGroupUpdateDto } from './dto/device-group-update.dto';
 import { DeviceGroupCreateDto } from './dto/device-group-create.dto';
 import { DeviceGroupGetQueryDto } from './dto/device-group-get-query.dto';
+import { PaginationDto } from '../../shared/dto/pagination.dto';
 
 @Controller('device-group')
 export class DeviceGroupController {
@@ -33,9 +34,15 @@ export class DeviceGroupController {
     roles: [Role.DeviceTypeView],
   })
   public async getAll(
+    @Query() pagination: PaginationDto,
     @Query() querys: DeviceGroupGetQueryDto,
   ): Promise<DeviceGroupDto[]> {
-    return this.service.findAll(querys.offset, querys.limit);
+    return this.service.findAll(
+      pagination.offset,
+      pagination.limit,
+      querys.sortCol,
+      querys.sortDir,
+    );
   }
 
   @Endpoint(EndpointType.GET, {

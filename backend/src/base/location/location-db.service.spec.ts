@@ -65,14 +65,66 @@ describe('LocationDbService', () => {
         getMany: jest.fn().mockResolvedValue(locations),
       });
 
-      expect(await service.findAll()).toEqual(locations);
+      expect(await service.findAll(10, 10)).toEqual(locations);
+      expect(repoMock.createQueryBuilder).toHaveBeenCalled();
+      expect(
+        repoMock.createQueryBuilder().leftJoinAndSelect,
+      ).toHaveBeenCalled();
+      expect(repoMock.createQueryBuilder().limit).toHaveBeenCalledWith(10);
+      expect(repoMock.createQueryBuilder().offset).toHaveBeenCalledWith(10);
+      expect(repoMock.createQueryBuilder().orderBy).toHaveBeenCalled();
+      expect(repoMock.createQueryBuilder().getMany).toHaveBeenCalled();
+    });
+
+    it('should return all locations, with presets for limit an offset and ordering #1', async () => {
+      const locations = [new LocationEntity(), new LocationEntity()];
+      repoMock.createQueryBuilder = jest.fn().mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        offset: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(locations),
+      });
+
+      expect(
+        await service.findAll(undefined, undefined, 'name', undefined),
+      ).toEqual(locations);
       expect(repoMock.createQueryBuilder).toHaveBeenCalled();
       expect(
         repoMock.createQueryBuilder().leftJoinAndSelect,
       ).toHaveBeenCalled();
       expect(repoMock.createQueryBuilder().limit).toHaveBeenCalledWith(100);
       expect(repoMock.createQueryBuilder().offset).toHaveBeenCalledWith(0);
-      expect(repoMock.createQueryBuilder().orderBy).toHaveBeenCalled();
+      expect(repoMock.createQueryBuilder().orderBy).toHaveBeenCalledWith(
+        'l.name',
+        'ASC',
+      );
+      expect(repoMock.createQueryBuilder().getMany).toHaveBeenCalled();
+    });
+
+    it('should return all locations, with presets for limit an offset and ordering #2', async () => {
+      const locations = [new LocationEntity(), new LocationEntity()];
+      repoMock.createQueryBuilder = jest.fn().mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        offset: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(locations),
+      });
+
+      expect(await service.findAll(10, 10, 'parent.name', undefined)).toEqual(
+        locations,
+      );
+      expect(repoMock.createQueryBuilder).toHaveBeenCalled();
+      expect(
+        repoMock.createQueryBuilder().leftJoinAndSelect,
+      ).toHaveBeenCalled();
+      expect(repoMock.createQueryBuilder().limit).toHaveBeenCalledWith(10);
+      expect(repoMock.createQueryBuilder().offset).toHaveBeenCalledWith(10);
+      expect(repoMock.createQueryBuilder().orderBy).toHaveBeenCalledWith(
+        'p.name',
+        'ASC',
+      );
       expect(repoMock.createQueryBuilder().getMany).toHaveBeenCalled();
     });
   });

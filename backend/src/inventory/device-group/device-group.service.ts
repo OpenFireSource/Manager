@@ -14,8 +14,18 @@ import { DeviceGroupUpdateDto } from './dto/device-group-update.dto';
 export class DeviceGroupService {
   constructor(private readonly dbService: DeviceGroupDbService) {}
 
-  public async findAll(offset?: number, limit?: number) {
-    const entities = await this.dbService.findAll(offset, limit);
+  public async findAll(
+    offset?: number,
+    limit?: number,
+    sortCol?: string,
+    sortDir?: 'ASC' | 'DESC',
+  ) {
+    const entities = await this.dbService.findAll(
+      offset,
+      limit,
+      sortCol,
+      sortDir,
+    );
     return plainToInstance(DeviceGroupDto, entities);
   }
 

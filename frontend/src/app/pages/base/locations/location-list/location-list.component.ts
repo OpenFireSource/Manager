@@ -43,7 +43,8 @@ export class LocationListComponent {
   }
 
   onQueryParamsChange(params: NzTableQueryParams) {
-    const {pageSize, pageIndex} = params;
-    this.locationsService.updatePage(pageIndex, pageSize);
+    const {pageSize, pageIndex, sort} = params;
+    const sortCol = sort.find(x => x.value);
+    this.locationsService.updatePage(pageIndex, pageSize, sortCol?.key, sortCol?.value === 'ascend' ? 'ASC' : 'DESC');
   }
 }

@@ -43,7 +43,8 @@ export class DeviceTypeListComponent {
   }
 
   onQueryParamsChange(params: NzTableQueryParams) {
-    const {pageSize, pageIndex} = params;
-    this.service.updatePage(pageIndex, pageSize);
+    const {pageSize, pageIndex, sort} = params;
+    const sortCol = sort.find(x => x.value);
+    this.service.updatePage(pageIndex, pageSize, sortCol?.key, sortCol?.value === 'ascend' ? 'ASC' : 'DESC');
   }
 }

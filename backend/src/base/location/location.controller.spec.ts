@@ -39,9 +39,9 @@ describe('LocationController', () => {
     const mockLocations = [{ id: 1, name: 'Location 1' }];
     service.findAll = jest.fn().mockResolvedValue(mockLocations);
 
-    const result = await controller.getAll({ offset: 0, limit: 10 });
+    const result = await controller.getAll({ offset: 0, limit: 10 }, {});
 
-    expect(service.findAll).toHaveBeenCalledWith(0, 10);
+    expect(service.findAll).toHaveBeenCalledWith(0, 10, undefined, undefined);
     expect(result).toEqual(mockLocations);
   });
 

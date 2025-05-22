@@ -12,6 +12,8 @@ export class DeviceGroupsService {
   total = signal(0);
   entitiesLoading = signal(false);
   entitiesLoadError = signal(false);
+  sortCol?: string;
+  sortDir?: string;
 
   constructor(private readonly apiService: DeviceGroupService) {
   }
@@ -20,7 +22,7 @@ export class DeviceGroupsService {
     this.entitiesLoading.set(true);
     this.apiService.deviceGroupControllerGetCount()
       .subscribe((count) => this.total.set(count.count));
-    this.apiService.deviceGroupControllerGetAll(this.itemsPerPage, (this.page - 1) * this.itemsPerPage)
+    this.apiService.deviceGroupControllerGetAll(this.itemsPerPage, (this.page - 1) * this.itemsPerPage, this.sortCol, this.sortDir)
       .subscribe({
         next: (users) => {
           this.entities.set(users);
@@ -35,9 +37,11 @@ export class DeviceGroupsService {
       });
   }
 
-  updatePage(page: number, itemsPerPage: number) {
+  updatePage(page: number, itemsPerPage: number, sortCol?: string, sortDir?: string) {
     this.page = page;
     this.itemsPerPage = itemsPerPage;
+    this.sortCol = sortCol;
+    this.sortDir = this.sortCol ? sortDir : undefined;
     this.load();
   }
 }

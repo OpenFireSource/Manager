@@ -1,12 +1,13 @@
 import {
   Column,
-  Entity, OneToMany,
+  Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   Tree,
   TreeChildren,
   TreeParent,
 } from 'typeorm';
-import {DeviceEntity} from "../../inventory/device/device.entity";
+import { DeviceEntity } from '../../inventory/device/device.entity';
 
 export enum LocationType {
   NONE = 0, // Keine Angabe

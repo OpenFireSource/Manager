@@ -15,13 +15,24 @@ export class DeviceGroupDbService {
     return this.repo.count();
   }
 
-  public async findAll(offset?: number, limit?: number) {
-    const query = this.repo
+  public async findAll(
+    offset?: number,
+    limit?: number,
+    sortCol?: string,
+    sortDir?: 'ASC' | 'DESC',
+  ) {
+    let query = this.repo
       .createQueryBuilder('dg')
       .limit(limit ?? 100)
       .offset(offset ?? 0);
 
-    return query.orderBy('dg.name').getMany();
+    if (sortCol) {
+      query = query.orderBy(`dg.${sortCol}`, sortDir ?? 'ASC');
+    } else {
+      query = query.orderBy('dg.name');
+    }
+
+    return query.getMany();
   }
 
   public findOne(id: number) {

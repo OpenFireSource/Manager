@@ -39,9 +39,17 @@ describe('DeviceController', () => {
     const mockDevices = [{ id: 1, name: 'Device 1' }];
     service.findAll = jest.fn().mockResolvedValue(mockDevices);
 
-    const result = await controller.getAll({ offset: 0, limit: 10 });
+    const result = await controller.getAll({ offset: 0, limit: 10 }, {});
 
-    expect(service.findAll).toHaveBeenCalledWith(0, 10, undefined, undefined, undefined);
+    expect(service.findAll).toHaveBeenCalledWith(
+      0,
+      10,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+    );
     expect(result).toEqual(mockDevices);
   });
 

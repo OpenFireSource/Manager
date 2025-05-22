@@ -20,6 +20,8 @@ export class DeviceService {
     typeId?: number,
     groupId?: number,
     locationId?: number,
+    sortCol?: string,
+    sortDir?: 'ASC' | 'DESC',
   ) {
     const entities = await this.dbService.findAll(
       offset,
@@ -27,6 +29,8 @@ export class DeviceService {
       typeId,
       groupId,
       locationId,
+      sortCol,
+      sortDir,
     );
     return plainToInstance(DeviceDto, entities);
   }

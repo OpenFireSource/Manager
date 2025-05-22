@@ -15,14 +15,32 @@ export class LocationDbService {
     return this.repo.count();
   }
 
-  public async findAll(offset?: number, limit?: number) {
-    const query = this.repo
+  public async findAll(
+    offset?: number,
+    limit?: number,
+    sortCol?: string,
+    sortDir?: 'ASC' | 'DESC',
+  ) {
+    let query = this.repo
       .createQueryBuilder('l')
       .leftJoinAndSelect('l.parent', 'p')
       .limit(limit ?? 100)
       .offset(offset ?? 0);
 
-    return query.orderBy('l.name').getMany();
+    if (sortCol) {
+      if (sortCol.startsWith('parent.')) {
+        query = query.orderBy(
+          `p.${sortCol.replaceAll('parent.', '')}`,
+          sortDir ?? 'ASC',
+        );
+      } else {
+        query = query.orderBy(`l.${sortCol}`, sortDir ?? 'ASC');
+      }
+    } else {
+      query = query.orderBy('l.name');
+    }
+
+    return query.getMany();
   }
 
   public findOne(id: number) {

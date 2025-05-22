@@ -87,6 +87,24 @@ describe('DeviceTypeDbService', () => {
       expect(repoMock.createQueryBuilder().orderBy).toHaveBeenCalled();
       expect(repoMock.createQueryBuilder().getMany).toHaveBeenCalled();
     });
+
+    it('should return all device-types, with presets for limit an offset and ordering', async () => {
+      const deviceTypes = [new DeviceTypeEntity(), new DeviceTypeEntity()];
+      repoMock.createQueryBuilder = jest.fn().mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        offset: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(deviceTypes),
+      });
+
+      expect(await service.findAll(10, 10, 'name')).toEqual(deviceTypes);
+      expect(repoMock.createQueryBuilder).toHaveBeenCalled();
+      expect(repoMock.createQueryBuilder().limit).toHaveBeenCalledWith(10);
+      expect(repoMock.createQueryBuilder().offset).toHaveBeenCalledWith(10);
+      expect(repoMock.createQueryBuilder().orderBy).toHaveBeenCalledWith('dt.name', 'ASC');
+      expect(repoMock.createQueryBuilder().getMany).toHaveBeenCalled();
+    });
   });
 
   it('findOne', async () => {

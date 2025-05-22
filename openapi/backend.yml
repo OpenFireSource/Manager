@@ -542,6 +542,16 @@ paths:
           in: query
           schema:
             type: number
+        - name: sortCol
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: sortDir
+          required: false
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -696,6 +706,16 @@ paths:
           in: query
           schema:
             type: number
+        - name: sortCol
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: sortDir
+          required: false
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -844,13 +864,11 @@ paths:
           required: false
           in: query
           schema:
-            nullable: true
             type: number
         - name: offset
           required: false
           in: query
           schema:
-            nullable: true
             type: number
         - name: typeId
           required: false
@@ -870,6 +888,16 @@ paths:
           schema:
             nullable: true
             type: number
+        - name: sortCol
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: sortDir
+          required: false
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -1024,6 +1052,16 @@ paths:
           in: query
           schema:
             type: number
+        - name: sortCol
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: sortDir
+          required: false
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''

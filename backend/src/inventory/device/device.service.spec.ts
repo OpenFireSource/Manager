@@ -50,6 +50,8 @@ describe('DeviceService', () => {
         undefined,
         undefined,
         undefined,
+        undefined,
+        undefined,
       );
     });
     it('should call findAll with no parameters', async () => {
@@ -58,6 +60,8 @@ describe('DeviceService', () => {
       expect(await service.findAll()).toEqual([]);
 
       expect(dbService.findAll).toHaveBeenCalledWith(
+        undefined,
+        undefined,
         undefined,
         undefined,
         undefined,

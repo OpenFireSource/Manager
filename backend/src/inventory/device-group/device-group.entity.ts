@@ -1,5 +1,5 @@
-import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
-import {DeviceEntity} from "../device/device.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { DeviceEntity } from '../device/device.entity';
 
 @Entity()
 export class DeviceGroupEntity {

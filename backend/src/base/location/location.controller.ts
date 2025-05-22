@@ -11,6 +11,7 @@ import { CountDto } from '../../shared/dto/count.dto';
 import { LocationGetQueryDto } from './dto/location-get-query.dto';
 import { LocationCreateDto } from './dto/location-create.dto';
 import { LocationUpdateDto } from './dto/location-update.dto';
+import { PaginationDto } from '../../shared/dto/pagination.dto';
 
 @Controller('location')
 export class LocationController {
@@ -33,9 +34,15 @@ export class LocationController {
     roles: [Role.LocationView],
   })
   public async getAll(
+    @Query() pagination: PaginationDto,
     @Query() querys: LocationGetQueryDto,
   ): Promise<LocationDto[]> {
-    return this.service.findAll(querys.offset, querys.limit);
+    return this.service.findAll(
+      pagination.offset,
+      pagination.limit,
+      querys.sortCol,
+      querys.sortDir,
+    );
   }
 
   @Endpoint(EndpointType.GET, {

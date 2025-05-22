@@ -140,6 +140,131 @@ describe('DeviceDbService', () => {
       expect(repoMock.createQueryBuilder().orderBy).toHaveBeenCalled();
       expect(repoMock.createQueryBuilder().getMany).toHaveBeenCalled();
     });
+
+    it('should return all devices, with presets for limit an offset and ordering #1', async () => {
+      const devices = [new DeviceEntity(), new DeviceEntity()];
+      repoMock.createQueryBuilder = jest.fn().mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        offset: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(devices),
+      });
+
+      expect(
+        await service.findAll(10, 10, undefined, undefined, undefined, 'name'),
+      ).toEqual(devices);
+      expect(repoMock.createQueryBuilder).toHaveBeenCalled();
+      expect(
+        repoMock.createQueryBuilder().leftJoinAndSelect,
+      ).toHaveBeenCalled();
+      expect(repoMock.createQueryBuilder().limit).toHaveBeenCalledWith(10);
+      expect(repoMock.createQueryBuilder().offset).toHaveBeenCalledWith(10);
+      expect(repoMock.createQueryBuilder().orderBy).toHaveBeenCalledWith(
+        'd.name',
+        'ASC',
+      );
+      expect(repoMock.createQueryBuilder().getMany).toHaveBeenCalled();
+    });
+
+    it('should return all devices, with presets for limit an offset and ordering #2', async () => {
+      const devices = [new DeviceEntity(), new DeviceEntity()];
+      repoMock.createQueryBuilder = jest.fn().mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        offset: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(devices),
+      });
+
+      expect(
+        await service.findAll(
+          10,
+          10,
+          undefined,
+          undefined,
+          undefined,
+          'location.name',
+        ),
+      ).toEqual(devices);
+      expect(repoMock.createQueryBuilder).toHaveBeenCalled();
+      expect(
+        repoMock.createQueryBuilder().leftJoinAndSelect,
+      ).toHaveBeenCalled();
+      expect(repoMock.createQueryBuilder().limit).toHaveBeenCalledWith(10);
+      expect(repoMock.createQueryBuilder().offset).toHaveBeenCalledWith(10);
+      expect(repoMock.createQueryBuilder().orderBy).toHaveBeenCalledWith(
+        'l.name',
+        'ASC',
+      );
+      expect(repoMock.createQueryBuilder().getMany).toHaveBeenCalled();
+    });
+
+    it('should return all devices, with presets for limit an offset and ordering #3', async () => {
+      const devices = [new DeviceEntity(), new DeviceEntity()];
+      repoMock.createQueryBuilder = jest.fn().mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        offset: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(devices),
+      });
+
+      expect(
+        await service.findAll(
+          10,
+          10,
+          undefined,
+          undefined,
+          undefined,
+          'type.name',
+        ),
+      ).toEqual(devices);
+      expect(repoMock.createQueryBuilder).toHaveBeenCalled();
+      expect(
+        repoMock.createQueryBuilder().leftJoinAndSelect,
+      ).toHaveBeenCalled();
+      expect(repoMock.createQueryBuilder().limit).toHaveBeenCalledWith(10);
+      expect(repoMock.createQueryBuilder().offset).toHaveBeenCalledWith(10);
+      expect(repoMock.createQueryBuilder().orderBy).toHaveBeenCalledWith(
+        'dt.name',
+        'ASC',
+      );
+      expect(repoMock.createQueryBuilder().getMany).toHaveBeenCalled();
+    });
+
+    it('should return all devices, with presets for limit an offset and ordering #4', async () => {
+      const devices = [new DeviceEntity(), new DeviceEntity()];
+      repoMock.createQueryBuilder = jest.fn().mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        offset: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(devices),
+      });
+
+      expect(
+        await service.findAll(
+          10,
+          10,
+          undefined,
+          undefined,
+          undefined,
+          'group.name',
+        ),
+      ).toEqual(devices);
+      expect(repoMock.createQueryBuilder).toHaveBeenCalled();
+      expect(
+        repoMock.createQueryBuilder().leftJoinAndSelect,
+      ).toHaveBeenCalled();
+      expect(repoMock.createQueryBuilder().limit).toHaveBeenCalledWith(10);
+      expect(repoMock.createQueryBuilder().offset).toHaveBeenCalledWith(10);
+      expect(repoMock.createQueryBuilder().orderBy).toHaveBeenCalledWith(
+        'dg.name',
+        'ASC',
+      );
+      expect(repoMock.createQueryBuilder().getMany).toHaveBeenCalled();
+    });
   });
 
   it('findOne', async () => {

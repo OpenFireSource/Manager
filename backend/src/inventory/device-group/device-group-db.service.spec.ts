@@ -70,6 +70,24 @@ describe('DeviceGroupDbService', () => {
       expect(repoMock.createQueryBuilder().orderBy).toHaveBeenCalled();
       expect(repoMock.createQueryBuilder().getMany).toHaveBeenCalled();
     });
+
+    it('should return all devices, with presets for limit an offset and ordering', async () => {
+      const devices = [new DeviceGroupEntity(), new DeviceGroupEntity()];
+      repoMock.createQueryBuilder = jest.fn().mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        offset: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(devices),
+      });
+
+      expect(await service.findAll(10, 10, 'name')).toEqual(devices);
+      expect(repoMock.createQueryBuilder).toHaveBeenCalled();
+      expect(repoMock.createQueryBuilder().limit).toHaveBeenCalledWith(10);
+      expect(repoMock.createQueryBuilder().offset).toHaveBeenCalledWith(10);
+      expect(repoMock.createQueryBuilder().orderBy).toHaveBeenCalledWith('dg.name', 'ASC');
+      expect(repoMock.createQueryBuilder().getMany).toHaveBeenCalled();
+    });
   });
 
   it('findOne', async () => {

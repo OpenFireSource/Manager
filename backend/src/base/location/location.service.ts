@@ -15,8 +15,18 @@ import { CountDto } from '../../shared/dto/count.dto';
 export class LocationService {
   constructor(private readonly dbService: LocationDbService) {}
 
-  public async findAll(offset?: number, limit?: number) {
-    const locations = await this.dbService.findAll(offset, limit);
+  public async findAll(
+    offset?: number,
+    limit?: number,
+    sortCol?: string,
+    sortDir?: 'ASC' | 'DESC',
+  ) {
+    const locations = await this.dbService.findAll(
+      offset,
+      limit,
+      sortCol,
+      sortDir,
+    );
     return plainToInstance(LocationDto, locations);
   }
 
