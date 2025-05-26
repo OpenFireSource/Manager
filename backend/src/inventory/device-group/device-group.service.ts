@@ -19,12 +19,14 @@ export class DeviceGroupService {
     limit?: number,
     sortCol?: string,
     sortDir?: 'ASC' | 'DESC',
+    searchTerm?: string,
   ) {
     const entities = await this.dbService.findAll(
       offset,
       limit,
       sortCol,
       sortDir,
+      searchTerm,
     );
     return plainToInstance(DeviceGroupDto, entities);
   }
@@ -43,8 +45,8 @@ export class DeviceGroupService {
     }
   }
 
-  public async getCount() {
-    const count = await this.dbService.getCount();
+  public async getCount(searchTerm?: string) {
+    const count = await this.dbService.getCount(searchTerm);
     return plainToInstance(CountDto, { count });
   }
 

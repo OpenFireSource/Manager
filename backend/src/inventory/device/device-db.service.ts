@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { DeviceEntity } from './device.entity';
 
@@ -11,8 +11,21 @@ export class DeviceDbService {
     private readonly repo: Repository<DeviceEntity>,
   ) {}
 
-  public async getCount() {
-    return this.repo.count();
+  private searchQueryBuilder(
+    query: SelectQueryBuilder<DeviceEntity>,
+    searchTerm: string,
+  ): SelectQueryBuilder<DeviceEntity> {
+    return query.where('d.name ilike :searchTerm', {
+      searchTerm: `%${searchTerm}%`,
+    });
+  }
+
+  public async getCount(searchTerm?: string) {
+    let query = this.repo.createQueryBuilder('d');
+    if (searchTerm) {
+      query = this.searchQueryBuilder(query, searchTerm);
+    }
+    return query.getCount();
   }
 
   public async findAll(
@@ -23,6 +36,7 @@ export class DeviceDbService {
     locationId?: number,
     sortCol?: string,
     sortDir?: 'ASC' | 'DESC',
+    searchTerm?: string,
   ) {
     let query = this.repo
       .createQueryBuilder('d')
@@ -32,6 +46,10 @@ export class DeviceDbService {
       .leftJoinAndSelect('d.group', 'dg')
       .leftJoinAndSelect('d.location', 'l')
       .leftJoinAndSelect('l.parent', 'lp');
+
+    if (searchTerm) {
+      query = this.searchQueryBuilder(query, searchTerm);
+    }
 
     if (sortCol) {
       if (sortCol.startsWith('type.')) {

@@ -12,6 +12,7 @@ import { DeviceGetQueryDto } from './dto/device-get-query.dto';
 import { DeviceUpdateDto } from './dto/device-update.dto';
 import { DeviceCreateDto } from './dto/device-create.dto';
 import { PaginationDto } from '../../shared/dto/pagination.dto';
+import { SearchDto } from '../../shared/dto/search.dto';
 
 @Controller('device')
 export class DeviceController {
@@ -23,8 +24,8 @@ export class DeviceController {
     responseType: CountDto,
     roles: [Role.DeviceView],
   })
-  public getCount(): Promise<CountDto> {
-    return this.service.getCount();
+  public getCount(@Query() search: SearchDto): Promise<CountDto> {
+    return this.service.getCount(search.searchTerm);
   }
 
   @Endpoint(EndpointType.GET, {
@@ -36,6 +37,7 @@ export class DeviceController {
   public async getAll(
     @Query() pagination: PaginationDto,
     @Query() querys: DeviceGetQueryDto,
+    @Query() search: SearchDto,
   ): Promise<DeviceDto[]> {
     return this.service.findAll(
       pagination.offset,
@@ -45,6 +47,7 @@ export class DeviceController {
       querys.locationId,
       querys.sortCol,
       querys.sortDir,
+      search.searchTerm,
     );
   }
 
