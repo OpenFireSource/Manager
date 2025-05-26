@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { DeviceGroupEntity } from './device-group.entity';
 
@@ -11,8 +11,21 @@ export class DeviceGroupDbService {
     private readonly repo: Repository<DeviceGroupEntity>,
   ) {}
 
-  public async getCount() {
-    return this.repo.count();
+  private searchQueryBuilder(
+    query: SelectQueryBuilder<DeviceGroupEntity>,
+    searchTerm: string,
+  ): SelectQueryBuilder<DeviceGroupEntity> {
+    return query.where('dg.name ilike :searchTerm', {
+      searchTerm: `%${searchTerm}%`,
+    });
+  }
+
+  public async getCount(searchTerm?: string) {
+    let query = this.repo.createQueryBuilder('dg');
+    if (searchTerm) {
+      query = this.searchQueryBuilder(query, searchTerm);
+    }
+    return query.getCount();
   }
 
   public async findAll(
@@ -20,11 +33,16 @@ export class DeviceGroupDbService {
     limit?: number,
     sortCol?: string,
     sortDir?: 'ASC' | 'DESC',
+    searchTerm?: string,
   ) {
     let query = this.repo
       .createQueryBuilder('dg')
       .limit(limit ?? 100)
       .offset(offset ?? 0);
+
+    if (searchTerm) {
+      query = this.searchQueryBuilder(query, searchTerm);
+    }
 
     if (sortCol) {
       query = query.orderBy(`dg.${sortCol}`, sortDir ?? 'ASC');

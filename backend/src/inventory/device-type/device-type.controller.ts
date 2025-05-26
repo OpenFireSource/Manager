@@ -12,6 +12,7 @@ import { DeviceTypeUpdateDto } from './dto/device-type-update.dto';
 import { DeviceTypeGetQueryDto } from './dto/device-type-get-query.dto';
 import { CountDto } from '../../shared/dto/count.dto';
 import { PaginationDto } from '../../shared/dto/pagination.dto';
+import { SearchDto } from '../../shared/dto/search.dto';
 
 @Controller('device-type')
 export class DeviceTypeController {
@@ -23,8 +24,8 @@ export class DeviceTypeController {
     responseType: CountDto,
     roles: [Role.DeviceTypeView],
   })
-  public getCount(): Promise<CountDto> {
-    return this.service.getCount();
+  public getCount(@Query() search: SearchDto): Promise<CountDto> {
+    return this.service.getCount(search.searchTerm);
   }
 
   @Endpoint(EndpointType.GET, {
@@ -36,12 +37,14 @@ export class DeviceTypeController {
   public async getAll(
     @Query() pagination: PaginationDto,
     @Query() querys: DeviceTypeGetQueryDto,
+    @Query() search: SearchDto,
   ): Promise<DeviceTypeDto[]> {
     return this.service.findAll(
       pagination.offset,
       pagination.limit,
       querys.sortCol,
       querys.sortDir,
+      search.searchTerm,
     );
   }
 

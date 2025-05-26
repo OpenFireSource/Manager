@@ -21,6 +21,7 @@ import {authConfig} from './core/auth/auth-config';
 import {authModuleConfig} from './core/auth/auth-module-config';
 import {de as deDE} from 'date-fns/locale';
 import {registerLocaleData} from '@angular/common';
+import {provideAppConfigs} from './app.configs';
 
 registerLocaleData(de);
 
@@ -47,5 +48,6 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(FormsModule),
     provideAnimationsAsync(),
     {provide: BASE_PATH, useValue: ''},
+    provideAppConfigs(),
   ]
 };

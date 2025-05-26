@@ -512,7 +512,12 @@ paths:
     get:
       description: Gibt die Anzahl aller Device-Typen zurück
       operationId: DeviceTypeController_getCount
-      parameters: []
+      parameters:
+        - name: searchTerm
+          required: false
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -548,6 +553,11 @@ paths:
           schema:
             type: string
         - name: sortDir
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: searchTerm
           required: false
           in: query
           schema:
@@ -676,7 +686,12 @@ paths:
     get:
       description: Gibt die Anzahl aller Geräte-Gruppen zurück
       operationId: DeviceGroupController_getCount
-      parameters: []
+      parameters:
+        - name: searchTerm
+          required: false
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -712,6 +727,11 @@ paths:
           schema:
             type: string
         - name: sortDir
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: searchTerm
           required: false
           in: query
           schema:
@@ -840,7 +860,12 @@ paths:
     get:
       description: Gibt die Anzahl aller Geräte zurück
       operationId: DeviceController_getCount
-      parameters: []
+      parameters:
+        - name: searchTerm
+          required: false
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -894,6 +919,11 @@ paths:
           schema:
             type: string
         - name: sortDir
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: searchTerm
           required: false
           in: query
           schema:
@@ -1022,7 +1052,12 @@ paths:
     get:
       description: Gibt die Anzahl aller Standorte zurück
       operationId: LocationController_getCount
-      parameters: []
+      parameters:
+        - name: searchTerm
+          required: false
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -1058,6 +1093,11 @@ paths:
           schema:
             type: string
         - name: sortDir
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: searchTerm
           required: false
           in: query
           schema:

@@ -12,6 +12,7 @@ import { LocationGetQueryDto } from './dto/location-get-query.dto';
 import { LocationCreateDto } from './dto/location-create.dto';
 import { LocationUpdateDto } from './dto/location-update.dto';
 import { PaginationDto } from '../../shared/dto/pagination.dto';
+import { SearchDto } from '../../shared/dto/search.dto';
 
 @Controller('location')
 export class LocationController {
@@ -23,8 +24,8 @@ export class LocationController {
     responseType: CountDto,
     roles: [Role.LocationView],
   })
-  public getCount(): Promise<CountDto> {
-    return this.service.getCount();
+  public getCount(@Query() search: SearchDto): Promise<CountDto> {
+    return this.service.getCount(search.searchTerm);
   }
 
   @Endpoint(EndpointType.GET, {
@@ -36,12 +37,14 @@ export class LocationController {
   public async getAll(
     @Query() pagination: PaginationDto,
     @Query() querys: LocationGetQueryDto,
+    @Query() search: SearchDto,
   ): Promise<LocationDto[]> {
     return this.service.findAll(
       pagination.offset,
       pagination.limit,
       querys.sortCol,
       querys.sortDir,
+      search.searchTerm,
     );
   }
 

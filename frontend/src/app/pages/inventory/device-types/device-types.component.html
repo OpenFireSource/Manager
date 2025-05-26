@@ -1,3 +1,15 @@
 <h1>Geräte-Typen</h1>
-<button nz-button nzType="primary" routerLink="create" *ofsHasRole="['device-type.manage']">Geräte-Typ anlegen</button>
+<div nz-row nzJustify="space-between">
+  <div nz-col>
+    <button nz-button nzType="primary" routerLink="create" *ofsHasRole="['device-type.manage']">Geräte-Typ anlegen</button>
+  </div>
+  <div nz-col>
+    <nz-input-group [nzSuffix]="suffixIconSearch">
+      <input type="text" (input)="search($event)" nz-input placeholder="Suchen"/>
+    </nz-input-group>
+    <ng-template #suffixIconSearch>
+      <nz-icon nzType="search" />
+    </ng-template>
+  </div>
+</div>
 <ofs-device-type-list></ofs-device-type-list>

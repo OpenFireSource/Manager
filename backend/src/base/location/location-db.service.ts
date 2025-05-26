@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LocationEntity } from './location.entity';
-import { TreeRepository } from 'typeorm';
+import { SelectQueryBuilder, TreeRepository } from 'typeorm';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 
 @Injectable()
@@ -11,8 +11,21 @@ export class LocationDbService {
     private readonly repo: TreeRepository<LocationEntity>,
   ) {}
 
-  public async getCount() {
-    return this.repo.count();
+  private searchQueryBuilder(
+    query: SelectQueryBuilder<LocationEntity>,
+    searchTerm: string,
+  ): SelectQueryBuilder<LocationEntity> {
+    return query.where('l.name ilike :searchTerm', {
+      searchTerm: `%${searchTerm}%`,
+    });
+  }
+
+  public async getCount(searchTerm?: string) {
+    let query = this.repo.createQueryBuilder('l');
+    if (searchTerm) {
+      query = this.searchQueryBuilder(query, searchTerm);
+    }
+    return query.getCount();
   }
 
   public async findAll(
@@ -20,12 +33,17 @@ export class LocationDbService {
     limit?: number,
     sortCol?: string,
     sortDir?: 'ASC' | 'DESC',
+    searchTerm?: string,
   ) {
     let query = this.repo
       .createQueryBuilder('l')
       .leftJoinAndSelect('l.parent', 'p')
       .limit(limit ?? 100)
       .offset(offset ?? 0);
+
+    if (searchTerm) {
+      query = this.searchQueryBuilder(query, searchTerm);
+    }
 
     if (sortCol) {
       if (sortCol.startsWith('parent.')) {

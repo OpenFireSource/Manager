@@ -102,7 +102,10 @@ describe('DeviceTypeDbService', () => {
       expect(repoMock.createQueryBuilder).toHaveBeenCalled();
       expect(repoMock.createQueryBuilder().limit).toHaveBeenCalledWith(10);
       expect(repoMock.createQueryBuilder().offset).toHaveBeenCalledWith(10);
-      expect(repoMock.createQueryBuilder().orderBy).toHaveBeenCalledWith('dt.name', 'ASC');
+      expect(repoMock.createQueryBuilder().orderBy).toHaveBeenCalledWith(
+        'dt.name',
+        'ASC',
+      );
       expect(repoMock.createQueryBuilder().getMany).toHaveBeenCalled();
     });
   });

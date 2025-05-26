@@ -20,12 +20,14 @@ export class LocationService {
     limit?: number,
     sortCol?: string,
     sortDir?: 'ASC' | 'DESC',
+    searchTerm?: string,
   ) {
     const locations = await this.dbService.findAll(
       offset,
       limit,
       sortCol,
       sortDir,
+      searchTerm,
     );
     return plainToInstance(LocationDto, locations);
   }
@@ -44,8 +46,8 @@ export class LocationService {
     }
   }
 
-  public async getCount() {
-    const count = await this.dbService.getCount();
+  public async getCount(searchTerm?: string) {
+    const count = await this.dbService.getCount(searchTerm);
     return plainToInstance(CountDto, { count });
   }
 
