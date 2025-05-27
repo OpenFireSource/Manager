@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, Signal} from '@angular/core';
+import {Component, OnDestroy, Signal} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NzButtonModule} from 'ng-zorro-antd/button';
 import {NzFormModule} from 'ng-zorro-antd/form';
@@ -26,7 +26,7 @@ interface LocationCreateForm {
   templateUrl: './location-create.component.html',
   styleUrl: './location-create.component.less'
 })
-export class LocationCreateComponent implements OnDestroy, OnInit {
+export class LocationCreateComponent implements OnDestroy {
   types = LocationTypes.all;
 
   parentsIsLoading: Signal<boolean>;
@@ -52,35 +52,30 @@ export class LocationCreateComponent implements OnDestroy, OnInit {
   private destroy$ = new Subject<void>();
 
   constructor(
-    private readonly locationCreateService: LocationCreateService,
+    private readonly service: LocationCreateService,
     private readonly inAppMessagingService: InAppMessageService
   ) {
-    this.createLoading = this.locationCreateService.createLoading;
-    this.parentsIsLoading = this.locationCreateService.parentsIsLoading;
-    this.parents = this.locationCreateService.parents;
+    this.createLoading = this.service.createLoading;
+    this.parentsIsLoading = this.service.parentsIsLoading;
+    this.parents = this.service.parents;
 
-    this.locationCreateService.createLoadingError
+    this.service.createLoadingError
       .pipe(takeUntil(this.destroy$))
       .subscribe((x) => this.inAppMessagingService.showError(x));
-    this.locationCreateService.createLoadingSuccess
+    this.service.createLoadingSuccess
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.inAppMessagingService.showSuccess('Änderungen gespeichert'));
   }
 
-
-  ngOnInit(): void {
-    this.locationCreateService.loadParents(true);
-  }
-
   submit() {
-    this.locationCreateService.create(this.form.getRawValue());
-  }
-
-  loadMore() {
-    this.locationCreateService.loadParents();
+    this.service.create(this.form.getRawValue());
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
+  }
+
+  onSearchParent(search: string) {
+    this.service.onSearchParent(search);
   }
 }

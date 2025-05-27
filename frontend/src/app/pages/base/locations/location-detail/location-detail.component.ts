@@ -60,39 +60,39 @@ export class LocationDetailComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
-    private readonly locationDetailService: LocationDetailService,
+    private readonly service: LocationDetailService,
     private readonly inAppMessagingService: InAppMessageService,
   ) {
-    this.notFound = this.locationDetailService.notFound;
-    this.loading = this.locationDetailService.loading;
-    this.loadingError = this.locationDetailService.loadingError;
-    this.deleteLoading = this.locationDetailService.deleteLoading;
-    this.updateLoading = this.locationDetailService.updateLoading;
-    this.parentsIsLoading = this.locationDetailService.parentsIsLoading;
-    this.parents = this.locationDetailService.parents;
+    this.notFound = this.service.notFound;
+    this.loading = this.service.loading;
+    this.loadingError = this.service.loadingError;
+    this.deleteLoading = this.service.deleteLoading;
+    this.updateLoading = this.service.updateLoading;
+    this.parentsIsLoading = this.service.parentsIsLoading;
+    this.parents = this.service.parents;
 
     effect(() => {
-      const location = this.locationDetailService.location();
+      const location = this.service.location();
       if (location) this.form.patchValue(location);
     });
 
     effect(() => {
-      const updateLoading = this.locationDetailService.loadingError();
+      const updateLoading = this.service.loadingError();
       if (updateLoading) {
         this.inAppMessagingService.showError('Fehler beim laden des Orts/Fahrzeugs.');
       }
     });
 
-    this.locationDetailService.deleteLoadingError
+    this.service.deleteLoadingError
       .pipe(takeUntil(this.destroy$))
       .subscribe((x) => this.inAppMessagingService.showError(x));
-    this.locationDetailService.deleteLoadingSuccess
+    this.service.deleteLoadingSuccess
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.inAppMessagingService.showSuccess('Ort/Fahrzeug gelöscht'));
-    this.locationDetailService.updateLoadingError
+    this.service.updateLoadingError
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.inAppMessagingService.showError('Fehler beim speichern.'));
-    this.locationDetailService.updateLoadingSuccess
+    this.service.updateLoadingSuccess
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.inAppMessagingService.showSuccess('Änderungen gespeichert'));
   }
@@ -104,19 +104,19 @@ export class LocationDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
-      this.locationDetailService.load(params['id']);
+      this.service.load(params['id']);
     });
   }
 
   submit() {
-    this.locationDetailService.update(this.form.getRawValue());
+    this.service.update(this.form.getRawValue());
   }
 
   delete() {
-    this.locationDetailService.delete();
+    this.service.delete();
   }
 
-  loadMore() {
-    this.locationDetailService.loadParents();
+  onSearchParent(search: string) {
+    this.service.onSearchParent(search);
   }
 }

@@ -47,21 +47,20 @@
       <nz-form-label [nzSpan]="7">Standort/Fahrzeug</nz-form-label>
       <nz-form-control [nzSpan]="12">
         <nz-select
-          (nzScrollToBottom)="loadMoreLocations()"
+          (nzOnSearch)="onSearchLocation($event)"
           formControlName="locationId"
           nzPlaceHolder="Standort/Fahrzeug auswählen"
           nzAllowClear
-          [nzDropdownRender]="renderTemplateLocation">
-          @for (item of locations(); track item) {
-            <nz-option [nzValue]="item.id"
-                       [nzLabel]="item.name + (item.parent ? '(' + item.parent.name +  ')':'')"></nz-option>
-          }
-        </nz-select>
-        <ng-template #renderTemplateLocation>
+          nzShowSearch
+          nzServerSearch>
           @if (locationsIsLoading()) {
             <nz-spin></nz-spin>
+          } @else {
+            @for (item of locations(); track item) {
+              <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+            }
           }
-        </ng-template>
+        </nz-select>
       </nz-form-control>
     </nz-form-item>
 
@@ -69,20 +68,20 @@
       <nz-form-label [nzSpan]="7">Geräte-Typ</nz-form-label>
       <nz-form-control [nzSpan]="12">
         <nz-select
-          (nzScrollToBottom)="loadMoreTypes()"
+          (nzOnSearch)="onSearchType($event)"
           formControlName="typeId"
           nzPlaceHolder="Geräte-Typ auswählen"
           nzAllowClear
-          [nzDropdownRender]="renderTemplate">
-          @for (item of deviceTypes(); track item) {
-            <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
-          }
-        </nz-select>
-        <ng-template #renderTemplate>
+          nzShowSearch
+          nzServerSearch>
           @if (deviceTypesIsLoading()) {
             <nz-spin></nz-spin>
+          } @else {
+            @for (item of deviceTypes(); track item) {
+              <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+            }
           }
-        </ng-template>
+        </nz-select>
       </nz-form-control>
     </nz-form-item>
 
@@ -90,20 +89,20 @@
       <nz-form-label [nzSpan]="7">Geräte-Gruppe</nz-form-label>
       <nz-form-control [nzSpan]="12">
         <nz-select
-          (nzScrollToBottom)="loadMoreGroups()"
+          (nzOnSearch)="onSearchGroup($event)"
           formControlName="groupId"
           nzPlaceHolder="Geräte-Gruppe auswählen"
           nzAllowClear
-          [nzDropdownRender]="renderTemplateGroups">
-          @for (item of deviceGroups(); track item) {
-            <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
-          }
-        </nz-select>
-        <ng-template #renderTemplateGroups>
+          nzShowSearch
+          nzServerSearch>
           @if (deviceGroupsIsLoading()) {
             <nz-spin></nz-spin>
+          } @else {
+            @for (item of deviceGroups(); track item) {
+              <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+            }
           }
-        </ng-template>
+        </nz-select>
       </nz-form-control>
     </nz-form-item>
 

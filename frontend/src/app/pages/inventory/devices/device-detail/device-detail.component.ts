@@ -195,15 +195,15 @@ export class DeviceDetailComponent implements OnInit, OnDestroy {
     this.service.delete();
   }
 
-  loadMoreTypes() {
-    this.service.loadMoreTypes();
+  onSearchLocation(search: string) {
+    this.service.onSearchLocation(search);
   }
 
-  loadMoreGroups() {
-    this.service.loadMoreGroups();
+  onSearchType(search: string) {
+    this.service.onSearchType(search);
   }
 
-  loadMoreLocations() {
-    this.service.loadMoreLocations();
+  onSearchGroup(search: string) {
+    this.service.onSearchGroup(search);
   }
 }

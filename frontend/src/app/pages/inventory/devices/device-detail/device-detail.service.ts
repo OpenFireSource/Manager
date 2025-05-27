@@ -1,9 +1,9 @@
-import {Injectable, signal} from '@angular/core';
+import {Inject, Injectable, signal} from '@angular/core';
 import {DeviceService} from '@backend/api/device.service';
 import {DeviceTypeService} from '@backend/api/deviceType.service';
 import {Router} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
-import {Subject} from 'rxjs';
+import {BehaviorSubject, debounceTime, filter, Subject} from 'rxjs';
 import {DeviceDto} from '@backend/model/deviceDto';
 import {DeviceTypeDto} from '@backend/model/deviceTypeDto';
 import {DeviceUpdateDto} from '@backend/model/deviceUpdateDto';
@@ -11,6 +11,7 @@ import {DeviceGroupDto} from '@backend/model/deviceGroupDto';
 import {DeviceGroupService} from '@backend/api/deviceGroup.service';
 import {LocationDto} from '@backend/model/locationDto';
 import {LocationService} from '@backend/api/location.service';
+import {SEARCH_DEBOUNCE_TIME, SELECT_ITEMS_COUNT} from '../../../../app.configs';
 
 @Injectable({
   providedIn: 'root'
@@ -28,20 +29,20 @@ export class DeviceDetailService {
   updateLoadingSuccess = new Subject<void>();
   deleteLoadingSuccess = new Subject<void>();
 
+  deviceTypesSearch$ = new BehaviorSubject<{ propagate: boolean; value: string }>({propagate: false, value: ''});
+  deviceTypesSearch = '';
   deviceTypes = signal<DeviceTypeDto[]>([]);
   deviceTypesIsLoading = signal(false);
-  private deviceTypesPage = 0;
-  private deviceTypesItemsPerPage = 10;
 
+  deviceGroupsSearch$ = new BehaviorSubject<{ propagate: boolean; value: string }>({propagate: false, value: ''});
+  deviceGroupsSearch = '';
   deviceGroups = signal<DeviceGroupDto[]>([]);
   deviceGroupsIsLoading = signal(false);
-  private deviceGroupsPage = 0;
-  private deviceGroupsItemsPerPage = 10;
 
+  locationSearch$ = new BehaviorSubject<{ propagate: boolean; value: string }>({propagate: false, value: ''});
+  locationSearch = '';
   locations = signal<LocationDto[]>([]);
   locationsIsLoading = signal(false);
-  private locationsPage = 0;
-  private locationsItemsPerPage = 10;
 
   constructor(
     private readonly apiService: DeviceService,
@@ -49,14 +50,35 @@ export class DeviceDetailService {
     private readonly apiDeviceGroupsService: DeviceGroupService,
     private readonly apiLocationsService: LocationService,
     private readonly router: Router,
+    @Inject(SEARCH_DEBOUNCE_TIME) time: number,
+    @Inject(SELECT_ITEMS_COUNT) private readonly selectCount: number,
   ) {
+    this.locationSearch$.pipe(
+      filter(x => x.propagate),
+      debounceTime(time),
+    ).subscribe((x) => {
+      this.locationSearch = x.value;
+      this.loadMoreLocations();
+    });
+    this.deviceTypesSearch$.pipe(
+      filter(x => x.propagate),
+      debounceTime(time),
+    ).subscribe((x) => {
+      this.deviceTypesSearch = x.value;
+      this.loadMoreTypes();
+    });
+    this.deviceGroupsSearch$.pipe(
+      filter(x => x.propagate),
+      debounceTime(time),
+    ).subscribe((x) => {
+      this.deviceGroupsSearch = x.value;
+      this.loadMoreGroups();
+    });
   }
 
   load(id: number) {
     this.id = id;
-    this.deviceTypesPage = 0;
-    this.deviceGroupsPage = 0;
-    this.locationsPage = 0;
+
     this.deviceTypes.set([]);
     this.deviceGroups.set([]);
     this.locations.set([]);
@@ -76,9 +98,6 @@ export class DeviceDetailService {
           if (newEntity.location) {
             this.locations.set([newEntity.location]);
           }
-          this.loadMoreTypes();
-          this.loadMoreGroups();
-          this.loadMoreLocations();
         },
         error: (err: HttpErrorResponse) => {
           if (err.status === 404) {
@@ -132,21 +151,15 @@ export class DeviceDetailService {
   loadMoreTypes() {
     this.deviceTypesIsLoading.set(true);
     this.apiDeviceTypesService
-      .deviceTypeControllerGetAll(this.deviceTypesItemsPerPage, this.deviceTypesPage * this.deviceTypesItemsPerPage)
+      .deviceTypeControllerGetAll(this.selectCount, 0, undefined, undefined, this.deviceTypesSearch)
       .subscribe({
         next: (deviceTypes) => {
           this.deviceTypesIsLoading.set(false);
-          const newDeviceTypes = [
-            ...this.deviceTypes(),
-            ...deviceTypes.filter(x => x.id != this.entity()?.typeId),
-          ];
-          this.deviceTypes.set(newDeviceTypes);
-          this.deviceTypesPage += 1;
+          this.deviceTypes.set(deviceTypes);
         },
         error: () => {
           this.deviceTypesIsLoading.set(false);
           this.deviceTypes.set([]);
-          this.deviceTypesPage = 0;
         }
       });
   }
@@ -154,21 +167,15 @@ export class DeviceDetailService {
   loadMoreGroups() {
     this.deviceGroupsIsLoading.set(true);
     this.apiDeviceGroupsService
-      .deviceGroupControllerGetAll(this.deviceGroupsItemsPerPage, this.deviceGroupsPage * this.deviceGroupsItemsPerPage)
+      .deviceGroupControllerGetAll(this.selectCount, 0, undefined, undefined, this.deviceGroupsSearch)
       .subscribe({
         next: (deviceGroups) => {
           this.deviceGroupsIsLoading.set(false);
-          const newDeviceGroups = [
-            ...this.deviceGroups(),
-            ...deviceGroups.filter(x => x.id != this.entity()?.groupId),
-          ];
-          this.deviceGroups.set(newDeviceGroups);
-          this.deviceGroupsPage += 1;
+          this.deviceGroups.set(deviceGroups);
         },
         error: () => {
           this.deviceGroupsIsLoading.set(false);
           this.deviceGroups.set([]);
-          this.deviceGroupsPage = 0;
         }
       });
   }
@@ -176,22 +183,28 @@ export class DeviceDetailService {
   loadMoreLocations() {
     this.locationsIsLoading.set(true);
     this.apiLocationsService
-      .locationControllerGetAll(this.locationsItemsPerPage, this.locationsPage * this.locationsItemsPerPage)
+      .locationControllerGetAll(this.selectCount, 0, undefined, undefined, this.locationSearch)
       .subscribe({
         next: (locations) => {
           this.locationsIsLoading.set(false);
-          const newlocations = [
-            ...this.locations(),
-            ...locations.filter(x => x.id != this.entity()?.locationId),
-          ];
-          this.locations.set(newlocations);
-          this.locationsPage += 1;
+          this.locations.set(locations);
         },
         error: () => {
           this.locationsIsLoading.set(false);
           this.locations.set([]);
-          this.locationsPage = 0;
         }
       });
+  }
+
+  onSearchLocation(value: string): void {
+    this.locationSearch$.next({propagate: true, value});
+  }
+
+  onSearchType(value: string): void {
+    this.deviceTypesSearch$.next({propagate: true, value});
+  }
+
+  onSearchGroup(value: string): void {
+    this.deviceGroupsSearch$.next({propagate: true, value});
   }
 }

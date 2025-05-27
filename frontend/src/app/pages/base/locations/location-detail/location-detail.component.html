@@ -61,21 +61,20 @@
       <nz-form-label [nzSpan]="7">Übergeordneter Ort/Fahrzeug</nz-form-label>
       <nz-form-control [nzSpan]="12">
         <nz-select
-          (nzScrollToBottom)="loadMore()"
+          (nzOnSearch)="onSearchParent($event)"
           formControlName="parentId"
           nzPlaceHolder="Ort/Fahrzeug auswählen"
           nzAllowClear
-          [nzDropdownRender]="renderTemplate">
-          @for (item of parents(); track item) {
-            <nz-option [nzValue]="item.id"
-                       [nzLabel]="(item.parent? item.parent.name+' -> ':'') + item.name"></nz-option>
-          }
-        </nz-select>
-        <ng-template #renderTemplate>
+          nzShowSearch
+          nzServerSearch>
           @if (parentsIsLoading()) {
             <nz-spin></nz-spin>
+          } @else {
+            @for (item of parents(); track item) {
+              <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+            }
           }
-        </ng-template>
+        </nz-select>
       </nz-form-control>
     </nz-form-item>
 

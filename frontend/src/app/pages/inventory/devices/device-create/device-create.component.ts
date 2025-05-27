@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, Signal} from '@angular/core';
+import {Component, OnDestroy, Signal} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NzButtonModule} from 'ng-zorro-antd/button';
 import {NzFormModule} from 'ng-zorro-antd/form';
@@ -35,7 +35,6 @@ interface DeviceCreateForm {
   locationId: FormControl<number | null>;
 }
 
-// TODO Geräte-Typ durch eintippen von filtern
 @Component({
   selector: 'ofs-device-create',
   imports: [ReactiveFormsModule, NzButtonModule, NzFormModule, NzInputModule, NzCheckboxModule, NzInputNumberModule, NzDatePickerModule, NzOptionComponent, NzSelectComponent, NzSpinComponent],
@@ -43,7 +42,7 @@ interface DeviceCreateForm {
   templateUrl: './device-create.component.html',
   styleUrl: './device-create.component.less'
 })
-export class DeviceCreateComponent implements OnInit, OnDestroy {
+export class DeviceCreateComponent implements OnDestroy {
   states = DeviceTypes.all;
 
   form = new FormGroup<DeviceCreateForm>({
@@ -133,25 +132,20 @@ export class DeviceCreateComponent implements OnInit, OnDestroy {
     this.service.create(this.form.getRawValue() as any); // TODO
   }
 
-  loadMoreLocations() {
-    this.service.loadMoreLocations();
-  }
-
-  loadMoreTypes() {
-    this.service.loadMoreTypes();
-  }
-
-  loadMoreGroups() {
-    this.service.loadMoreGroups();
-  }
-
-  ngOnInit(): void {
-    this.service.loadMoreTypes(true);
-    this.service.loadMoreGroups(true);
-    this.service.loadMoreLocations(true);
-  }
-
   ngOnDestroy(): void {
     this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  onSearchLocation(search: string) {
+    this.service.onSearchLocation(search);
+  }
+
+  onSearchType(search: string) {
+    this.service.onSearchType(search);
+  }
+
+  onSearchGroup(search: string) {
+    this.service.onSearchGroup(search);
   }
 }

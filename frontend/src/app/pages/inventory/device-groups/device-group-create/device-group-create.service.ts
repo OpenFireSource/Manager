@@ -9,7 +9,7 @@ import {HttpErrorResponse} from '@angular/common/http';
   providedIn: 'root'
 })
 export class DeviceGroupCreateService {
-createLoading = signal(false);
+  createLoading = signal(false);
   createLoadingError = new Subject<string>();
   createLoadingSuccess = new Subject<void>();
 

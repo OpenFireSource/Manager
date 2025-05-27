@@ -1,10 +1,11 @@
-import {Injectable, signal} from '@angular/core';
-import {Subject} from 'rxjs';
+import {Inject, Injectable, signal} from '@angular/core';
+import {BehaviorSubject, debounceTime, filter, Subject} from 'rxjs';
 import {Router} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LocationDto} from '@backend/model/locationDto';
 import {LocationService} from '@backend/api/location.service';
 import {LocationUpdateDto} from '@backend/model/locationUpdateDto';
+import {SEARCH_DEBOUNCE_TIME, SELECT_ITEMS_COUNT} from '../../../../app.configs';
 
 @Injectable({
   providedIn: 'root'
@@ -24,19 +25,26 @@ export class LocationDetailService {
   updateLoadingSuccess = new Subject<void>();
   deleteLoadingSuccess = new Subject<void>();
 
-  private parentsPage = 0;
-  private parentsItemsPerPage = 10;
+  parentsSearch$ = new BehaviorSubject<{ propagate: boolean; value: string }>({propagate: false, value: ''});
+  parentsSearch = '';
 
   constructor(
     private readonly locationService: LocationService,
     private readonly router: Router,
+    @Inject(SEARCH_DEBOUNCE_TIME) time: number,
+    @Inject(SELECT_ITEMS_COUNT) private readonly selectCount: number,
   ) {
+    this.parentsSearch$.pipe(
+      filter(x => x.propagate),
+      debounceTime(time),
+    ).subscribe((x) => {
+      this.parentsSearch = x.value;
+      this.loadParents();
+    });
   }
 
   load(id: number) {
     this.id = id;
-    this.parentsPage = 0;
-    this.parents.set([]);
     this.loading.set(true);
     this.locationService.locationControllerGetOne(id)
       .subscribe({
@@ -47,7 +55,6 @@ export class LocationDetailService {
           if (newEntity.parent) {
             this.parents.set([newEntity.parent]);
           }
-          this.loadParents();
         },
         error: (err: HttpErrorResponse) => {
           if (err.status === 404) {
@@ -57,7 +64,6 @@ export class LocationDetailService {
           this.loadingError.set(true);
           this.loading.set(false);
           this.parents.set([]);
-          this.parentsPage = 0;
         }
       })
   }
@@ -103,22 +109,20 @@ export class LocationDetailService {
   loadParents() {
     this.parentsIsLoading.set(true);
     this.locationService
-      .locationControllerGetAll(this.parentsItemsPerPage, this.parentsPage * this.parentsItemsPerPage)
+      .locationControllerGetAll(this.selectCount, 0, undefined, undefined, this.parentsSearch)
       .subscribe({
         next: (parents) => {
           this.parentsIsLoading.set(false);
-          const newParents = [
-            ...this.parents(),
-            ...parents.filter(x => x.id != this.location()?.parentId && x.id != this.id),
-          ];
-          this.parents.set(newParents);
-          this.parentsPage += 1;
+          this.parents.set(parents.filter(x => x.id !== this.location()?.id));
         },
         error: () => {
           this.parentsIsLoading.set(false);
           this.parents.set([]);
-          this.parentsPage = 0;
         }
       });
+  }
+
+  onSearchParent(value: string): void {
+    this.parentsSearch$.next({propagate: true, value});
   }
 }
