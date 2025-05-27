@@ -1,10 +1,11 @@
-import {Injectable, signal} from '@angular/core';
-import {Subject} from 'rxjs';
+import {Inject, Injectable, signal} from '@angular/core';
+import {BehaviorSubject, debounceTime, filter, Subject} from 'rxjs';
 import {Router} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LocationService} from '@backend/api/location.service';
 import {LocationCreateDto} from '@backend/model/locationCreateDto';
 import {LocationDto} from '@backend/model/locationDto';
+import {SEARCH_DEBOUNCE_TIME, SELECT_ITEMS_COUNT} from '../../../../app.configs';
 
 @Injectable({
   providedIn: 'root'
@@ -16,10 +17,22 @@ export class LocationCreateService {
   parentsIsLoading = signal(false);
   parents = signal<LocationDto[]>([]);
 
-  private parentsPage = 0;
-  private parentsItemsPerPage = 10;
+  parentsSearch$ = new BehaviorSubject<{ propagate: boolean; value: string }>({propagate: false, value: ''});
+  parentsSearch = '';
 
-  constructor(private readonly locationService: LocationService, private readonly router: Router) {
+  constructor(
+    private readonly locationService: LocationService,
+    private readonly router: Router,
+    @Inject(SEARCH_DEBOUNCE_TIME) time: number,
+    @Inject(SELECT_ITEMS_COUNT) private readonly selectCount: number,
+  ) {
+    this.parentsSearch$.pipe(
+      filter(x => x.propagate),
+      debounceTime(time),
+    ).subscribe((x) => {
+      this.parentsSearch = x.value;
+      this.loadParents();
+    });
   }
 
   create(rawValue: LocationCreateDto) {
@@ -38,29 +51,23 @@ export class LocationCreateService {
       });
   }
 
-  loadParents(init = false) {
-    if (init) {
-      this.parentsPage = 0;
-      this.parents.set([]);
-    }
+  loadParents() {
     this.parentsIsLoading.set(true);
     this.locationService
-      .locationControllerGetAll(this.parentsItemsPerPage, this.parentsPage * this.parentsItemsPerPage)
+      .locationControllerGetAll(this.selectCount, 0, undefined, undefined, this.parentsSearch)
       .subscribe({
         next: (parents) => {
           this.parentsIsLoading.set(false);
-          const newParents = [
-            ...this.parents(),
-            ...parents,
-          ];
-          this.parents.set(newParents);
-          this.parentsPage += 1;
+          this.parents.set(parents);
         },
         error: () => {
           this.parentsIsLoading.set(false);
           this.parents.set([]);
-          this.parentsPage = 0;
         }
       });
+  }
+
+  onSearchParent(value: string): void {
+    this.parentsSearch$.next({propagate: true, value});
   }
 }
