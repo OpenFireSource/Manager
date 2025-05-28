@@ -16,7 +16,7 @@ export class LocationsService {
   locationsLoadError = signal(false);
   sortCol?: string;
   sortDir?: string;
-  searchTerm$ = new BehaviorSubject<{propagate: boolean, value: string}>({propagate: true, value: ''});
+  searchTerm$ = new BehaviorSubject<{ propagate: boolean, value: string }>({propagate: true, value: ''});
   private searchTerm?: string;
 
 
@@ -38,9 +38,15 @@ export class LocationsService {
 
   load() {
     this.locationsLoading.set(true);
-    this.locationService.locationControllerGetCount(this.searchTerm)
+    this.locationService.locationControllerGetCount({searchTerm: this.searchTerm})
       .subscribe((count) => this.total.set(count.count));
-    this.locationService.locationControllerGetAll(this.itemsPerPage, (this.page - 1) * this.itemsPerPage, this.sortCol, this.sortDir, this.searchTerm)
+    this.locationService.locationControllerGetAll({
+      limit: this.itemsPerPage,
+      offset: (this.page - 1) * this.itemsPerPage,
+      sortCol: this.sortCol,
+      sortDir: this.sortDir,
+      searchTerm: this.searchTerm
+    })
       .subscribe({
         next: (users) => {
           this.locations.set(users);

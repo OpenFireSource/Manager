@@ -20,7 +20,10 @@ export class UsersService {
     this.usersLoading.set(true);
     this.userService.userControllerGetCount()
       .subscribe((count) => this.total.set(count.count));
-    this.userService.userControllerGetUsers(this.itemsPerPage(), this.page() * this.itemsPerPage())
+    this.userService.userControllerGetUsers({
+      limit: this.itemsPerPage(),
+      offset: this.page() * this.itemsPerPage(),
+    })
       .subscribe({
         next: (users) => {
           this.users.set(users);

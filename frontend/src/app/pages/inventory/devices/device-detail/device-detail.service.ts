@@ -83,7 +83,7 @@ export class DeviceDetailService {
     this.deviceGroups.set([]);
     this.locations.set([]);
     this.loading.set(true);
-    this.apiService.deviceControllerGetOne(id)
+    this.apiService.deviceControllerGetOne({id})
       .subscribe({
         next: (newEntity) => {
           this.entity.set(newEntity);
@@ -114,7 +114,7 @@ export class DeviceDetailService {
     const entity = this.entity();
     if (entity) {
       this.updateLoading.set(true);
-      this.apiService.deviceControllerUpdate(entity.id, rawValue)
+      this.apiService.deviceControllerUpdate({id: entity.id, deviceUpdateDto: rawValue})
         .subscribe({
           next: (newEntity) => {
             this.updateLoading.set(false);
@@ -133,7 +133,7 @@ export class DeviceDetailService {
     const entity = this.entity();
     if (entity) {
       this.deleteLoading.set(true);
-      this.apiService.deviceControllerDelete(entity.id)
+      this.apiService.deviceControllerDelete({id: entity.id})
         .subscribe({
           next: () => {
             this.deleteLoading.set(false);
@@ -151,7 +151,10 @@ export class DeviceDetailService {
   loadMoreTypes() {
     this.deviceTypesIsLoading.set(true);
     this.apiDeviceTypesService
-      .deviceTypeControllerGetAll(this.selectCount, 0, undefined, undefined, this.deviceTypesSearch)
+      .deviceTypeControllerGetAll({
+        limit: this.selectCount,
+        searchTerm: this.deviceTypesSearch,
+      })
       .subscribe({
         next: (deviceTypes) => {
           this.deviceTypesIsLoading.set(false);
@@ -167,7 +170,10 @@ export class DeviceDetailService {
   loadMoreGroups() {
     this.deviceGroupsIsLoading.set(true);
     this.apiDeviceGroupsService
-      .deviceGroupControllerGetAll(this.selectCount, 0, undefined, undefined, this.deviceGroupsSearch)
+      .deviceGroupControllerGetAll({
+        limit: this.selectCount,
+        searchTerm: this.deviceGroupsSearch,
+      })
       .subscribe({
         next: (deviceGroups) => {
           this.deviceGroupsIsLoading.set(false);
@@ -183,7 +189,10 @@ export class DeviceDetailService {
   loadMoreLocations() {
     this.locationsIsLoading.set(true);
     this.apiLocationsService
-      .locationControllerGetAll(this.selectCount, 0, undefined, undefined, this.locationSearch)
+      .locationControllerGetAll({
+        limit: this.selectCount,
+        searchTerm: this.locationSearch,
+      })
       .subscribe({
         next: (locations) => {
           this.locationsIsLoading.set(false);

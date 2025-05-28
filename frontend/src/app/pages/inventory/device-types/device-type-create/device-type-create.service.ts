@@ -21,7 +21,7 @@ export class DeviceTypeCreateService {
 
   create(rawValue: DeviceTypeCreateDto) {
     this.createLoading.set(true);
-    this.apiService.deviceTypeControllerCreate(rawValue)
+    this.apiService.deviceTypeControllerCreate({deviceTypeCreateDto: rawValue})
       .subscribe({
         next: (entity) => {
           this.createLoading.set(false);

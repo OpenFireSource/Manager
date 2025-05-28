@@ -20,7 +20,10 @@ export class GroupsService {
     this.groupsLoading.set(true);
     this.groupService.groupControllerGetCount()
       .subscribe((count) => this.total.set(count.count));
-    this.groupService.groupControllerGetGroups(this.itemsPerPage(), this.page() * this.itemsPerPage())
+    this.groupService.groupControllerGetGroups({
+      limit: this.itemsPerPage(),
+      offset: this.page() * this.itemsPerPage(),
+    })
       .subscribe({
         next: (groups) => {
           this.groups.set(groups);

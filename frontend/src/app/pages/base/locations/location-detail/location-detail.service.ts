@@ -46,7 +46,7 @@ export class LocationDetailService {
   load(id: number) {
     this.id = id;
     this.loading.set(true);
-    this.locationService.locationControllerGetOne(id)
+    this.locationService.locationControllerGetOne({id})
       .subscribe({
         next: (newEntity) => {
           this.location.set(newEntity);
@@ -72,7 +72,7 @@ export class LocationDetailService {
     const entity = this.location();
     if (entity) {
       this.updateLoading.set(true);
-      this.locationService.locationControllerUpdate(entity.id, rawValue)
+      this.locationService.locationControllerUpdate({id: entity.id, locationUpdateDto: rawValue})
         .subscribe({
           next: (newEntity) => {
             this.updateLoading.set(false);
@@ -91,7 +91,7 @@ export class LocationDetailService {
     const entity = this.location();
     if (entity) {
       this.deleteLoading.set(true);
-      this.locationService.locationControllerDelete(entity.id)
+      this.locationService.locationControllerDelete({id: entity.id})
         .subscribe({
           next: () => {
             this.deleteLoading.set(false);
@@ -109,7 +109,10 @@ export class LocationDetailService {
   loadParents() {
     this.parentsIsLoading.set(true);
     this.locationService
-      .locationControllerGetAll(this.selectCount, 0, undefined, undefined, this.parentsSearch)
+      .locationControllerGetAll({
+        searchTerm: this.parentsSearch,
+        limit: this.selectCount,
+      })
       .subscribe({
         next: (parents) => {
           this.parentsIsLoading.set(false);
