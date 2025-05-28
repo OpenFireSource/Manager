@@ -36,9 +36,15 @@ export class DeviceTypesService {
 
   load() {
     this.entitiesLoading.set(true);
-    this.apiService.deviceTypeControllerGetCount(this.searchTerm)
+    this.apiService.deviceTypeControllerGetCount({searchTerm: this.searchTerm})
       .subscribe((count) => this.total.set(count.count));
-    this.apiService.deviceTypeControllerGetAll(this.itemsPerPage, (this.page - 1) * this.itemsPerPage, this.sortCol, this.sortDir, this.searchTerm)
+    this.apiService.deviceTypeControllerGetAll({
+      limit: this.itemsPerPage,
+      offset: (this.page - 1) * this.itemsPerPage,
+      sortCol: this.sortCol,
+      sortDir: this.sortDir,
+      searchTerm: this.searchTerm
+    })
       .subscribe({
         next: (users) => {
           this.entities.set(users);

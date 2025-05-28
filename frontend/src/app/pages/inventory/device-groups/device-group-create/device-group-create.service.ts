@@ -21,7 +21,7 @@ export class DeviceGroupCreateService {
 
   create(rawValue: DeviceGroupCreateDto) {
     this.createLoading.set(true);
-    this.apiService.deviceGroupControllerCreate(rawValue)
+    this.apiService.deviceGroupControllerCreate({deviceGroupCreateDto: rawValue})
       .subscribe({
         next: (entity) => {
           this.createLoading.set(false);

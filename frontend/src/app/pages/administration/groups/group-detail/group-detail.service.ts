@@ -40,10 +40,10 @@ export class GroupDetailService {
     this.usersTransferLoading.set(true);
     this.rolesTransferLoading.set(true);
 
-    this.groupService.groupControllerGetGroup(id)
+    this.groupService.groupControllerGetGroup({id})
       .pipe(
         tap((group) => this.group.set(group)),
-        mergeMap(() => this.groupService.groupControllerGetMembers(id)),
+        mergeMap(() => this.groupService.groupControllerGetMembers({id})),
         tap((data) => this.users.set(data.users.map((user) => ({
           user,
           member: data.members.some(x => x.id === user.id)
@@ -82,7 +82,7 @@ export class GroupDetailService {
     const group = this.group();
     if (group) {
       this.updateLoading.set(true);
-      this.groupService.groupControllerUpdateGroup(group.id, rawValue)
+      this.groupService.groupControllerUpdateGroup({id: group.id, groupUpdateDto: rawValue})
         .subscribe({
           next: (group) => {
             this.updateLoading.set(false);
@@ -101,7 +101,7 @@ export class GroupDetailService {
     const group = this.group();
     if (group) {
       this.deleteLoading.set(true);
-      this.groupService.groupControllerDeleteGroup(group.id)
+      this.groupService.groupControllerDeleteGroup({id: group.id})
         .subscribe({
           next: () => {
             this.deleteLoading.set(false);
@@ -120,13 +120,13 @@ export class GroupDetailService {
     this.usersTransferLoading.set(true);
     from([users]).pipe(
       mergeMap((users) =>
-        forkJoin(users.map((user) => add ?
-          this.groupService.groupControllerAddMemberToGroup(this.group()!.id, user) :
-          this.groupService.groupControllerRemoveMemberFromGroup(this.group()!.id, user)))
+        forkJoin(users.map((userId) => add ?
+          this.groupService.groupControllerAddMemberToGroup({id: this.group()!.id, userId}) :
+          this.groupService.groupControllerRemoveMemberFromGroup({id: this.group()!.id, userId})))
       ),
-      mergeMap(() => this.groupService.groupControllerGetGroup(this.group()!.id)),
+      mergeMap(() => this.groupService.groupControllerGetGroup({id: this.group()!.id})),
       tap((group) => this.group.set(group)),
-      mergeMap(() => this.groupService.groupControllerGetMembers(this.group()!.id)),
+      mergeMap(() => this.groupService.groupControllerGetMembers({id: this.group()!.id})),
       tap((data) => this.users.set(data.users.map((user) => ({
         user,
         member: data.members.some(x => x.id === user.id)
@@ -148,10 +148,10 @@ export class GroupDetailService {
     from([roles]).pipe(
       mergeMap((roles) =>
         forkJoin(roles.map((role) => add ?
-          this.groupService.groupControllerAddRoleToGroup(this.group()!.id, role) :
-          this.groupService.groupControllerRemoveRoleFromGroup(this.group()!.id, role)))
+          this.groupService.groupControllerAddRoleToGroup({id: this.group()!.id, role}) :
+          this.groupService.groupControllerRemoveRoleFromGroup({id: this.group()!.id, role})))
       ),
-      mergeMap(() => this.groupService.groupControllerGetGroup(this.group()!.id)),
+      mergeMap(() => this.groupService.groupControllerGetGroup({id: this.group()!.id})),
       tap((group) => this.group.set(group)),
       mergeMap(() => this.groupService.groupControllerGetRoles()),
       tap((data) => this.roles.set(data.map((role) => ({

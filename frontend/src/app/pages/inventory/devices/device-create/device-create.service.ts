@@ -45,31 +45,31 @@ export class DeviceCreateService {
     @Inject(SELECT_ITEMS_COUNT) private readonly selectCount: number,
   ) {
     this.locationSearch$.pipe(
-        filter(x => x.propagate),
-        debounceTime(time),
-      ).subscribe((x) => {
-        this.locationSearch = x.value;
-        this.loadMoreLocations();
-      });
-      this.deviceTypesSearch$.pipe(
-        filter(x => x.propagate),
-        debounceTime(time),
-      ).subscribe((x) => {
-        this.deviceTypesSearch = x.value;
-        this.loadMoreTypes();
-      });
-      this.deviceGroupsSearch$.pipe(
-        filter(x => x.propagate),
-        debounceTime(time),
-      ).subscribe((x) => {
-        this.deviceGroupsSearch = x.value;
+      filter(x => x.propagate),
+      debounceTime(time),
+    ).subscribe((x) => {
+      this.locationSearch = x.value;
+      this.loadMoreLocations();
+    });
+    this.deviceTypesSearch$.pipe(
+      filter(x => x.propagate),
+      debounceTime(time),
+    ).subscribe((x) => {
+      this.deviceTypesSearch = x.value;
+      this.loadMoreTypes();
+    });
+    this.deviceGroupsSearch$.pipe(
+      filter(x => x.propagate),
+      debounceTime(time),
+    ).subscribe((x) => {
+      this.deviceGroupsSearch = x.value;
       this.loadMoreGroups();
     });
   }
 
   create(rawValue: DeviceCreateDto) {
     this.createLoading.set(true);
-    this.apiService.deviceControllerCreate(rawValue)
+    this.apiService.deviceControllerCreate({deviceCreateDto: rawValue})
       .subscribe({
         next: (entity) => {
           this.createLoading.set(false);
@@ -87,7 +87,10 @@ export class DeviceCreateService {
 
     this.deviceTypesIsLoading.set(true);
     this.apiDeviceTypesService
-      .deviceTypeControllerGetAll(this.selectCount, 0, undefined, undefined, this.deviceTypesSearch)
+      .deviceTypeControllerGetAll({
+        limit: this.selectCount,
+        searchTerm: this.deviceTypesSearch
+      })
       .subscribe({
         next: (deviceTypes) => {
           this.deviceTypesIsLoading.set(false);
@@ -103,7 +106,10 @@ export class DeviceCreateService {
   loadMoreGroups() {
     this.deviceGroupsIsLoading.set(true);
     this.apiDeviceGroupsService
-      .deviceGroupControllerGetAll(this.selectCount, 0, undefined, undefined, this.deviceGroupsSearch)
+      .deviceGroupControllerGetAll({
+        limit: this.selectCount,
+        searchTerm: this.deviceGroupsSearch,
+      })
       .subscribe({
         next: (deviceGroups) => {
           this.deviceGroupsIsLoading.set(false);
@@ -119,7 +125,10 @@ export class DeviceCreateService {
   loadMoreLocations() {
     this.locationsIsLoading.set(true);
     this.apiLocationsService
-      .locationControllerGetAll(this.selectCount, 0, undefined, undefined, this.locationSearch)
+      .locationControllerGetAll({
+        limit: this.selectCount,
+        searchTerm: this.locationSearch
+      })
       .subscribe({
         next: (locations) => {
           this.locationsIsLoading.set(false);

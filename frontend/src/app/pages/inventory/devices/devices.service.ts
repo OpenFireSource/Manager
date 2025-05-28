@@ -37,10 +37,15 @@ export class DevicesService {
 
   load() {
     this.entitiesLoading.set(true);
-    this.apiService.deviceControllerGetCount(this.searchTerm)
+    this.apiService.deviceControllerGetCount({searchTerm: this.searchTerm})
       .subscribe((count) => this.total.set(count.count));
-    this.apiService.deviceControllerGetAll(this.itemsPerPage, (this.page - 1) * this.itemsPerPage, undefined,
-      undefined, undefined, this.sortCol, this.sortDir, this.searchTerm)
+    this.apiService.deviceControllerGetAll({
+      limit: this.itemsPerPage,
+      offset: (this.page - 1) * this.itemsPerPage,
+      searchTerm: this.searchTerm,
+      sortCol: this.sortCol,
+      sortDir: this.sortDir,
+    })
       .subscribe({
         next: (entities) => {
           this.entities.set(entities);

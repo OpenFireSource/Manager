@@ -18,7 +18,7 @@ export class UserCreateService {
 
   create(rawValue: UserCreateDto) {
     this.createLoading.set(true);
-    this.userService.userControllerCreateUser(rawValue)
+    this.userService.userControllerCreateUser({userCreateDto: rawValue})
       .subscribe({
         next: (user) => {
           this.createLoading.set(false);

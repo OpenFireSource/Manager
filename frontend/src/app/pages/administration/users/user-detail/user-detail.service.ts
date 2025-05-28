@@ -34,10 +34,10 @@ export class UserDetailService {
 
   load(id: string) {
     this.loading.set(true);
-    this.userService.userControllerGetUser(id)
+    this.userService.userControllerGetUser({id})
       .pipe(
         tap((user) => this.user.set(user)),
-        mergeMap(() => this.userService.userControllerGetGroups(id)),
+        mergeMap(() => this.userService.userControllerGetGroups({id})),
         tap((data) => this.groups.set(data.groups.map((group) => ({
           group,
           member: data.members.some(x => x.id === group.id)
@@ -63,7 +63,7 @@ export class UserDetailService {
     const user = this.user();
     if (user) {
       this.updateLoading.set(true);
-      this.userService.userControllerUpdateUser(user.id, rawValue)
+      this.userService.userControllerUpdateUser({id: user.id, userUpdateDto: rawValue})
         .subscribe({
           next: (user) => {
             this.updateLoading.set(false);
@@ -82,13 +82,13 @@ export class UserDetailService {
     this.groupsTransferLoading.set(true);
     from([groups]).pipe(
       mergeMap((users) =>
-        forkJoin(users.map((group) => add ?
-          this.userService.userControllerAddUserToGroup(this.user()!.id, group) :
-          this.userService.userControllerRemoveUserFromGroup(this.user()!.id, group)))
+        forkJoin(users.map((groupId) => add ?
+          this.userService.userControllerAddUserToGroup({id: this.user()!.id, groupId}) :
+          this.userService.userControllerRemoveUserFromGroup({id: this.user()!.id, groupId})))
       ),
-      mergeMap(() => this.userService.userControllerGetUser(this.user()!.id)),
+      mergeMap(() => this.userService.userControllerGetUser({id: this.user()!.id})),
       tap((user) => this.user.set(user)),
-      mergeMap(() => this.userService.userControllerGetGroups(this.user()!.id)),
+      mergeMap(() => this.userService.userControllerGetGroups({id: this.user()!.id})),
       tap((data) => this.groups.set(data.groups.map((group) => ({
         group,
         member: data.members.some(x => x.id === group.id)
@@ -109,7 +109,7 @@ export class UserDetailService {
     const user = this.user();
     if (user) {
       this.deleteLoading.set(true);
-      this.userService.userControllerDeleteUser(user.id)
+      this.userService.userControllerDeleteUser({id: user.id})
         .subscribe({
           next: () => {
             this.deleteLoading.set(false);

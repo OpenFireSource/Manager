@@ -37,7 +37,7 @@ export class LocationCreateService {
 
   create(rawValue: LocationCreateDto) {
     this.createLoading.set(true);
-    this.locationService.locationControllerCreate(rawValue)
+    this.locationService.locationControllerCreate({locationCreateDto: rawValue})
       .subscribe({
         next: (entity) => {
           this.createLoading.set(false);
@@ -54,7 +54,10 @@ export class LocationCreateService {
   loadParents() {
     this.parentsIsLoading.set(true);
     this.locationService
-      .locationControllerGetAll(this.selectCount, 0, undefined, undefined, this.parentsSearch)
+      .locationControllerGetAll({
+        searchTerm: this.parentsSearch,
+        limit: this.selectCount,
+      })
       .subscribe({
         next: (parents) => {
           this.parentsIsLoading.set(false);

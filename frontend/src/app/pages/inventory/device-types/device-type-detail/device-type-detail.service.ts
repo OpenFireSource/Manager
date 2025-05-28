@@ -31,7 +31,7 @@ export class DeviceTypeDetailService {
   load(id: number) {
     this.id = id;
     this.loading.set(true);
-    this.locationService.deviceTypeControllerGetOne(id)
+    this.locationService.deviceTypeControllerGetOne({id})
       .subscribe({
         next: (newEntity) => {
           this.entity.set(newEntity);
@@ -53,7 +53,7 @@ export class DeviceTypeDetailService {
     const entity = this.entity();
     if (entity) {
       this.updateLoading.set(true);
-      this.locationService.deviceTypeControllerUpdate(entity.id, rawValue)
+      this.locationService.deviceTypeControllerUpdate({id: entity.id, deviceTypeUpdateDto: rawValue})
         .subscribe({
           next: (newEntity) => {
             this.updateLoading.set(false);
@@ -72,7 +72,7 @@ export class DeviceTypeDetailService {
     const entity = this.entity();
     if (entity) {
       this.deleteLoading.set(true);
-      this.locationService.deviceTypeControllerDelete(entity.id)
+      this.locationService.deviceTypeControllerDelete({id: entity.id})
         .subscribe({
           next: () => {
             this.deleteLoading.set(false);

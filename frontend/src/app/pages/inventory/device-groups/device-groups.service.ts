@@ -16,7 +16,7 @@ export class DeviceGroupsService {
   entitiesLoadError = signal(false);
   sortCol?: string;
   sortDir?: string;
-  searchTerm$ = new BehaviorSubject<{propagate: boolean, value: string}>({propagate: true, value: ''});
+  searchTerm$ = new BehaviorSubject<{ propagate: boolean, value: string }>({propagate: true, value: ''});
   private searchTerm?: string;
 
   constructor(private readonly apiService: DeviceGroupService,
@@ -36,9 +36,15 @@ export class DeviceGroupsService {
 
   load() {
     this.entitiesLoading.set(true);
-    this.apiService.deviceGroupControllerGetCount(this.searchTerm)
+    this.apiService.deviceGroupControllerGetCount({searchTerm: this.searchTerm})
       .subscribe((count) => this.total.set(count.count));
-    this.apiService.deviceGroupControllerGetAll(this.itemsPerPage, (this.page - 1) * this.itemsPerPage, this.sortCol, this.sortDir, this.searchTerm)
+    this.apiService.deviceGroupControllerGetAll({
+      limit: this.itemsPerPage,
+      offset: (this.page - 1) * this.itemsPerPage,
+      sortCol: this.sortCol,
+      sortDir: this.sortDir,
+      searchTerm: this.searchTerm
+    })
       .subscribe({
         next: (users) => {
           this.entities.set(users);

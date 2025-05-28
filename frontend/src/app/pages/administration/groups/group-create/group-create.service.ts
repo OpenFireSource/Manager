@@ -18,7 +18,7 @@ export class GroupCreateService {
 
   create(rawValue: GroupCreateDto): void {
     this.createLoading.set(true);
-    this.groupService.groupControllerCreateGroup(rawValue)
+    this.groupService.groupControllerCreateGroup({groupCreateDto: rawValue})
       .subscribe({
         next: (group) => {
           this.createLoading.set(false);
