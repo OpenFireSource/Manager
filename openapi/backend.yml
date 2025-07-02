@@ -1253,6 +1253,364 @@ paths:
       summary: ''
       tags:
         - Location
+  /api/consumable-group/count:
+    get:
+      description: Gibt die Anzahl aller Verbrauchsgüter-Gruppen zurück
+      operationId: ConsumableGroupController_getCount
+      parameters:
+        - name: searchTerm
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - ConsumableGroup
+  /api/consumable-group:
+    get:
+      description: Gibt alle Verbrauchsgüter-Gruppen zurück
+      operationId: ConsumableGroupController_getAll
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: offset
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: sortCol
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: sortDir
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: searchTerm
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConsumableGroupDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - ConsumableGroup
+    post:
+      description: Erstellt eine Verbrauchsgüter-Gruppe
+      operationId: ConsumableGroupController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumableGroupCreateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumableGroupDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - ConsumableGroup
+  /api/consumable-group/{id}:
+    get:
+      description: Gibt eine Verbrauchsgüter-Gruppe zurück
+      operationId: ConsumableGroupController_getOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumableGroupDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - ConsumableGroup
+    put:
+      description: Aktualisiert eine Verbrauchsgüter-Gruppe
+      operationId: ConsumableGroupController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumableGroupUpdateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumableGroupDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - ConsumableGroup
+    delete:
+      description: Löscht eine Verbrauchsgüter-Gruppe
+      operationId: ConsumableGroupController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - ConsumableGroup
+  /api/consumable/count:
+    get:
+      description: Gibt die Anzahl aller Verbrauchsgüter zurück
+      operationId: ConsumableController_getCount
+      parameters:
+        - name: searchTerm
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Consumable
+  /api/consumable:
+    get:
+      description: Gibt alle Verbrauchsgüter zurück
+      operationId: ConsumableController_getAll
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: offset
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: groupId
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: locationId
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: sortCol
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: sortDir
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: searchTerm
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConsumableDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Consumable
+    post:
+      description: Erstellt ein Verbrauchsgut
+      operationId: ConsumableController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumableCreateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumableDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Consumable
+  /api/consumable/{id}:
+    get:
+      description: Gibt ein Verbrauchsgut zurück
+      operationId: ConsumableController_getOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumableDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Consumable
+    put:
+      description: Aktualisiert ein Verbrauchsgut
+      operationId: ConsumableController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumableUpdateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumableDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Consumable
+    delete:
+      description: Löscht ein Verbrauchsgut
+      operationId: ConsumableController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Consumable
 info:
   title: OFS-Manager
   description: ''
@@ -1519,6 +1877,115 @@ components:
           nullable: true
       required:
         - name
+    ConsumableGroupDto:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        notice:
+          type: string
+          nullable: true
+      required:
+        - id
+        - name
+    ConsumableGroupCreateDto:
+      type: object
+      properties:
+        name:
+          type: string
+        notice:
+          type: string
+          nullable: true
+      required:
+        - name
+    ConsumableGroupUpdateDto:
+      type: object
+      properties:
+        name:
+          type: string
+        notice:
+          type: string
+          nullable: true
+      required:
+        - name
+    ConsumableDto:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+          nullable: true
+        notice:
+          type: string
+          nullable: true
+        quantity:
+          type: number
+        expirationDate:
+          type: string
+          format: date
+          nullable: true
+        groupId:
+          type: number
+          nullable: true
+        group:
+          $ref: '#/components/schemas/ConsumableGroupDto'
+          nullable: true
+        locationId:
+          type: number
+          nullable: true
+        location:
+          $ref: '#/components/schemas/LocationDto'
+          nullable: true
+      required:
+        - id
+        - quantity
+    ConsumableCreateDto:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        notice:
+          type: string
+          nullable: true
+        quantity:
+          type: number
+        expirationDate:
+          type: string
+          format: date
+          nullable: true
+        groupId:
+          type: number
+          nullable: true
+        locationId:
+          type: number
+          nullable: true
+      required:
+        - quantity
+    ConsumableUpdateDto:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        notice:
+          type: string
+          nullable: true
+        quantity:
+          type: number
+        expirationDate:
+          type: string
+          format: date
+          nullable: true
+        groupId:
+          type: number
+          nullable: true
+        locationId:
+          type: number
+          nullable: true
     LocationDto:
       type: object
       properties:

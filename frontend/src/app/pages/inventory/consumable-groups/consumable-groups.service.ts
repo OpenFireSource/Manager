@@ -1,6 +1,6 @@
 import {Inject, Injectable, signal} from '@angular/core';
-import {ConsumableGroupDto} from '../../../shared/models/consumable.models';
-import {ConsumableGroupApiService} from '../../../shared/services/consumable-group-api.service';
+import {ConsumableGroupDto} from '@backend/model/consumableGroupDto';
+import {ConsumableGroupService} from '@backend/api/consumableGroup.service';
 import {BehaviorSubject, debounceTime, distinctUntilChanged, filter} from 'rxjs';
 import {SEARCH_DEBOUNCE_TIME} from '../../../app.configs';
 
@@ -19,7 +19,7 @@ export class ConsumableGroupsService {
   searchTerm$ = new BehaviorSubject<{ propagate: boolean, value: string }>({propagate: true, value: ''});
   private searchTerm?: string;
 
-  constructor(private readonly apiService: ConsumableGroupApiService,
+  constructor(private readonly apiService: ConsumableGroupService,
               @Inject(SEARCH_DEBOUNCE_TIME) time: number,
   ) {
     this.searchTerm$
@@ -36,9 +36,9 @@ export class ConsumableGroupsService {
 
   load() {
     this.entitiesLoading.set(true);
-    this.apiService.getCount(this.searchTerm)
+    this.apiService.consumableGroupControllerGetCount({searchTerm: this.searchTerm})
       .subscribe((count) => this.total.set(count.count));
-    this.apiService.getAll({
+    this.apiService.consumableGroupControllerGetAll({
       limit: this.itemsPerPage,
       offset: (this.page - 1) * this.itemsPerPage,
       sortCol: this.sortCol,
