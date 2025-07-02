@@ -8,6 +8,7 @@ import {
   TreeParent,
 } from 'typeorm';
 import { DeviceEntity } from '../../inventory/device/device.entity';
+import { ConsumableEntity } from '../../inventory/consumable/consumable.entity';
 
 export enum LocationType {
   NONE = 0, // Keine Angabe
@@ -57,4 +58,7 @@ export class LocationEntity {
 
   @OneToMany(() => DeviceEntity, (x) => x.location)
   devices: DeviceEntity[];
+
+  @OneToMany(() => ConsumableEntity, (x) => x.location)
+  consumables: ConsumableEntity[];
 }

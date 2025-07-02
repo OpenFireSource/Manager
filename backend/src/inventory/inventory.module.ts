@@ -12,6 +12,14 @@ import { DeviceController } from './device/device.controller';
 import { DeviceService } from './device/device.service';
 import { DeviceDbService } from './device/device-db.service';
 import { DeviceEntity } from './device/device.entity';
+import { ConsumableGroupController } from './consumable-group/consumable-group.controller';
+import { ConsumableGroupService } from './consumable-group/consumable-group.service';
+import { ConsumableGroupDbService } from './consumable-group/consumable-group-db.service';
+import { ConsumableGroupEntity } from './consumable-group/consumable-group.entity';
+import { ConsumableController } from './consumable/consumable.controller';
+import { ConsumableService } from './consumable/consumable.service';
+import { ConsumableDbService } from './consumable/consumable-db.service';
+import { ConsumableEntity } from './consumable/consumable.entity';
 import { DeviceImageEntity } from './device/device-image.entity';
 
 @Module({
@@ -20,10 +28,18 @@ import { DeviceImageEntity } from './device/device-image.entity';
       DeviceTypeEntity,
       DeviceGroupEntity,
       DeviceEntity,
+      ConsumableGroupEntity,
+      ConsumableEntity,
       DeviceImageEntity,
     ]),
   ],
-  controllers: [DeviceTypeController, DeviceGroupController, DeviceController],
+  controllers: [
+    DeviceTypeController,
+    DeviceGroupController,
+    DeviceController,
+    ConsumableGroupController,
+    ConsumableController,
+  ],
   providers: [
     DeviceTypeService,
     DeviceTypeDbService,
@@ -31,6 +47,10 @@ import { DeviceImageEntity } from './device/device-image.entity';
     DeviceGroupDbService,
     DeviceService,
     DeviceDbService,
+    ConsumableGroupService,
+    ConsumableGroupDbService,
+    ConsumableService,
+    ConsumableDbService,
   ],
   exports: [DeviceService],
 })
