@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { IsIn, IsInt, IsOptional, IsPositive, IsString } from 'class-validator';
 
 export class ConsumableGetQueryDto {
@@ -8,11 +9,17 @@ export class ConsumableGetQueryDto {
   @IsPositive()
   groupId?: number;
 
-  @ApiProperty({ required: false, nullable: true })
+  @ApiProperty({ required: false, nullable: true, type: [Number] })
   @IsOptional()
-  @IsInt()
-  @IsPositive()
-  locationId?: number;
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return value.split(',').map(id => parseInt(id, 10));
+    }
+    return value;
+  })
+  @IsInt({ each: true })
+  @IsPositive({ each: true })
+  locationIds?: number[];
 
   @ApiProperty({ required: false })
   @IsOptional()
@@ -23,7 +30,6 @@ export class ConsumableGetQueryDto {
     'quantity',
     'expirationDate',
     'group.name',
-    'location.name',
   ])
   sortCol?: string;
 

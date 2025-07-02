@@ -20,6 +20,7 @@ import { ConsumableController } from './consumable/consumable.controller';
 import { ConsumableService } from './consumable/consumable.service';
 import { ConsumableDbService } from './consumable/consumable-db.service';
 import { ConsumableEntity } from './consumable/consumable.entity';
+import { LocationEntity } from '../base/location/location.entity';
 import { DeviceImageEntity } from './device/device-image.entity';
 
 @Module({
@@ -30,6 +31,7 @@ import { DeviceImageEntity } from './device/device-image.entity';
       DeviceEntity,
       ConsumableGroupEntity,
       ConsumableEntity,
+      LocationEntity,
       DeviceImageEntity,
     ]),
   ],

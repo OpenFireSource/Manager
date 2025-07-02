@@ -43,7 +43,7 @@ export class ConsumableController {
       pagination.offset,
       pagination.limit,
       querys.groupId,
-      querys.locationId,
+      querys.locationIds,
       querys.sortCol,
       querys.sortDir,
       search.searchTerm,

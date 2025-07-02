@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ConsumableGroupEntity } from '../consumable-group/consumable-group.entity';
 import { LocationEntity } from '../../base/location/location.entity';
 
@@ -25,12 +25,7 @@ export class ConsumableEntity {
   })
   group?: ConsumableGroupEntity;
 
-  @Column({ nullable: true })
-  locationId?: number;
-  @ManyToOne(() => LocationEntity, (x) => x.consumables, {
-    nullable: true,
-    onDelete: 'SET NULL',
-    onUpdate: 'CASCADE',
-  })
-  location?: LocationEntity;
+  @ManyToMany(() => LocationEntity, (location) => location.consumables)
+  @JoinTable()
+  locations?: LocationEntity[];
 }

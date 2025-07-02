@@ -63,12 +63,12 @@ export class ConsumableDto {
   @ApiProperty({ required: false, nullable: true })
   @Expose()
   @IsOptional()
-  @IsInt()
-  @IsPositive()
-  locationId?: number;
+  @IsInt({ each: true })
+  @IsPositive({ each: true })
+  locationIds?: number[];
 
-  @ApiProperty({ required: false, nullable: true })
+  @ApiProperty({ required: false, nullable: true, type: [LocationDto] })
   @Expose()
   @Type(() => LocationDto)
-  location?: LocationDto;
+  locations?: LocationDto[];
 }

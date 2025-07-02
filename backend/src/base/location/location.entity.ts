@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   Tree,
@@ -59,6 +60,6 @@ export class LocationEntity {
   @OneToMany(() => DeviceEntity, (x) => x.location)
   devices: DeviceEntity[];
 
-  @OneToMany(() => ConsumableEntity, (x) => x.location)
+  @ManyToMany(() => ConsumableEntity, (consumable) => consumable.locations)
   consumables: ConsumableEntity[];
 }

@@ -32,7 +32,7 @@ export class ConsumableDbService {
     offset?: number,
     limit?: number,
     groupId?: number,
-    locationId?: number,
+    locationIds?: number[],
     sortCol?: string,
     sortDir?: 'ASC' | 'DESC',
     searchTerm?: string,
@@ -42,7 +42,7 @@ export class ConsumableDbService {
       .limit(limit ?? 100)
       .offset(offset ?? 0)
       .leftJoinAndSelect('c.group', 'cg')
-      .leftJoinAndSelect('c.location', 'l')
+      .leftJoinAndSelect('c.locations', 'l')
       .leftJoinAndSelect('l.parent', 'lp');
 
     if (searchTerm) {
@@ -53,8 +53,8 @@ export class ConsumableDbService {
       query = query.andWhere('c.groupId = :groupId', { groupId });
     }
 
-    if (locationId) {
-      query = query.andWhere('c.locationId = :locationId', { locationId });
+    if (locationIds && locationIds.length > 0) {
+      query = query.andWhere('l.id IN (:...locationIds)', { locationIds });
     }
 
     if (sortCol) {
@@ -71,7 +71,7 @@ export class ConsumableDbService {
       .createQueryBuilder('c')
       .where('c.id = :id', { id })
       .leftJoinAndSelect('c.group', 'cg')
-      .leftJoinAndSelect('c.location', 'l')
+      .leftJoinAndSelect('c.locations', 'l')
       .leftJoinAndSelect('l.parent', 'lp');
 
     return query.getOne();

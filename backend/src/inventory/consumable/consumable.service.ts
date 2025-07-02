@@ -3,8 +3,12 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import { CountDto } from '../../shared/dto/count.dto';
+import { LocationEntity } from '../../base/location/location.entity';
+import { ConsumableEntity } from './consumable.entity';
 import { ConsumableDbService } from './consumable-db.service';
 import { ConsumableDto } from './dto/consumable.dto';
 import { ConsumableCreateDto } from './dto/consumable-create.dto';
@@ -12,13 +16,19 @@ import { ConsumableUpdateDto } from './dto/consumable-update.dto';
 
 @Injectable()
 export class ConsumableService {
-  constructor(private readonly dbService: ConsumableDbService) {}
+  constructor(
+    private readonly dbService: ConsumableDbService,
+    @InjectRepository(ConsumableEntity)
+    private readonly repo: Repository<ConsumableEntity>,
+    @InjectRepository(LocationEntity)
+    private readonly locationRepo: Repository<LocationEntity>,
+  ) {}
 
   public async findAll(
     offset?: number,
     limit?: number,
     groupId?: number,
-    locationId?: number,
+    locationIds?: number[],
     sortCol?: string,
     sortDir?: 'ASC' | 'DESC',
     searchTerm?: string,
@@ -27,7 +37,7 @@ export class ConsumableService {
       offset,
       limit,
       groupId,
-      locationId,
+      locationIds,
       sortCol,
       sortDir,
       searchTerm,
@@ -55,7 +65,24 @@ export class ConsumableService {
   }
 
   public async create(body: ConsumableCreateDto) {
-    const newEntity = await this.dbService.create(body);
+    // Extract locationIds from the body
+    const { locationIds, ...consumableData } = body;
+    
+    // Create the consumable entity first
+    const newEntity = await this.dbService.create(consumableData);
+    
+    // Handle location associations if provided
+    if (locationIds && locationIds.length > 0) {
+      const locations = await this.locationRepo.findByIds(locationIds);
+      if (locations.length > 0) {
+        await this.repo
+          .createQueryBuilder()
+          .relation(ConsumableEntity, 'locations')
+          .of(newEntity.id)
+          .add(locations.map(l => l.id));
+      }
+    }
+    
     const entity = await this.dbService.findOne(newEntity.id);
     if (!entity) {
       throw new InternalServerErrorException();
@@ -64,8 +91,39 @@ export class ConsumableService {
   }
 
   public async update(id: number, body: ConsumableUpdateDto) {
-    if (!(await this.dbService.update(id, body))) {
+    // Extract locationIds from the body
+    const { locationIds, ...consumableData } = body;
+    
+    // Update the consumable entity first
+    if (!(await this.dbService.update(id, consumableData))) {
       throw new NotFoundException();
+    }
+
+    // Handle location associations if provided
+    if (locationIds !== undefined) {
+      // First, remove all existing location associations
+      await this.repo
+        .createQueryBuilder()
+        .relation(ConsumableEntity, 'locations')
+        .of(id)
+        .remove(await this.repo
+          .createQueryBuilder('c')
+          .relation('locations')
+          .of(id)
+          .loadMany()
+        );
+      
+      // Then add new associations if any
+      if (locationIds.length > 0) {
+        const locations = await this.locationRepo.findByIds(locationIds);
+        if (locations.length > 0) {
+          await this.repo
+            .createQueryBuilder()
+            .relation(ConsumableEntity, 'locations')
+            .of(id)
+            .add(locations.map(l => l.id));
+        }
+      }
     }
 
     const entity = await this.dbService.findOne(id);
