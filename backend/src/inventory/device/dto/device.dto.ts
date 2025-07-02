@@ -13,6 +13,7 @@ import {
   MaxLength,
 } from 'class-validator';
 import { LocationDto } from '../../../base/location/dto/location.dto';
+import { DeviceImageDto } from './device-image.dto';
 
 export class DeviceDto {
   @ApiProperty()
@@ -147,4 +148,9 @@ export class DeviceDto {
   @Expose()
   @Type(() => LocationDto)
   location?: LocationDto;
+
+  @ApiProperty({ required: false, nullable: true })
+  @Expose()
+  @Type(() => DeviceImageDto)
+  images?: DeviceImageDto[];
 }

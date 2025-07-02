@@ -12,6 +12,7 @@ import { DeviceController } from './device/device.controller';
 import { DeviceService } from './device/device.service';
 import { DeviceDbService } from './device/device-db.service';
 import { DeviceEntity } from './device/device.entity';
+import { DeviceImageEntity } from './device/device-image.entity';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { DeviceEntity } from './device/device.entity';
       DeviceTypeEntity,
       DeviceGroupEntity,
       DeviceEntity,
+      DeviceImageEntity,
     ]),
   ],
   controllers: [DeviceTypeController, DeviceGroupController, DeviceController],
@@ -30,5 +32,6 @@ import { DeviceEntity } from './device/device.entity';
     DeviceService,
     DeviceDbService,
   ],
+  exports: [DeviceService],
 })
 export class InventoryModule {}

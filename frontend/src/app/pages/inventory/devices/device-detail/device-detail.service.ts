@@ -2,8 +2,15 @@ import {Inject, Injectable, signal} from '@angular/core';
 import {DeviceService} from '@backend/api/device.service';
 import {DeviceTypeService} from '@backend/api/deviceType.service';
 import {Router} from '@angular/router';
-import {HttpErrorResponse} from '@angular/common/http';
-import {BehaviorSubject, debounceTime, filter, Subject} from 'rxjs';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpEventType,
+  HttpHeaders,
+  HttpRequest,
+  HttpResponse
+} from '@angular/common/http';
+import {BehaviorSubject, debounceTime, filter, mergeMap, of, Subject, switchMap} from 'rxjs';
 import {DeviceDto} from '@backend/model/deviceDto';
 import {DeviceTypeDto} from '@backend/model/deviceTypeDto';
 import {DeviceUpdateDto} from '@backend/model/deviceUpdateDto';
@@ -12,6 +19,7 @@ import {DeviceGroupService} from '@backend/api/deviceGroup.service';
 import {LocationDto} from '@backend/model/locationDto';
 import {LocationService} from '@backend/api/location.service';
 import {SEARCH_DEBOUNCE_TIME, SELECT_ITEMS_COUNT} from '../../../../app.configs';
+import {NzUploadXHRArgs} from 'ng-zorro-antd/upload';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +58,7 @@ export class DeviceDetailService {
     private readonly apiDeviceGroupsService: DeviceGroupService,
     private readonly apiLocationsService: LocationService,
     private readonly router: Router,
+    private readonly http: HttpClient,
     @Inject(SEARCH_DEBOUNCE_TIME) time: number,
     @Inject(SELECT_ITEMS_COUNT) private readonly selectCount: number,
   ) {
@@ -215,5 +224,40 @@ export class DeviceDetailService {
 
   onSearchGroup(value: string): void {
     this.deviceGroupsSearch$.next({propagate: true, value});
+  }
+
+  uploadImage(fileName: string, data: NzUploadXHRArgs) {
+    return this.apiService.deviceControllerGetImageUploadUrl({
+      id: this.id!,
+      contentType: data.file.type ?? '',
+    }).pipe(
+      mergeMap(uploadData => {
+        const formData = new FormData();
+        Object.entries(uploadData.formData).forEach(([k, v]) => {
+          formData.append(k, v as string);
+        });
+        formData.append('file', data.file as never, fileName);
+        return this.http.post(uploadData.postURL, formData, {reportProgress: true, observe: 'events'});
+      }),
+    )
+      .subscribe({
+        next: (event) => {
+          if (event && event.type === HttpEventType.UploadProgress && data.onProgress) {
+            if (event.total && event.total > 0) {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (event as any).percent = event.loaded / event.total * 100;
+            }
+            // To process the upload progress bar, you must specify the `percent` attribute to indicate progress.
+            data.onProgress(event, data.file);
+          } else if (event instanceof HttpResponse && data.onSuccess) {
+            data.file['filename'] = fileName;
+            data.onSuccess(event.body, data.file, event);
+          }
+        }, error: (err) => {
+          if (data.onError) {
+            data.onError(err, data.file);
+          }
+        }
+      });
   }
 }

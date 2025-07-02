@@ -1048,6 +1048,37 @@ paths:
       summary: ''
       tags:
         - Device
+  /api/device/{id}/image-upload:
+    get:
+      description: Gibt die URL zum Hochladen eines Gerätebildes zurück
+      operationId: DeviceController_getImageUploadUrl
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+        - name: contentType
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadUrlDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Device
   /api/location/count:
     get:
       description: Gibt die Anzahl aller Standorte zurück
@@ -1716,6 +1747,16 @@ components:
             - $ref: '#/components/schemas/LocationDto'
       required:
         - state
+    UploadUrlDto:
+      type: object
+      properties:
+        postURL:
+          type: string
+        formData:
+          type: object
+      required:
+        - postURL
+        - formData
     LocationCreateDto:
       type: object
       properties:

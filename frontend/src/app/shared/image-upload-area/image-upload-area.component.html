@@ -1,0 +1,16 @@
+<nz-upload
+  nzType="drag"
+  [nzMultiple]="true"
+  [nzFileList]="nzFileList"
+  (nzFileListChange)="nzFileListChange.emit($event)"
+  [nzCustomRequest]="nzCustomRequest"
+  [nzShowUploadList]="{showRemoveIcon: false, showPreviewIcon: false, showDownloadIcon: false}"
+  [nzData]="nzData"
+  (nzChange)="nzChange.emit($event)"
+  nzAccept="image/*">
+  <p class="ant-upload-drag-icon">
+    <span nz-icon nzType="inbox"></span>
+  </p>
+  <p class="ant-upload-text">Klicken oder ein Bild hier ablegen zum hochladen</p>
+  <p class="ant-upload-hint">Es werden ein oder mehrere Bilder unterstützt.</p>
+</nz-upload>

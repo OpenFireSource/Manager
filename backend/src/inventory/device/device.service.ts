@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -9,10 +10,16 @@ import { DeviceDbService } from './device-db.service';
 import { DeviceDto } from './dto/device.dto';
 import { DeviceUpdateDto } from './dto/device-update.dto';
 import { DeviceCreateDto } from './dto/device-create.dto';
+import { v4 } from 'uuid';
+import { MinioService } from '../../core/services/storage/minio.service';
+import { UploadUrlDto } from '../../shared/dto/upload-url.dto';
 
 @Injectable()
 export class DeviceService {
-  constructor(private readonly dbService: DeviceDbService) {}
+  constructor(
+    private readonly dbService: DeviceDbService,
+    private readonly minioService: MinioService,
+  ) {}
 
   public async findAll(
     offset?: number,
@@ -75,5 +82,42 @@ export class DeviceService {
       throw new NotFoundException();
     }
     return plainToInstance(DeviceDto, entity);
+  }
+
+  public async getImageUploadUrl(id: number, contentType: string) {
+    const device = await this.dbService.findOne(id);
+    if (!device) {
+      throw new NotFoundException();
+    }
+
+    if (!this.minioService.checkImageTypes(contentType)) {
+      throw new BadRequestException('Invalid file extension');
+    }
+
+    const uuid = v4();
+    const minioPath = `devices/${device.id}/images/${uuid}`;
+
+    const url = await this.minioService.generatePresignedPostUrl(
+      minioPath,
+      contentType,
+      50, // 50 MB
+    );
+    return plainToInstance(UploadUrlDto, url, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  async addImage(deviceId: number, imageId: string) {
+    if (!Number.isInteger(deviceId)) {
+      throw new Error('deviceId must be an integer');
+    }
+
+    const device = await this.dbService.findOne(deviceId);
+
+    if (!device) {
+      throw new NotFoundException();
+    }
+
+    await this.dbService.addImage(device, imageId);
   }
 }

@@ -3,12 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { DeviceEntity } from './device.entity';
+import { DeviceImageEntity } from './device-image.entity';
 
 @Injectable()
 export class DeviceDbService {
   constructor(
     @InjectRepository(DeviceEntity)
     private readonly repo: Repository<DeviceEntity>,
+    @InjectRepository(DeviceImageEntity)
+    private readonly imageRepo: Repository<DeviceImageEntity>,
   ) {}
 
   private searchQueryBuilder(
@@ -45,7 +48,8 @@ export class DeviceDbService {
       .leftJoinAndSelect('d.type', 'dt')
       .leftJoinAndSelect('d.group', 'dg')
       .leftJoinAndSelect('d.location', 'l')
-      .leftJoinAndSelect('l.parent', 'lp');
+      .leftJoinAndSelect('l.parent', 'lp')
+      .leftJoinAndSelect('d.images', 'i');
 
     if (searchTerm) {
       query = this.searchQueryBuilder(query, searchTerm);
@@ -94,6 +98,7 @@ export class DeviceDbService {
       .leftJoinAndSelect('d.group', 'dg')
       .leftJoinAndSelect('d.location', 'l')
       .leftJoinAndSelect('l.parent', 'lp')
+      .leftJoinAndSelect('d.images', 'i')
       .where('d.id = :id', { id });
 
     return query.getOne();
@@ -111,5 +116,9 @@ export class DeviceDbService {
   public async delete(id: number) {
     const result = await this.repo.delete(id);
     return (result.affected ?? 0) > 0;
+  }
+
+  async addImage(device: DeviceEntity, imageId: string) {
+    await this.imageRepo.save({ device, id: imageId });
   }
 }

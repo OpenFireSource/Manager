@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Client } from 'minio';
+import { Client, ItemBucketMetadata } from 'minio';
 
 @Injectable()
 export class MinioService {
@@ -8,7 +8,6 @@ export class MinioService {
     'image/jpeg',
     'image/png',
     'image/tiff',
-    'image/bmp',
     'image/heic',
   ];
 
@@ -44,7 +43,7 @@ export class MinioService {
     });
   }
 
-  async setupEnvironment() {
+  public async setupEnvironment() {
     this.logger.debug('Minio-Setup gestartet');
 
     // Bucket erstellen
@@ -54,5 +53,53 @@ export class MinioService {
     }
 
     this.logger.debug('Minio-Setup abgeschlossen');
+  }
+
+  public async generatePresignedPutUrl(file: string): Promise<string> {
+    return this.client.presignedPutObject(
+      this.bucketName,
+      file,
+      this.uploadExpiry,
+    );
+  }
+
+  public async generatePresignedPostUrl(
+    file: string,
+    contentType: string,
+    fileSizeMb: number,
+  ): Promise<{
+    postURL: string;
+    formData: {
+      [key: string]: any;
+    };
+  }> {
+    const policy = this.client.newPostPolicy();
+    policy.setBucket(this.bucketName);
+    policy.setKey(file);
+    const expires = new Date();
+    expires.setSeconds(expires.getSeconds() + this.uploadExpiry);
+    policy.setExpires(expires);
+    policy.setContentType(contentType);
+    policy.setContentLengthRange(0, 1024 * 1024 * fileSizeMb); // in MB
+
+    return this.client.presignedPostPolicy(policy);
+  }
+
+  public checkImageTypes(contentType: string) {
+    return this.allowedImageTypes.some((x) => x === contentType);
+  }
+
+  public getObject(key: string) {
+    return this.client.getObject(this.bucketName, key);
+  }
+
+  public putObject(key: string, webpBuffer: Buffer, metaData?: ItemBucketMetadata) {
+    return this.client.putObject(
+      this.bucketName,
+      key,
+      webpBuffer,
+      webpBuffer.length,
+      metaData,
+    );
   }
 }

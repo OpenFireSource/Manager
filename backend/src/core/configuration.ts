@@ -10,12 +10,14 @@ import {
   validateSync,
 } from 'class-validator';
 import { Logger } from '@nestjs/common';
+import * as process from 'node:process';
 
 export enum ConfigKey {
   App = 'APP',
   Db = 'DB',
   Minio = 'MINIO',
   Keycloak = 'KEYCLOAK',
+  Amqp = 'AMQP',
 }
 
 const AppConfig = registerAs(ConfigKey.App, () => ({
@@ -28,6 +30,15 @@ const DbConfig = registerAs(ConfigKey.Db, () => ({
   username: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE,
+}));
+
+const AmqpConfig = registerAs(ConfigKey.Amqp, () => ({
+  host: process.env.AMQP_HOST,
+  vhost: process.env.AMQP_VHOST,
+  port: Number(process.env.AMQP_PORT),
+  username: process.env.AMQP_USERNAME,
+  password: process.env.AMQP_PASSWORD,
+  queueFileChange: process.env.AMQP_QUEUE_FILE_CHANGE,
 }));
 
 const MinioConfig = registerAs(ConfigKey.Minio, () => ({
@@ -55,6 +66,7 @@ export const configurations = [
   DbConfig,
   MinioConfig,
   KeycloakConfig,
+  AmqpConfig,
 ];
 
 class EnvironmentVariables {
@@ -161,6 +173,37 @@ class EnvironmentVariables {
   @IsString()
   @MinLength(1)
   KEYCLOAK_ISSUER: string;
+
+  /* AMQP CONFIG */
+  @IsDefined()
+  @IsString()
+  @MinLength(1)
+  AMQP_HOST: string;
+
+  @IsDefined()
+  @IsString()
+  @MinLength(1)
+  AMQP_VHOST: string;
+
+  @IsDefined()
+  @IsNumberString()
+  @MinLength(1)
+  AMQP_PORT: string;
+
+  @IsDefined()
+  @IsString()
+  @MinLength(1)
+  AMQP_USERNAME: string;
+
+  @IsDefined()
+  @IsString()
+  @MinLength(1)
+  AMQP_PASSWORD: string;
+
+  @IsDefined()
+  @IsString()
+  @MinLength(1)
+  AMQP_QUEUE_FILE_CHANGE: string;
 }
 
 export function validateConfig(configuration: Record<string, unknown>) {

@@ -1,7 +1,8 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { DeviceTypeEntity } from '../device-type/device-type.entity';
 import { DeviceGroupEntity } from '../device-group/device-group.entity';
 import { LocationEntity } from '../../base/location/location.entity';
+import { DeviceImageEntity } from './device-image.entity';
 
 export enum EquipmentState {
   ACTIVE = 0,
@@ -76,4 +77,7 @@ export class DeviceEntity {
     onUpdate: 'CASCADE',
   })
   location?: LocationEntity;
+
+  @OneToMany(() => DeviceImageEntity, (x) => x.device, { onDelete: 'CASCADE' })
+  images: DeviceImageEntity[];
 }

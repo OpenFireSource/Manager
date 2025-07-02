@@ -8,7 +8,7 @@ import {
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configurations, validateConfig } from './configuration';
 import { StartupService } from './services/startup.service';
-import { MinioService } from './services/minio.service';
+import { MinioService } from './services/storage/minio.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { KeycloakService } from './services/keycloak.service';
 import { HttpModule } from '@nestjs/axios';
@@ -28,6 +28,11 @@ import { LoggerContextMiddleware } from './middleware/logger-context.middleware'
 import { DeviceTypeEntity } from '../inventory/device-type/device-type.entity';
 import { DeviceGroupEntity } from '../inventory/device-group/device-group.entity';
 import { DeviceEntity } from '../inventory/device/device.entity';
+import { AmqpService } from './services/amqp.service';
+import { MinioListenerService } from './services/storage/minio-listener.service';
+import { ImageService } from './services/storage/image.service';
+import { DeviceImageEntity } from '../inventory/device/device-image.entity';
+import { InventoryModule } from '../inventory/inventory.module';
 
 @Module({
   imports: [
@@ -61,6 +66,7 @@ import { DeviceEntity } from '../inventory/device/device.entity';
           DeviceTypeEntity,
           DeviceGroupEntity,
           DeviceEntity,
+          DeviceImageEntity,
         ],
         extra: {
           connectionLimit: 10,
@@ -71,6 +77,7 @@ import { DeviceEntity } from '../inventory/device/device.entity';
         // migrationsRun: true,
       }),
     }),
+    InventoryModule,
   ],
   providers: [
     StartupService,
@@ -83,8 +90,16 @@ import { DeviceEntity } from '../inventory/device/device.entity';
     RequestContextService,
     AppLoggerService,
     LoggerContextMiddleware,
+    AmqpService,
+    MinioListenerService,
+    ImageService,
   ],
-  exports: [MinioService, KeycloakService, LoggerContextMiddleware],
+  exports: [
+    MinioService,
+    KeycloakService,
+    LoggerContextMiddleware,
+    AmqpService,
+  ],
   controllers: [UserController, GroupController],
 })
 @Global()

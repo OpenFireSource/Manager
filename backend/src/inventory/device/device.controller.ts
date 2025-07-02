@@ -13,6 +13,8 @@ import { DeviceUpdateDto } from './dto/device-update.dto';
 import { DeviceCreateDto } from './dto/device-create.dto';
 import { PaginationDto } from '../../shared/dto/pagination.dto';
 import { SearchDto } from '../../shared/dto/search.dto';
+import { UploadUrlDto } from '../../shared/dto/upload-url.dto';
+import { FilenameDto } from '../../shared/dto/filename.dto';
 
 @Controller('device')
 export class DeviceController {
@@ -95,5 +97,19 @@ export class DeviceController {
   })
   public async delete(@Param() params: IdNumberDto): Promise<void> {
     await this.service.delete(params.id);
+  }
+
+  @Endpoint(EndpointType.GET, {
+    path: ':id/image-upload',
+    description: 'Gibt die URL zum Hochladen eines Gerätebildes zurück',
+    notFound: true,
+    responseType: UploadUrlDto,
+    roles: [Role.DeviceManage],
+  })
+  public async getImageUploadUrl(
+    @Param() params: IdNumberDto,
+    @Query() querys: FilenameDto,
+  ): Promise<UploadUrlDto> {
+    return this.service.getImageUploadUrl(params.id, querys.contentType);
   }
 }

@@ -6,227 +6,240 @@
   Gerät wird geladen...
 </ng-container>
 <ng-container *ngIf="!loading() && !notFound()  && !loadingError()">
-  <form nz-form [formGroup]="form" (ngSubmit)="submit()">
-    <nz-form-item>
-      <nz-form-label [nzSpan]="7">Name</nz-form-label>
-      <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="nameErrorTpl">
-        <input nz-input formControlName="name" placeholder="Name"/>
-        <ng-template #nameErrorTpl let-control>
-          @if (control.errors?.['required']) {
-            Bitte einen Namen eingeben.
-          }
-          @if (control.errors?.['minlength']) {
-            Bitte mindestens 1 Zeichen eingeben.
-          }
-          @if (control.errors?.['maxlength']) {
-            Bitte maximal 100 Zeichen eingeben.
-          }
-        </ng-template>
-      </nz-form-control>
-    </nz-form-item>
+  <nz-tabset nz-col nzSpan="24" nz-row>
+    <nz-tab nzTitle="Allgemein" nz-col nzSpan="24" nz-row>
+      <form nz-form [formGroup]="form" (ngSubmit)="submit()">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Name</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="nameErrorTpl">
+            <input nz-input formControlName="name" placeholder="Name"/>
+            <ng-template #nameErrorTpl let-control>
+              @if (control.errors?.['required']) {
+                Bitte einen Namen eingeben.
+              }
+              @if (control.errors?.['minlength']) {
+                Bitte mindestens 1 Zeichen eingeben.
+              }
+              @if (control.errors?.['maxlength']) {
+                Bitte maximal 100 Zeichen eingeben.
+              }
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label [nzSpan]="7" nzRequired>Zustand</nz-form-label>
-      <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="stateErrorTpl">
-        <nz-select
-          formControlName="state"
-          nzPlaceHolder="Zustand auswählen">
-          @for (item of states; track item) {
-            <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
-          }
-        </nz-select>
-        <ng-template #stateErrorTpl let-control>
-          @if (control.errors?.['required']) {
-            Bitte einen Zustand eingeben.
-          }
-        </ng-template>
-      </nz-form-control>
-    </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7" nzRequired>Zustand</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="stateErrorTpl">
+            <nz-select
+              formControlName="state"
+              nzPlaceHolder="Zustand auswählen">
+              @for (item of states; track item) {
+                <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+              }
+            </nz-select>
+            <ng-template #stateErrorTpl let-control>
+              @if (control.errors?.['required']) {
+                Bitte einen Zustand eingeben.
+              }
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label [nzSpan]="7">Standort/Fahrzeug</nz-form-label>
-      <nz-form-control [nzSpan]="12">
-        <nz-select
-          (nzOnSearch)="onSearchLocation($event)"
-          formControlName="locationId"
-          nzPlaceHolder="Standort/Fahrzeug auswählen"
-          nzAllowClear
-          nzShowSearch
-          nzServerSearch>
-          @if (locationsIsLoading()) {
-            <nz-spin></nz-spin>
-          } @else {
-            @for (item of locations(); track item) {
-              <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
-            }
-          }
-        </nz-select>
-      </nz-form-control>
-    </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Standort/Fahrzeug</nz-form-label>
+          <nz-form-control [nzSpan]="12">
+            <nz-select
+              (nzOnSearch)="onSearchLocation($event)"
+              formControlName="locationId"
+              nzPlaceHolder="Standort/Fahrzeug auswählen"
+              nzAllowClear
+              nzShowSearch
+              nzServerSearch>
+              @if (locationsIsLoading()) {
+                <nz-spin></nz-spin>
+              } @else {
+                @for (item of locations(); track item) {
+                  <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                }
+              }
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label [nzSpan]="7">Geräte-Typ</nz-form-label>
-      <nz-form-control [nzSpan]="12">
-        <nz-select
-          (nzOnSearch)="onSearchType($event)"
-          formControlName="typeId"
-          nzPlaceHolder="Geräte-Typ auswählen"
-          nzAllowClear
-          nzShowSearch
-          nzServerSearch>
-          @if (deviceTypesIsLoading()) {
-            <nz-spin></nz-spin>
-          } @else {
-            @for (item of deviceTypes(); track item) {
-              <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
-            }
-          }
-        </nz-select>
-      </nz-form-control>
-    </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Geräte-Typ</nz-form-label>
+          <nz-form-control [nzSpan]="12">
+            <nz-select
+              (nzOnSearch)="onSearchType($event)"
+              formControlName="typeId"
+              nzPlaceHolder="Geräte-Typ auswählen"
+              nzAllowClear
+              nzShowSearch
+              nzServerSearch>
+              @if (deviceTypesIsLoading()) {
+                <nz-spin></nz-spin>
+              } @else {
+                @for (item of deviceTypes(); track item) {
+                  <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                }
+              }
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label [nzSpan]="7">Geräte-Gruppe</nz-form-label>
-      <nz-form-control [nzSpan]="12">
-        <nz-select
-          (nzOnSearch)="onSearchGroup($event)"
-          formControlName="groupId"
-          nzPlaceHolder="Geräte-Gruppe auswählen"
-          nzAllowClear
-          nzShowSearch
-          nzServerSearch>
-          @if (deviceGroupsIsLoading()) {
-            <nz-spin></nz-spin>
-          } @else {
-            @for (item of deviceGroups(); track item) {
-              <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
-            }
-          }
-        </nz-select>
-      </nz-form-control>
-    </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Geräte-Gruppe</nz-form-label>
+          <nz-form-control [nzSpan]="12">
+            <nz-select
+              (nzOnSearch)="onSearchGroup($event)"
+              formControlName="groupId"
+              nzPlaceHolder="Geräte-Gruppe auswählen"
+              nzAllowClear
+              nzShowSearch
+              nzServerSearch>
+              @if (deviceGroupsIsLoading()) {
+                <nz-spin></nz-spin>
+              } @else {
+                @for (item of deviceGroups(); track item) {
+                  <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                }
+              }
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label [nzSpan]="7">Hersteller</nz-form-label>
-      <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="manufactorErrorTpl">
-        <input nz-input formControlName="manufactor" placeholder="Hersteller"/>
-        <ng-template #manufactorErrorTpl let-control>
-          @if (control.errors?.['maxlength']) {
-            Bitte maximal 100 Zeichen eingeben.
-          }
-        </ng-template>
-      </nz-form-control>
-    </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Hersteller</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="manufactorErrorTpl">
+            <input nz-input formControlName="manufactor" placeholder="Hersteller"/>
+            <ng-template #manufactorErrorTpl let-control>
+              @if (control.errors?.['maxlength']) {
+                Bitte maximal 100 Zeichen eingeben.
+              }
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label [nzSpan]="7">Händler</nz-form-label>
-      <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="dealerErrorTpl">
-        <input nz-input formControlName="dealer" placeholder="Händler"/>
-        <ng-template #dealerErrorTpl let-control>
-          @if (control.errors?.['maxlength']) {
-            Bitte maximal 100 Zeichen eingeben.
-          }
-        </ng-template>
-      </nz-form-control>
-    </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Händler</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="dealerErrorTpl">
+            <input nz-input formControlName="dealer" placeholder="Händler"/>
+            <ng-template #dealerErrorTpl let-control>
+              @if (control.errors?.['maxlength']) {
+                Bitte maximal 100 Zeichen eingeben.
+              }
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label [nzSpan]="7">Hersteller-Seriennummer</nz-form-label>
-      <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="serialManufactorErrorTpl">
-        <input nz-input formControlName="serialManufactor" placeholder="Hersteller-Seriennummer"/>
-        <ng-template #serialManufactorErrorTpl let-control>
-          @if (control.errors?.['maxlength']) {
-            Bitte maximal 100 Zeichen eingeben.
-          }
-        </ng-template>
-      </nz-form-control>
-    </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Hersteller-Seriennummer</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="serialManufactorErrorTpl">
+            <input nz-input formControlName="serialManufactor" placeholder="Hersteller-Seriennummer"/>
+            <ng-template #serialManufactorErrorTpl let-control>
+              @if (control.errors?.['maxlength']) {
+                Bitte maximal 100 Zeichen eingeben.
+              }
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label [nzSpan]="7">Seriennummer</nz-form-label>
-      <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="serialErrorTpl">
-        <input nz-input formControlName="serial" placeholder="Seriennummer"/>
-        <ng-template #serialErrorTpl let-control>
-          @if (control.errors?.['maxlength']) {
-            Bitte maximal 100 Zeichen eingeben.
-          }
-        </ng-template>
-      </nz-form-control>
-    </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Seriennummer</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="serialErrorTpl">
+            <input nz-input formControlName="serial" placeholder="Seriennummer"/>
+            <ng-template #serialErrorTpl let-control>
+              @if (control.errors?.['maxlength']) {
+                Bitte maximal 100 Zeichen eingeben.
+              }
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label [nzSpan]="7">Barcode 1</nz-form-label>
-      <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="barcode1ErrorTpl">
-        <input nz-input formControlName="barcode1" placeholder="Barcode"/>
-        <ng-template #barcode1ErrorTpl let-control>
-          @if (control.errors?.['maxlength']) {
-            Bitte maximal 100 Zeichen eingeben.
-          }
-        </ng-template>
-      </nz-form-control>
-    </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Barcode 1</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="barcode1ErrorTpl">
+            <input nz-input formControlName="barcode1" placeholder="Barcode"/>
+            <ng-template #barcode1ErrorTpl let-control>
+              @if (control.errors?.['maxlength']) {
+                Bitte maximal 100 Zeichen eingeben.
+              }
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label [nzSpan]="7">Barcode 2</nz-form-label>
-      <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="barcode2ErrorTpl">
-        <input nz-input formControlName="barcode2" placeholder="Barcode"/>
-        <ng-template #barcode2ErrorTpl let-control>
-          @if (control.errors?.['maxlength']) {
-            Bitte maximal 100 Zeichen eingeben.
-          }
-        </ng-template>
-      </nz-form-control>
-    </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Barcode 2</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="barcode2ErrorTpl">
+            <input nz-input formControlName="barcode2" placeholder="Barcode"/>
+            <ng-template #barcode2ErrorTpl let-control>
+              @if (control.errors?.['maxlength']) {
+                Bitte maximal 100 Zeichen eingeben.
+              }
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label [nzSpan]="7">Herstellungsdatum</nz-form-label>
-      <nz-form-control [nzSpan]="5">
-        <nz-date-picker formControlName="producedDate"></nz-date-picker>
-      </nz-form-control>
-    </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Herstellungsdatum</nz-form-label>
+          <nz-form-control [nzSpan]="5">
+            <nz-date-picker formControlName="producedDate"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label [nzSpan]="7">Inbetriebnahme</nz-form-label>
-      <nz-form-control [nzSpan]="5">
-        <nz-date-picker formControlName="activeDate"></nz-date-picker>
-      </nz-form-control>
-    </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Inbetriebnahme</nz-form-label>
+          <nz-form-control [nzSpan]="5">
+            <nz-date-picker formControlName="activeDate"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label [nzSpan]="7">Außerbetriebnahme (Hersteller)</nz-form-label>
-      <nz-form-control [nzSpan]="5">
-        <nz-date-picker formControlName="decomissionDateManufacture"></nz-date-picker>
-      </nz-form-control>
-    </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Außerbetriebnahme (Hersteller)</nz-form-label>
+          <nz-form-control [nzSpan]="5">
+            <nz-date-picker formControlName="decomissionDateManufacture"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label [nzSpan]="7">Außerbetriebnahme</nz-form-label>
-      <nz-form-control [nzSpan]="5">
-        <nz-date-picker formControlName="decomissionDate"></nz-date-picker>
-      </nz-form-control>
-    </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Außerbetriebnahme</nz-form-label>
+          <nz-form-control [nzSpan]="5">
+            <nz-date-picker formControlName="decomissionDate"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label [nzSpan]="7">Weitere Informationen</nz-form-label>
-      <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="noticeErrorTpl">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Weitere Informationen</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="noticeErrorTpl">
         <textarea nz-input nzAutosize formControlName="notice"
                   placeholder="weitere Information (max 2000 Zeichen)"></textarea>
-        <ng-template #noticeErrorTpl let-control>
-          @if (control.errors?.['maxlength']) {
-            Bitte maximal 2000 Zeichen eingeben.
-          }
-        </ng-template>
-      </nz-form-control>
-    </nz-form-item>
+            <ng-template #noticeErrorTpl let-control>
+              @if (control.errors?.['maxlength']) {
+                Bitte maximal 2000 Zeichen eingeben.
+              }
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-control [nzOffset]="7" [nzSpan]="12">
-        <button nz-button nzType="primary" [disabled]="!form.valid" [nzLoading]="updateLoading()">Speichern</button>
-        <button nz-button nzType="primary" nzDanger type="button" [nzLoading]="deleteLoading()" nz-popconfirm
-                nzPopconfirmTitle="Bist du dir sicher?" (nzOnConfirm)="delete()">Löschen
-        </button>
-      </nz-form-control>
-    </nz-form-item>
-  </form>
+        <nz-form-item>
+          <nz-form-control [nzOffset]="7" [nzSpan]="12">
+            <button nz-button nzType="primary" [disabled]="!form.valid" [nzLoading]="updateLoading()">Speichern</button>
+            <button nz-button nzType="primary" nzDanger type="button" [nzLoading]="deleteLoading()" nz-popconfirm
+                    nzPopconfirmTitle="Bist du dir sicher?" (nzOnConfirm)="delete()">Löschen
+            </button>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </nz-tab>
 
+    <nz-tab nzTitle="Bilder" nz-col nzSpan="24" nz-row>
+      <div nz-col nzSpan="24">
+        <ofs-image-upload-area (nzChange)="imageChanged($event)"
+                               [nzData]="this"
+                               [(nzFileList)]="imgList"
+                               [nzCustomRequest]="uploadImage">
+        </ofs-image-upload-area>
+      </div>
+    </nz-tab>
+  </nz-tabset>
 </ng-container>

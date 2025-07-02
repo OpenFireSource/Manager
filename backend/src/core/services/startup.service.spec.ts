@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StartupService } from './startup.service';
-import { MinioService } from './minio.service';
+import { MinioService } from './storage/minio.service';
 import { KeycloakService } from './keycloak.service';
 import { Logger } from '@nestjs/common';
 

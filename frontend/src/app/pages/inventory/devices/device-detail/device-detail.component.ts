@@ -1,5 +1,5 @@
 import {Component, effect, OnDestroy, OnInit, Signal} from '@angular/core';
-import {Subject, takeUntil} from 'rxjs';
+import {interval, map, mergeMap, of, Subject, Subscription, takeUntil, takeWhile} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
 import {InAppMessageService} from '../../../../shared/services/in-app-message.service';
 import {DeviceDetailService} from './device-detail.service';
@@ -20,6 +20,9 @@ import {DeviceTypeDto} from '@backend/model/deviceTypeDto';
 import {NzDatePickerModule} from 'ng-zorro-antd/date-picker';
 import {DeviceGroupDto} from '@backend/model/deviceGroupDto';
 import {LocationDto} from '@backend/model/locationDto';
+import {NzTabsModule} from 'ng-zorro-antd/tabs';
+import {NzUploadChangeParam, NzUploadFile, NzUploadXHRArgs} from 'ng-zorro-antd/upload';
+import {ImageUploadAreaComponent} from '../../../../shared/image-upload-area/image-upload-area.component';
 
 interface DeviceDetailForm {
   name: FormControl<string | null>;
@@ -54,6 +57,8 @@ interface DeviceDetailForm {
     NzInputNumberModule,
     NzSpinModule,
     NzDatePickerModule,
+    NzTabsModule,
+    ImageUploadAreaComponent,
   ],
   templateUrl: './device-detail.component.html',
   styleUrl: './device-detail.component.less'
@@ -183,8 +188,8 @@ export class DeviceDetailComponent implements OnInit, OnDestroy {
     this.activatedRoute.params
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
-      this.service.load(params['id']);
-    });
+        this.service.load(params['id']);
+      });
   }
 
   submit() {
@@ -205,5 +210,55 @@ export class DeviceDetailComponent implements OnInit, OnDestroy {
 
   onSearchGroup(search: string) {
     this.service.onSearchGroup(search);
+  }
+
+  imgList: NzUploadFile[] = [];
+
+  uploadImage(item: NzUploadXHRArgs): Subscription {
+    const comp = (item.data as DeviceDetailComponent);
+    return comp.service.uploadImage(item.file.name, item);
+  }
+
+  imageChanged(event: NzUploadChangeParam) {
+    // TODO Device neu laden und Bilder aktualisieren
+
+    // Upload event handling, wenn sich etwas ändert
+    if (event.type === "success") {
+      let i = 0;
+      let pollInterval = 500;
+      interval(pollInterval)
+        .pipe(
+          mergeMap(async () => {
+            //await this.equipmentService.findOne(this.entity.id);
+          }),
+          map(x => {
+            i++;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const filename = (event.file.originFileObj as any)?.filename ?? '';
+            /*if (x.documents.find(y => y.key === filename) !== undefined) {
+              // this.entity.documents = x.documents;
+              const i = this.imgList.findIndex(y => y.name === event.file.name);
+              if (i !== -1) {
+                this.imgList = this.imgList.slice(i, -1);
+              }
+              return true;
+            }*/
+            console.log(i);
+            return false;
+          }),
+          takeWhile(x => !x && i < 10 / (pollInterval / 1000)),
+        )
+        .subscribe({
+          complete: () => {
+            // this.notification.create("success", "Hochgeladen", `Datei wurde erfolgreich hochgeladen!`);
+          }
+        });
+    } else if (event.type === 'error') {
+      const index = this.imgList.indexOf(event.file);
+      if (index !== -1) {
+        this.imgList.splice(index, 1);
+      }
+      // this.notification.create("error", "Fehler", "Fehler beim hochladen");
+    }
   }
 }
