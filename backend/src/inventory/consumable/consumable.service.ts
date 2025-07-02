@@ -132,4 +132,52 @@ export class ConsumableService {
     }
     return plainToInstance(ConsumableDto, entity);
   }
+
+  public async addLocation(id: number, locationId: number) {
+    // Check if consumable exists
+    const consumable = await this.dbService.findOne(id);
+    if (!consumable) {
+      throw new NotFoundException('Consumable not found');
+    }
+
+    // Check if location exists
+    const location = await this.locationRepo.findOne({ where: { id: locationId } });
+    if (!location) {
+      throw new NotFoundException('Location not found');
+    }
+
+    // Add the location to the consumable
+    await this.repo
+      .createQueryBuilder()
+      .relation(ConsumableEntity, 'locations')
+      .of(id)
+      .add(locationId);
+
+    const entity = await this.dbService.findOne(id);
+    if (!entity) {
+      throw new InternalServerErrorException();
+    }
+    return plainToInstance(ConsumableDto, entity);
+  }
+
+  public async removeLocation(id: number, locationId: number) {
+    // Check if consumable exists
+    const consumable = await this.dbService.findOne(id);
+    if (!consumable) {
+      throw new NotFoundException('Consumable not found');
+    }
+
+    // Remove the location from the consumable
+    await this.repo
+      .createQueryBuilder()
+      .relation(ConsumableEntity, 'locations')
+      .of(id)
+      .remove(locationId);
+
+    const entity = await this.dbService.findOne(id);
+    if (!entity) {
+      throw new InternalServerErrorException();
+    }
+    return plainToInstance(ConsumableDto, entity);
+  }
 }

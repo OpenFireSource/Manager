@@ -10,6 +10,7 @@ import { DevicesComponent } from './devices/devices.component';
 import {DeviceCreateComponent} from './devices/device-create/device-create.component';
 import {DeviceDetailComponent} from './devices/device-detail/device-detail.component';
 import { ConsumableGroupsComponent } from './consumable-groups/consumable-groups.component';
+import { ConsumablesComponent } from './consumables/consumables.component';
 
 export const ROUTES: Route[] = [
   {
@@ -60,6 +61,11 @@ export const ROUTES: Route[] = [
   {
     path: 'consumable-groups',
     component: ConsumableGroupsComponent,
-    canActivate: [roleGuard(['device-group.view'])],
+    canActivate: [roleGuard(['consumable-group.view'])],
+  },
+  {
+    path: 'consumables',
+    component: ConsumablesComponent,
+    canActivate: [roleGuard(['consumable.view'])],
   },
 ];

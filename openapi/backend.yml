@@ -1471,11 +1471,13 @@ paths:
           in: query
           schema:
             type: number
-        - name: locationId
+        - name: locationIds
           required: false
           in: query
           schema:
-            type: number
+            type: array
+            items:
+              type: number
         - name: sortCol
           required: false
           in: query
@@ -1602,6 +1604,67 @@ paths:
       responses:
         '204':
           description: ''
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Consumable
+  /api/consumable/{id}/locations/{locationId}:
+    post:
+      description: Fügt einem Verbrauchsgut einen Standort hinzu
+      operationId: ConsumableController_addLocation
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+        - name: locationId
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumableDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Consumable
+    delete:
+      description: Entfernt einen Standort von einem Verbrauchsgut
+      operationId: ConsumableController_removeLocation
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+        - name: locationId
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumableDto'
         '401':
           description: ''
         '404':
@@ -1933,11 +1996,15 @@ components:
         group:
           $ref: '#/components/schemas/ConsumableGroupDto'
           nullable: true
-        locationId:
-          type: number
+        locationIds:
+          type: array
+          items:
+            type: number
           nullable: true
-        location:
-          $ref: '#/components/schemas/LocationDto'
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationDto'
           nullable: true
       required:
         - id
@@ -1960,8 +2027,10 @@ components:
         groupId:
           type: number
           nullable: true
-        locationId:
-          type: number
+        locationIds:
+          type: array
+          items:
+            type: number
           nullable: true
       required:
         - quantity
@@ -1983,8 +2052,10 @@ components:
         groupId:
           type: number
           nullable: true
-        locationId:
-          type: number
+        locationIds:
+          type: array
+          items:
+            type: number
           nullable: true
     LocationDto:
       type: object

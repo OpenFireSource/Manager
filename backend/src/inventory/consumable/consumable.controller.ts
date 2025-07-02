@@ -22,7 +22,7 @@ export class ConsumableController {
     path: 'count',
     description: 'Gibt die Anzahl aller Verbrauchsgüter zurück',
     responseType: CountDto,
-    roles: [Role.DeviceView],
+    roles: [Role.ConsumableView],
   })
   public getCount(@Query() search: SearchDto): Promise<CountDto> {
     return this.service.getCount(search.searchTerm);
@@ -32,7 +32,7 @@ export class ConsumableController {
     path: '',
     description: 'Gibt alle Verbrauchsgüter zurück',
     responseType: [ConsumableDto],
-    roles: [Role.DeviceView],
+    roles: [Role.ConsumableView],
   })
   public async getAll(
     @Query() pagination: PaginationDto,
@@ -55,7 +55,7 @@ export class ConsumableController {
     description: 'Gibt ein Verbrauchsgut zurück',
     responseType: ConsumableDto,
     notFound: true,
-    roles: [Role.DeviceView],
+    roles: [Role.ConsumableView],
   })
   public getOne(@Param() params: IdNumberDto): Promise<ConsumableDto> {
     return this.service.findOne(params.id);
@@ -65,7 +65,7 @@ export class ConsumableController {
     description: 'Erstellt ein Verbrauchsgut',
     responseType: ConsumableDto,
     notFound: true,
-    roles: [Role.DeviceManage],
+    roles: [Role.ConsumableManage],
   })
   public create(@Body() body: ConsumableCreateDto): Promise<ConsumableDto> {
     return this.service.create(body);
@@ -76,7 +76,7 @@ export class ConsumableController {
     description: 'Aktualisiert ein Verbrauchsgut',
     notFound: true,
     responseType: ConsumableDto,
-    roles: [Role.DeviceManage],
+    roles: [Role.ConsumableManage],
   })
   public update(
     @Param() params: IdNumberDto,
@@ -90,9 +90,37 @@ export class ConsumableController {
     description: 'Löscht ein Verbrauchsgut',
     noContent: true,
     notFound: true,
-    roles: [Role.DeviceManage],
+    roles: [Role.ConsumableManage],
   })
   public async delete(@Param() params: IdNumberDto): Promise<void> {
     await this.service.delete(params.id);
+  }
+
+  @Endpoint(EndpointType.POST, {
+    path: ':id/locations/:locationId',
+    description: 'Fügt einem Verbrauchsgut einen Standort hinzu',
+    responseType: ConsumableDto,
+    notFound: true,
+    roles: [Role.ConsumableManage],
+  })
+  public addLocation(
+    @Param('id') id: number,
+    @Param('locationId') locationId: number,
+  ): Promise<ConsumableDto> {
+    return this.service.addLocation(id, locationId);
+  }
+
+  @Endpoint(EndpointType.DELETE, {
+    path: ':id/locations/:locationId',
+    description: 'Entfernt einen Standort von einem Verbrauchsgut',
+    responseType: ConsumableDto,
+    notFound: true,
+    roles: [Role.ConsumableManage],
+  })
+  public removeLocation(
+    @Param('id') id: number,
+    @Param('locationId') locationId: number,
+  ): Promise<ConsumableDto> {
+    return this.service.removeLocation(id, locationId);
   }
 }

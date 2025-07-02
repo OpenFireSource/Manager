@@ -22,7 +22,7 @@ export class ConsumableGroupController {
     path: 'count',
     description: 'Gibt die Anzahl aller Verbrauchsgüter-Gruppen zurück',
     responseType: CountDto,
-    roles: [Role.DeviceTypeView],
+    roles: [Role.ConsumableGroupView],
   })
   public getCount(@Query() search: SearchDto): Promise<CountDto> {
     return this.service.getCount(search.searchTerm);
@@ -32,7 +32,7 @@ export class ConsumableGroupController {
     path: '',
     description: 'Gibt alle Verbrauchsgüter-Gruppen zurück',
     responseType: [ConsumableGroupDto],
-    roles: [Role.DeviceTypeView],
+    roles: [Role.ConsumableGroupView],
   })
   public async getAll(
     @Query() pagination: PaginationDto,
@@ -53,7 +53,7 @@ export class ConsumableGroupController {
     description: 'Gibt eine Verbrauchsgüter-Gruppe zurück',
     responseType: ConsumableGroupDto,
     notFound: true,
-    roles: [Role.DeviceTypeView],
+    roles: [Role.ConsumableGroupView],
   })
   public getOne(@Param() params: IdNumberDto): Promise<ConsumableGroupDto> {
     return this.service.findOne(params.id);
@@ -63,7 +63,7 @@ export class ConsumableGroupController {
     description: 'Erstellt eine Verbrauchsgüter-Gruppe',
     responseType: ConsumableGroupDto,
     notFound: true,
-    roles: [Role.DeviceTypeManage],
+    roles: [Role.ConsumableGroupManage],
   })
   public create(@Body() body: ConsumableGroupCreateDto): Promise<ConsumableGroupDto> {
     return this.service.create(body);
@@ -74,7 +74,7 @@ export class ConsumableGroupController {
     description: 'Aktualisiert eine Verbrauchsgüter-Gruppe',
     notFound: true,
     responseType: ConsumableGroupDto,
-    roles: [Role.DeviceTypeManage],
+    roles: [Role.ConsumableGroupManage],
   })
   public update(
     @Param() params: IdNumberDto,
@@ -88,7 +88,7 @@ export class ConsumableGroupController {
     description: 'Löscht eine Verbrauchsgüter-Gruppe',
     noContent: true,
     notFound: true,
-    roles: [Role.DeviceTypeManage],
+    roles: [Role.ConsumableGroupManage],
   })
   public async delete(@Param() params: IdNumberDto): Promise<void> {
     await this.service.delete(params.id);

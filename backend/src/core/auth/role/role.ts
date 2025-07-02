@@ -37,6 +37,26 @@ export class Role {
     [Role.LocationView],
   );
 
+  public static readonly ConsumableGroupView = new Role(
+    'consumable-group.view',
+    'Verbrauchsgüter-Gruppe ansehen',
+  );
+  public static readonly ConsumableGroupManage = new Role(
+    'consumable-group.manage',
+    'Verbrauchsgüter-Gruppe verwalten',
+    [Role.ConsumableGroupView],
+  );
+  public static readonly ConsumableView = new Role(
+    'consumable.view',
+    'Verbrauchsgüter ansehen',
+    [Role.ConsumableGroupView, Role.LocationView],
+  );
+  public static readonly ConsumableManage = new Role(
+    'consumable.manage',
+    'Verbrauchsgüter verwalten',
+    [Role.ConsumableView],
+  );
+
   public static readonly UserView = new Role('user.view', 'Benutzer ansehen');
   public static readonly UserManage = new Role(
     'user.manage',
@@ -58,6 +78,8 @@ export class Role {
     Role.DeviceTypeManage,
     Role.DeviceGroupManage,
     Role.DeviceManage,
+    Role.ConsumableGroupManage,
+    Role.ConsumableManage,
   ]);
 
   public name: string;
