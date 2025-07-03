@@ -1,9 +1,9 @@
-<h1>Geräte-Gruppe bearbeiten</h1>
+<h1>Verbrauchsmaterial-Gruppe bearbeiten</h1>
 <ng-container *ngIf="notFound() || loadingError()">
-  <h1>Der Geräte-Gruppe wurde nicht gefunden!</h1>
+  <h1>Der Verbrauchsmaterial-Gruppe wurde nicht gefunden!</h1>
 </ng-container>
 <ng-container *ngIf="loading()">
-  Geräte-Gruppe wird geladen...
+  Verbrauchsmaterial-Gruppe wird geladen...
 </ng-container>
 <ng-container *ngIf="!loading() && !notFound()  && !loadingError()">
   <form nz-form [formGroup]="form" (ngSubmit)="submit()">

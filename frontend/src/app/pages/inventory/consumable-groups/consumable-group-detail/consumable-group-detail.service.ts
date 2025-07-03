@@ -1,17 +1,17 @@
 import {Injectable, signal} from '@angular/core';
 import {Subject} from 'rxjs';
+import {ConsumableGroupDto} from '@backend/model/consumableGroupDto';
 import {Router} from '@angular/router';
+import {ConsumableGroupService} from '@backend/api/consumableGroup.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {DeviceGroupService} from '@backend/api/deviceGroup.service';
-import {DeviceGroupDto} from '@backend/model/deviceGroupDto';
 import {DeviceGroupUpdateDto} from '@backend/model/deviceGroupUpdateDto';
 
 @Injectable({
   providedIn: 'root'
 })
-export class DeviceGroupDetailService {
+export class ConsumableGroupDetailService {
   id?: number;
-  entity = signal<DeviceGroupDto | null>(null);
+  entity = signal<ConsumableGroupDto | null>(null);
   loading = signal(false);
   loadingError = signal(false);
   notFound = signal(false);
@@ -23,7 +23,7 @@ export class DeviceGroupDetailService {
   deleteLoadingSuccess = new Subject<void>();
 
   constructor(
-    private readonly locationService: DeviceGroupService,
+    private readonly service: ConsumableGroupService,
     private readonly router: Router,
   ) {
   }
@@ -31,7 +31,7 @@ export class DeviceGroupDetailService {
   load(id: number) {
     this.id = id;
     this.loading.set(true);
-    this.locationService.deviceGroupControllerGetOne({id})
+    this.service.consumableGroupControllerGetOne({id})
       .subscribe({
         next: (newEntity) => {
           this.entity.set(newEntity);
@@ -53,7 +53,7 @@ export class DeviceGroupDetailService {
     const entity = this.entity();
     if (entity) {
       this.updateLoading.set(true);
-      this.locationService.deviceGroupControllerUpdate({id: entity.id, deviceGroupUpdateDto: rawValue})
+      this.service.consumableGroupControllerUpdate({id: entity.id, consumableGroupUpdateDto: rawValue})
         .subscribe({
           next: (newEntity) => {
             this.updateLoading.set(false);
@@ -72,12 +72,12 @@ export class DeviceGroupDetailService {
     const entity = this.entity();
     if (entity) {
       this.deleteLoading.set(true);
-      this.locationService.deviceGroupControllerDelete({id: entity.id})
+      this.service.consumableGroupControllerDelete({id: entity.id})
         .subscribe({
           next: () => {
             this.deleteLoading.set(false);
             this.deleteLoadingSuccess.next();
-            this.router.navigate(['inventory', 'device-groups']);
+            this.router.navigate(['inventory', 'consumable-groups']);
           },
           error: (err: HttpErrorResponse) => {
             this.deleteLoading.set(false);

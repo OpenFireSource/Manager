@@ -23,7 +23,7 @@ export class DeviceGroupDetailService {
   deleteLoadingSuccess = new Subject<void>();
 
   constructor(
-    private readonly locationService: DeviceGroupService,
+    private readonly service: DeviceGroupService,
     private readonly router: Router,
   ) {
   }
@@ -31,7 +31,7 @@ export class DeviceGroupDetailService {
   load(id: number) {
     this.id = id;
     this.loading.set(true);
-    this.locationService.deviceGroupControllerGetOne({id})
+    this.service.deviceGroupControllerGetOne({id})
       .subscribe({
         next: (newEntity) => {
           this.entity.set(newEntity);
@@ -53,7 +53,7 @@ export class DeviceGroupDetailService {
     const entity = this.entity();
     if (entity) {
       this.updateLoading.set(true);
-      this.locationService.deviceGroupControllerUpdate({id: entity.id, deviceGroupUpdateDto: rawValue})
+      this.service.deviceGroupControllerUpdate({id: entity.id, deviceGroupUpdateDto: rawValue})
         .subscribe({
           next: (newEntity) => {
             this.updateLoading.set(false);
@@ -72,7 +72,7 @@ export class DeviceGroupDetailService {
     const entity = this.entity();
     if (entity) {
       this.deleteLoading.set(true);
-      this.locationService.deviceGroupControllerDelete({id: entity.id})
+      this.service.deviceGroupControllerDelete({id: entity.id})
         .subscribe({
           next: () => {
             this.deleteLoading.set(false);

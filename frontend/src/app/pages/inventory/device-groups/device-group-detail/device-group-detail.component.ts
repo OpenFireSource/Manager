@@ -26,7 +26,7 @@ interface DeviceGroupDetailForm {
   templateUrl: './device-group-detail.component.html',
   styleUrl: './device-group-detail.component.less'
 })
-export class DeviceGroupDetailComponent  implements OnInit, OnDestroy {
+export class DeviceGroupDetailComponent implements OnInit, OnDestroy {
   notFound: Signal<boolean>;
   loading: Signal<boolean>;
   loadingError: Signal<boolean>;

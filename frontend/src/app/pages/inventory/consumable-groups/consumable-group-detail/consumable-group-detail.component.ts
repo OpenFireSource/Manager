@@ -10,23 +10,23 @@ import {NzSelectModule} from 'ng-zorro-antd/select';
 import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 import {Subject, takeUntil} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
+import {ConsumableGroupDetailService} from './consumable-group-detail.service';
 import {InAppMessageService} from '../../../../shared/services/in-app-message.service';
-import {DeviceGroupDetailService} from './device-group-detail.service';
 
-interface DeviceGroupDetailForm {
+interface ConsumableGroupDetailForm {
   name: FormControl<string>;
   notice?: FormControl<string | null>;
 }
 
 @Component({
-  selector: 'ofs-device-group-detail',
+  selector: 'ofs-consumable-group-detail',
   imports: [NgIf, ReactiveFormsModule, NzButtonModule, NzFormModule, NzInputModule, NzCheckboxModule, NzPopconfirmModule, NzSelectModule, NzInputNumberModule
   ],
   standalone: true,
-  templateUrl: './device-group-detail.component.html',
-  styleUrl: './device-group-detail.component.less'
+  templateUrl: './consumable-group-detail.component.html',
+  styleUrl: './consumable-group-detail.component.less'
 })
-export class DeviceGroupDetailComponent  implements OnInit, OnDestroy {
+export class ConsumableGroupDetailComponent implements OnInit, OnDestroy {
   notFound: Signal<boolean>;
   loading: Signal<boolean>;
   loadingError: Signal<boolean>;
@@ -35,7 +35,7 @@ export class DeviceGroupDetailComponent  implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  form = new FormGroup<DeviceGroupDetailForm>({
+  form = new FormGroup<ConsumableGroupDetailForm>({
     name: new FormControl<string>('', {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(1), Validators.maxLength(100)]
@@ -47,7 +47,7 @@ export class DeviceGroupDetailComponent  implements OnInit, OnDestroy {
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
-    private readonly service: DeviceGroupDetailService,
+    private readonly service: ConsumableGroupDetailService,
     private readonly inAppMessagingService: InAppMessageService,
   ) {
     this.notFound = this.service.notFound;
@@ -64,7 +64,7 @@ export class DeviceGroupDetailComponent  implements OnInit, OnDestroy {
     effect(() => {
       const updateLoading = this.service.loadingError();
       if (updateLoading) {
-        this.inAppMessagingService.showError('Fehler beim laden der Geräte-Gruppe.');
+        this.inAppMessagingService.showError('Fehler beim laden der Verbrauchsmaterial-Gruppe.');
       }
     });
 
@@ -73,7 +73,7 @@ export class DeviceGroupDetailComponent  implements OnInit, OnDestroy {
       .subscribe((x) => this.inAppMessagingService.showError(x));
     this.service.deleteLoadingSuccess
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.inAppMessagingService.showSuccess('Geräte-Gruppe gelöscht'));
+      .subscribe(() => this.inAppMessagingService.showSuccess('Verbrauchsmaterial-Gruppe gelöscht'));
     this.service.updateLoadingError
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.inAppMessagingService.showError('Fehler beim speichern.'));

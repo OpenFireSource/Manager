@@ -1,26 +1,26 @@
 import {Component, OnDestroy, Signal} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Subject, takeUntil} from 'rxjs';
-import {DeviceGroupCreateService} from './device-group-create.service';
-import {InAppMessageService} from '../../../../shared/services/in-app-message.service';
 import {NzButtonModule} from 'ng-zorro-antd/button';
 import {NzFormModule} from 'ng-zorro-antd/form';
 import {NzInputModule} from 'ng-zorro-antd/input';
+import {Subject, takeUntil} from 'rxjs';
+import {InAppMessageService} from '../../../../shared/services/in-app-message.service';
+import {ConsumableGroupCreateService} from './consumable-group-create.service';
 
-interface DeviceGroupCreateForm {
+interface ConsumableGroupCreateForm {
   name: FormControl<string>;
   notice?: FormControl<string | null>;
 }
 
 @Component({
-  selector: 'ofs-device-group-create',
+  selector: 'ofs-consumable-group-create',
   imports: [ReactiveFormsModule, NzButtonModule, NzFormModule, NzInputModule],
   standalone: true,
-  templateUrl: './device-group-create.component.html',
-  styleUrl: './device-group-create.component.less'
+  templateUrl: './consumable-group-create.component.html',
+  styleUrl: './consumable-group-create.component.less'
 })
-export class DeviceGroupCreateComponent implements OnDestroy {
-  form = new FormGroup<DeviceGroupCreateForm>({
+export class ConsumableGroupCreateComponent implements OnDestroy {
+  form = new FormGroup<ConsumableGroupCreateForm>({
     name: new FormControl<string>('', {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(1), Validators.maxLength(100)]
@@ -34,7 +34,7 @@ export class DeviceGroupCreateComponent implements OnDestroy {
   private destroy$ = new Subject<void>();
 
   constructor(
-    private readonly service: DeviceGroupCreateService,
+    private readonly service: ConsumableGroupCreateService,
     private readonly inAppMessagingService: InAppMessageService
   ) {
     this.createLoading = this.service.createLoading;

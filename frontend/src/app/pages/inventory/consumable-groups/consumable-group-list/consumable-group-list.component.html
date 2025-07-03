@@ -1,21 +1,21 @@
 <nz-table nzShowSizeChanger
-          [nzData]="entities()"
+          [nzData]="service.entities()"
           [nzFrontPagination]="false"
-          [nzLoading]="entitiesLoading()"
-          [nzTotal]="total()"
-          [nzPageSize]="itemsPerPage"
-          [nzPageIndex]="page"
+          [nzLoading]="service.entitiesLoading()"
+          [nzTotal]="service.total()"
+          [nzPageSize]="service.itemsPerPage"
+          [nzPageIndex]="service.page"
           (nzQueryParams)="onQueryParamsChange($event)">
   <thead>
   <tr>
     <th nzColumnKey="name" [nzSortFn]="true">Name</th>
-    <th *ofsHasRole="['device-group.manage']"></th>
+    <th *ofsHasRole="['consumable-group.manage']"></th>
   </tr>
   </thead>
   <tbody>
-  <tr *ngFor="let entity of entities()" nz-typography>
+  <tr *ngFor="let entity of service.entities()">
     <td>{{ entity.name }}</td>
-    <td *ofsHasRole="['device-group.manage']">
+    <td *ofsHasRole="['consumable-group.manage']">
       <a nz-button nzType="link" [routerLink]="entity.id.toString()">Details</a>
     </td>
   </tr>

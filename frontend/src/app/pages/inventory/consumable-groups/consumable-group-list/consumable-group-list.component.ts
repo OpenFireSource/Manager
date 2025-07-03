@@ -1,33 +1,32 @@
 import {Component} from '@angular/core';
-import {ConsumableGroupsService} from '../consumable-groups.service';
-import {NzTableModule} from 'ng-zorro-antd/table';
 import {CommonModule} from '@angular/common';
+import {
+  NzTableModule, NzTableQueryParams,
+} from 'ng-zorro-antd/table';
+import {ConsumableGroupsService} from '../consumable-groups.service';
+import {HasRoleDirective} from "../../../../core/auth/has-role.directive";
+import {NzButtonComponent} from "ng-zorro-antd/button";
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'ofs-consumable-group-list',
   imports: [
     NzTableModule,
-    CommonModule
+    CommonModule,
+    HasRoleDirective,
+    NzButtonComponent,
+    RouterLink
   ],
   standalone: true,
-  template: `
-    <nz-table #basicTable [nzData]="service.entities()" [nzLoading]="service.entitiesLoading()">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Bemerkung</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let entity of basicTable.data">
-          <td>{{ entity.name }}</td>
-          <td>{{ entity.notice || '-' }}</td>
-        </tr>
-      </tbody>
-    </nz-table>
-  `,
-  styleUrls: []
+  templateUrl: './consumable-group-list.component.html',
+  styleUrl: './consumable-group-list.component.less'
 })
 export class ConsumableGroupListComponent {
   constructor(public service: ConsumableGroupsService) {}
+
+  onQueryParamsChange(params: NzTableQueryParams) {
+    const {pageSize, pageIndex, sort} = params;
+    const sortCol = sort.find(x => x.value);
+    this.service.updatePage(pageIndex, pageSize, sortCol?.key, sortCol?.value === 'ascend' ? 'ASC' : 'DESC');
+  }
 }

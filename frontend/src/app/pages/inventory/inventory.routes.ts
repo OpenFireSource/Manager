@@ -11,6 +11,12 @@ import {DeviceCreateComponent} from './devices/device-create/device-create.compo
 import {DeviceDetailComponent} from './devices/device-detail/device-detail.component';
 import { ConsumableGroupsComponent } from './consumable-groups/consumable-groups.component';
 import { ConsumablesComponent } from './consumables/consumables.component';
+import {
+  ConsumableGroupCreateComponent
+} from './consumable-groups/consumable-group-create/consumable-group-create.component';
+import {
+  ConsumableGroupDetailComponent
+} from './consumable-groups/consumable-group-detail/consumable-group-detail.component';
 
 export const ROUTES: Route[] = [
   {
@@ -62,6 +68,16 @@ export const ROUTES: Route[] = [
     path: 'consumable-groups',
     component: ConsumableGroupsComponent,
     canActivate: [roleGuard(['consumable-group.view'])],
+  },
+  {
+    path: 'consumable-groups/create',
+    component: ConsumableGroupCreateComponent,
+    canActivate: [roleGuard(['consumable-group.manage'])],
+  },
+  {
+    path: 'consumable-groups/:id',
+    component: ConsumableGroupDetailComponent,
+    canActivate: [roleGuard(['consumable-group.manage'])],
   },
   {
     path: 'consumables',
