@@ -1048,6 +1048,7 @@ paths:
       summary: ''
       tags:
         - Device
+<<<<<<< HEAD
   /api/device/{id}/image-upload:
     get:
       description: Gibt die URL zum Hochladen eines Gerätebildes zurück
@@ -1253,6 +1254,8 @@ paths:
       summary: ''
       tags:
         - Location
+=======
+>>>>>>> 95edcf7 (small fixes)
   /api/consumable-group/count:
     get:
       description: Gibt die Anzahl aller Verbrauchsgüter-Gruppen zurück
@@ -1302,6 +1305,9 @@ paths:
           in: query
           schema:
             type: string
+            enum:
+              - ASC
+              - DESC
         - name: searchTerm
           required: false
           in: query
@@ -1470,11 +1476,13 @@ paths:
           required: false
           in: query
           schema:
+            nullable: true
             type: number
         - name: locationIds
           required: false
           in: query
           schema:
+            nullable: true
             type: array
             items:
               type: number
@@ -1674,6 +1682,180 @@ paths:
       summary: ''
       tags:
         - Consumable
+  /api/location/count:
+    get:
+      description: Gibt die Anzahl aller Standorte zurück
+      operationId: LocationController_getCount
+      parameters:
+        - name: searchTerm
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Location
+  /api/location:
+    get:
+      description: Gibt alle Standorte zurück
+      operationId: LocationController_getAll
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: offset
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: sortCol
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: sortDir
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: searchTerm
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LocationDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Location
+    post:
+      description: Erstellt einen Standort
+      operationId: LocationController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationCreateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Location
+  /api/location/{id}:
+    get:
+      description: Gibt einen Standort zurück
+      operationId: LocationController_getOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Location
+    put:
+      description: Aktualisiert einen  Standort
+      operationId: LocationController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationUpdateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationDto'
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Location
+    delete:
+      description: Löscht einen Standort
+      operationId: LocationController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+        '404':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - Location
 info:
   title: OFS-Manager
   description: ''
@@ -1940,123 +2122,6 @@ components:
           nullable: true
       required:
         - name
-    ConsumableGroupDto:
-      type: object
-      properties:
-        id:
-          type: number
-        name:
-          type: string
-        notice:
-          type: string
-          nullable: true
-      required:
-        - id
-        - name
-    ConsumableGroupCreateDto:
-      type: object
-      properties:
-        name:
-          type: string
-        notice:
-          type: string
-          nullable: true
-      required:
-        - name
-    ConsumableGroupUpdateDto:
-      type: object
-      properties:
-        name:
-          type: string
-        notice:
-          type: string
-          nullable: true
-      required:
-        - name
-    ConsumableDto:
-      type: object
-      properties:
-        id:
-          type: number
-        name:
-          type: string
-          nullable: true
-        notice:
-          type: string
-          nullable: true
-        quantity:
-          type: number
-        expirationDate:
-          type: string
-          format: date
-          nullable: true
-        groupId:
-          type: number
-          nullable: true
-        group:
-          $ref: '#/components/schemas/ConsumableGroupDto'
-          nullable: true
-        locationIds:
-          type: array
-          items:
-            type: number
-          nullable: true
-        locations:
-          type: array
-          items:
-            $ref: '#/components/schemas/LocationDto'
-          nullable: true
-      required:
-        - id
-        - quantity
-    ConsumableCreateDto:
-      type: object
-      properties:
-        name:
-          type: string
-          nullable: true
-        notice:
-          type: string
-          nullable: true
-        quantity:
-          type: number
-        expirationDate:
-          type: string
-          format: date
-          nullable: true
-        groupId:
-          type: number
-          nullable: true
-        locationIds:
-          type: array
-          items:
-            type: number
-          nullable: true
-      required:
-        - quantity
-    ConsumableUpdateDto:
-      type: object
-      properties:
-        name:
-          type: string
-          nullable: true
-        notice:
-          type: string
-          nullable: true
-        quantity:
-          type: number
-        expirationDate:
-          type: string
-          format: date
-          nullable: true
-        groupId:
-          type: number
-          nullable: true
-        locationIds:
-          type: array
-          items:
-            type: number
-          nullable: true
     LocationDto:
       type: object
       properties:
@@ -2285,6 +2350,7 @@ components:
             - $ref: '#/components/schemas/LocationDto'
       required:
         - state
+<<<<<<< HEAD
     UploadUrlDto:
       type: object
       properties:
@@ -2295,6 +2361,124 @@ components:
       required:
         - postURL
         - formData
+=======
+    ConsumableGroupDto:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        notice:
+          type: string
+          nullable: true
+      required:
+        - id
+        - name
+    ConsumableGroupCreateDto:
+      type: object
+      properties:
+        name:
+          type: string
+        notice:
+          type: string
+          nullable: true
+      required:
+        - name
+    ConsumableGroupUpdateDto:
+      type: object
+      properties:
+        name:
+          type: string
+        notice:
+          type: string
+          nullable: true
+    ConsumableDto:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+          nullable: true
+        notice:
+          type: string
+          nullable: true
+        quantity:
+          type: number
+        expirationDate:
+          format: date-time
+          type: string
+          nullable: true
+        groupId:
+          type: number
+          nullable: true
+        group:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/ConsumableGroupDto'
+        locationIds:
+          nullable: true
+          type: array
+          items:
+            type: string
+        locations:
+          nullable: true
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationDto'
+      required:
+        - id
+        - quantity
+    ConsumableCreateDto:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        notice:
+          type: string
+          nullable: true
+        quantity:
+          type: number
+        expirationDate:
+          format: date-time
+          type: string
+          nullable: true
+        groupId:
+          type: number
+          nullable: true
+        locationIds:
+          nullable: true
+          type: array
+          items:
+            type: string
+      required:
+        - quantity
+    ConsumableUpdateDto:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        notice:
+          type: string
+          nullable: true
+        quantity:
+          type: number
+        expirationDate:
+          format: date-time
+          type: string
+          nullable: true
+        groupId:
+          type: number
+          nullable: true
+        locationIds:
+          nullable: true
+          type: array
+          items:
+            type: string
+>>>>>>> 95edcf7 (small fixes)
     LocationCreateDto:
       type: object
       properties:

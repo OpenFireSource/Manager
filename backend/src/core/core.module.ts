@@ -28,6 +28,8 @@ import { LoggerContextMiddleware } from './middleware/logger-context.middleware'
 import { DeviceTypeEntity } from '../inventory/device-type/device-type.entity';
 import { DeviceGroupEntity } from '../inventory/device-group/device-group.entity';
 import { DeviceEntity } from '../inventory/device/device.entity';
+import { ConsumableEntity } from '../inventory/consumable/consumable.entity';
+import { ConsumableGroupEntity } from '../inventory/consumable-group/consumable-group.entity';
 import { AmqpService } from './services/amqp.service';
 import { MinioListenerService } from './services/storage/minio-listener.service';
 import { ImageService } from './services/storage/image.service';
@@ -66,6 +68,8 @@ import { InventoryModule } from '../inventory/inventory.module';
           DeviceTypeEntity,
           DeviceGroupEntity,
           DeviceEntity,
+          ConsumableEntity,
+          ConsumableGroupEntity,
           DeviceImageEntity,
         ],
         extra: {
