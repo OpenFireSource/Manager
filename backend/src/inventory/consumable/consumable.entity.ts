@@ -1,6 +1,12 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { ConsumableGroupEntity } from '../consumable-group/consumable-group.entity';
-import { LocationEntity } from '../../base/location/location.entity';
+import { ConsumableLocationEntity } from './consumable-location.entity';
 
 @Entity()
 export class ConsumableEntity {
@@ -11,10 +17,6 @@ export class ConsumableEntity {
   name?: string;
   @Column({ type: 'text', nullable: true })
   notice?: string;
-  @Column({ type: 'int' })
-  quantity: number;
-  @Column({ type: 'date', nullable: true })
-  expirationDate?: Date;
 
   @Column({ nullable: true })
   groupId?: number;
@@ -25,7 +27,6 @@ export class ConsumableEntity {
   })
   group?: ConsumableGroupEntity;
 
-  @ManyToMany(() => LocationEntity, (location) => location.consumables)
-  @JoinTable()
-  locations?: LocationEntity[];
+  @OneToMany(() => ConsumableLocationEntity, (x) => x.consumable)
+  consumableLocations?: ConsumableLocationEntity[];
 }

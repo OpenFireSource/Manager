@@ -1,0 +1,27 @@
+<nz-table nzShowSizeChanger
+          [nzData]="entities()"
+          [nzFrontPagination]="false"
+          [nzLoading]="entitiesLoading()"
+          [nzTotal]="total()"
+          [nzPageSize]="itemsPerPage"
+          [nzPageIndex]="page"
+          (nzQueryParams)="onQueryParamsChange($event)">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Gruppe</th>
+    <th>Bemerkung</th>
+    <th *ofsHasRole="['consumable.manage']"></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let entity of entities()">
+    <td>{{ entity.name }}</td>
+    <td>{{ entity.group?.name }}</td>
+    <td>{{ entity.notice }}</td>
+    <td *ofsHasRole="['consumable.manage']">
+      <a nz-button nzType="link" [routerLink]="entity.id.toString()">Details</a>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>

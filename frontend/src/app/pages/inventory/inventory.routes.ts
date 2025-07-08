@@ -17,6 +17,8 @@ import {
 import {
   ConsumableGroupDetailComponent
 } from './consumable-groups/consumable-group-detail/consumable-group-detail.component';
+import {ConsumableCreateComponent} from './consumables/consumable-create/consumable-create.component';
+import {ConsumableDetailComponent} from './consumables/consumable-detail/consumable-detail.component';
 
 export const ROUTES: Route[] = [
   {
@@ -83,5 +85,15 @@ export const ROUTES: Route[] = [
     path: 'consumables',
     component: ConsumablesComponent,
     canActivate: [roleGuard(['consumable.view'])],
+  },
+  {
+    path: 'consumables/create',
+    component: ConsumableCreateComponent,
+    canActivate: [roleGuard(['consumable.manage'])],
+  },
+  {
+    path: 'consumables/:id',
+    component: ConsumableDetailComponent,
+    canActivate: [roleGuard(['consumable.manage'])],
   },
 ];

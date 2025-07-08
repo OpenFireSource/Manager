@@ -19,8 +19,9 @@ export class ConsumableGroupsService {
   searchTerm$ = new BehaviorSubject<{ propagate: boolean, value: string }>({propagate: true, value: ''});
   private searchTerm?: string;
 
-  constructor(private readonly apiService: ConsumableGroupService,
-              @Inject(SEARCH_DEBOUNCE_TIME) time: number,
+  constructor(
+    private readonly apiService: ConsumableGroupService,
+    @Inject(SEARCH_DEBOUNCE_TIME) time: number,
   ) {
     this.searchTerm$
       .pipe(
@@ -42,7 +43,7 @@ export class ConsumableGroupsService {
       limit: this.itemsPerPage,
       offset: (this.page - 1) * this.itemsPerPage,
       sortCol: this.sortCol,
-      sortDir: this.sortDir,
+      sortDir: (this.sortDir === 'ASC' || this.sortDir === 'DESC') ? this.sortDir : undefined,
       searchTerm: this.searchTerm
     })
       .subscribe({

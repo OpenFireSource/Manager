@@ -30,6 +30,7 @@ import { DeviceGroupEntity } from '../inventory/device-group/device-group.entity
 import { DeviceEntity } from '../inventory/device/device.entity';
 import { ConsumableEntity } from '../inventory/consumable/consumable.entity';
 import { ConsumableGroupEntity } from '../inventory/consumable-group/consumable-group.entity';
+import { ConsumableLocationEntity } from '../inventory/consumable/consumable-location.entity';
 import { AmqpService } from './services/amqp.service';
 import { MinioListenerService } from './services/storage/minio-listener.service';
 import { ImageService } from './services/storage/image.service';
@@ -70,6 +71,7 @@ import { InventoryModule } from '../inventory/inventory.module';
           DeviceEntity,
           ConsumableEntity,
           ConsumableGroupEntity,
+          ConsumableLocationEntity,
           DeviceImageEntity,
         ],
         extra: {

@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import {
-  IsDate,
   IsDefined,
   IsInt,
   IsOptional,
@@ -9,8 +8,8 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { LocationDto } from '../../../base/location/dto/location.dto';
 import { ConsumableGroupDto } from '../../consumable-group/dto/consumable-group.dto';
+import { ConsumableLocationDto } from './consumable-location.dto';
 
 export class ConsumableDto {
   @ApiProperty()
@@ -34,20 +33,6 @@ export class ConsumableDto {
   @MaxLength(2000)
   notice?: string;
 
-  @ApiProperty()
-  @Expose()
-  @IsDefined()
-  @IsInt()
-  @IsPositive()
-  quantity: number;
-
-  @ApiProperty({ required: false, nullable: true, type: Date })
-  @Expose()
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  expirationDate?: Date;
-
   @ApiProperty({ required: false, nullable: true })
   @Expose()
   @IsOptional()
@@ -65,10 +50,14 @@ export class ConsumableDto {
   @IsOptional()
   @IsInt({ each: true })
   @IsPositive({ each: true })
-  locationIds?: number[];
+  consumableLocationIds?: number[];
 
-  @ApiProperty({ required: false, nullable: true, type: [LocationDto] })
+  @ApiProperty({
+    required: false,
+    nullable: true,
+    type: [ConsumableLocationDto],
+  })
   @Expose()
-  @Type(() => LocationDto)
-  locations?: LocationDto[];
+  @Type(() => ConsumableLocationDto)
+  consumableLocations?: ConsumableLocationDto[];
 }

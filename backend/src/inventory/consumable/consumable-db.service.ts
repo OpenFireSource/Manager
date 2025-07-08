@@ -3,12 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { ConsumableEntity } from './consumable.entity';
+import { ConsumableLocationEntity } from './consumable-location.entity';
 
 @Injectable()
 export class ConsumableDbService {
   constructor(
     @InjectRepository(ConsumableEntity)
     private readonly repo: Repository<ConsumableEntity>,
+    @InjectRepository(ConsumableLocationEntity)
+    private readonly clRepo: Repository<ConsumableLocationEntity>,
   ) {}
 
   private searchQueryBuilder(
@@ -42,7 +45,8 @@ export class ConsumableDbService {
       .limit(limit ?? 100)
       .offset(offset ?? 0)
       .leftJoinAndSelect('c.group', 'cg')
-      .leftJoinAndSelect('c.locations', 'l')
+      .leftJoinAndSelect('c.consumableLocations', 'cl')
+      .leftJoinAndSelect('cl.location', 'l')
       .leftJoinAndSelect('l.parent', 'lp');
 
     if (searchTerm) {
@@ -71,7 +75,8 @@ export class ConsumableDbService {
       .createQueryBuilder('c')
       .where('c.id = :id', { id })
       .leftJoinAndSelect('c.group', 'cg')
-      .leftJoinAndSelect('c.locations', 'l')
+      .leftJoinAndSelect('c.consumableLocations', 'cl')
+      .leftJoinAndSelect('cl.location', 'l')
       .leftJoinAndSelect('l.parent', 'lp');
 
     return query.getOne();
@@ -88,6 +93,39 @@ export class ConsumableDbService {
 
   public async delete(id: number) {
     const result = await this.repo.delete(id);
+    return (result.affected ?? 0) > 0;
+  }
+
+  public async addLocation(
+    id: number,
+    body: DeepPartial<ConsumableLocationEntity>,
+  ) {
+    await this.clRepo.save({ ...body, consumableId: id });
+  }
+
+  public async removeLocation(consumableId: number, relationId: number) {
+    const result = await this.clRepo
+      .createQueryBuilder()
+      .where('id = :id', { id: relationId })
+      .andWhere('consumableId = :consumableId', { consumableId })
+      .delete()
+      .execute();
+    return result.affected && result.affected !== 0;
+  }
+
+  public async findLocationRelation(relationId: number, consumableId: number) {
+    return await this.clRepo.findOneBy({ id: relationId, consumableId });
+  }
+
+  public async updateLocation(
+    consumableId: number,
+    relationId: number,
+    data: DeepPartial<ConsumableLocationEntity>,
+  ) {
+    const result = await this.clRepo.update(
+      { id: relationId, consumableId },
+      data,
+    );
     return (result.affected ?? 0) > 0;
   }
 }

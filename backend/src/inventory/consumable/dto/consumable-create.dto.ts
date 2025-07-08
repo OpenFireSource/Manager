@@ -4,5 +4,6 @@ import { ConsumableDto } from './consumable.dto';
 export class ConsumableCreateDto extends OmitType(ConsumableDto, [
   'id',
   'group',
-  'locations',
+  'consumableLocations',
+  'consumableLocationIds',
 ] as const) {}

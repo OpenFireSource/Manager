@@ -13,6 +13,8 @@ import { ConsumableUpdateDto } from './dto/consumable-update.dto';
 import { ConsumableCreateDto } from './dto/consumable-create.dto';
 import { PaginationDto } from '../../shared/dto/pagination.dto';
 import { SearchDto } from '../../shared/dto/search.dto';
+import { ConsumableLocationAddDto } from './dto/consumable-location-add.dto';
+import { ConsumableLocationUpdateDto } from './dto/consumable-location-update.dto';
 
 @Controller('consumable')
 export class ConsumableController {
@@ -97,7 +99,7 @@ export class ConsumableController {
   }
 
   @Endpoint(EndpointType.POST, {
-    path: ':id/locations/:locationId',
+    path: ':id/locations',
     description: 'Fügt einem Verbrauchsgut einen Standort hinzu',
     responseType: ConsumableDto,
     notFound: true,
@@ -105,13 +107,13 @@ export class ConsumableController {
   })
   public addLocation(
     @Param('id') id: number,
-    @Param('locationId') locationId: number,
+    @Body() body: ConsumableLocationAddDto,
   ): Promise<ConsumableDto> {
-    return this.service.addLocation(id, locationId);
+    return this.service.addLocation(id, body);
   }
 
   @Endpoint(EndpointType.DELETE, {
-    path: ':id/locations/:locationId',
+    path: ':id/locations/:relationId',
     description: 'Entfernt einen Standort von einem Verbrauchsgut',
     responseType: ConsumableDto,
     notFound: true,
@@ -119,8 +121,24 @@ export class ConsumableController {
   })
   public removeLocation(
     @Param('id') id: number,
-    @Param('locationId') locationId: number,
+    @Param('relationId') relationId: number,
   ): Promise<ConsumableDto> {
-    return this.service.removeLocation(id, locationId);
+    return this.service.removeLocation(id, relationId);
+  }
+
+  @Endpoint(EndpointType.PUT, {
+    path: ':id/locations/:relationId',
+    description:
+      'Aktualisiert die Relation zwischen einem Verbrauchsgut und einen Standort.',
+    responseType: ConsumableDto,
+    notFound: true,
+    roles: [Role.ConsumableManage],
+  })
+  public updateLocation(
+    @Param('id') id: number,
+    @Param('relationId') relationId: number,
+    @Body() body: ConsumableLocationUpdateDto,
+  ): Promise<ConsumableDto> {
+    return this.service.updateLocation(id, relationId, body);
   }
 }

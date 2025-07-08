@@ -1,7 +1,7 @@
-import { Injectable, Inject, signal } from '@angular/core';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, Observable } from 'rxjs';
-import { ConsumableDto, ConsumableCreateDto, ConsumableUpdateDto, CountDto, ConsumableService } from '@backend/index';
-import { SEARCH_DEBOUNCE_TIME } from '../../../app.configs';
+import {Injectable, Inject, signal} from '@angular/core';
+import {BehaviorSubject, debounceTime, distinctUntilChanged, filter, Observable} from 'rxjs';
+import {ConsumableDto, ConsumableCreateDto, ConsumableUpdateDto, CountDto, ConsumableService} from '@backend/index';
+import {SEARCH_DEBOUNCE_TIME} from '../../../app.configs';
 
 @Injectable({
   providedIn: 'root'
@@ -58,27 +58,21 @@ export class ConsumablesService {
       });
   }
 
-  getOne(id: number): Observable<ConsumableDto> {
-    return this.apiService.consumableControllerGetOne({id});
+  updatePage(page: number, itemsPerPage: number, sortCol?: string, sortDir?: string) {
+    this.page = page;
+    this.itemsPerPage = itemsPerPage;
+    this.sortCol = sortCol;
+    this.sortDir = this.sortCol ? sortDir : undefined;
+    this.load();
   }
 
-  create(dto: ConsumableCreateDto): Observable<ConsumableDto> {
-    return this.apiService.consumableControllerCreate({consumableCreateDto: dto});
+  search(term: string) {
+    this.searchTerm$.next({propagate: true, value: term});
+    this.page = 1;
   }
 
-  update(id: number, dto: ConsumableUpdateDto): Observable<ConsumableDto> {
-    return this.apiService.consumableControllerUpdate({id, consumableUpdateDto: dto});
-  }
-
-  delete(id: number): Observable<void> {
-    return this.apiService.consumableControllerDelete({id});
-  }
-
-  addLocation(id: number, locationId: number): Observable<ConsumableDto> {
-    return this.apiService.consumableControllerAddLocation({id, locationId});
-  }
-
-  removeLocation(id: number, locationId: number): Observable<ConsumableDto> {
-    return this.apiService.consumableControllerRemoveLocation({id, locationId});
+  init() {
+    this.searchTerm = '';
+    this.searchTerm$.next({propagate: false, value: ''});
   }
 }

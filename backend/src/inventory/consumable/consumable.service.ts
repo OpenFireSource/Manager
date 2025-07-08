@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -13,15 +14,15 @@ import { ConsumableDbService } from './consumable-db.service';
 import { ConsumableDto } from './dto/consumable.dto';
 import { ConsumableCreateDto } from './dto/consumable-create.dto';
 import { ConsumableUpdateDto } from './dto/consumable-update.dto';
+import { ConsumableLocationAddDto } from './dto/consumable-location-add.dto';
+import { LocationDbService } from '../../base/location/location-db.service';
+import { ConsumableLocationUpdateDto } from './dto/consumable-location-update.dto';
 
 @Injectable()
 export class ConsumableService {
   constructor(
     private readonly dbService: ConsumableDbService,
-    @InjectRepository(ConsumableEntity)
-    private readonly repo: Repository<ConsumableEntity>,
-    @InjectRepository(LocationEntity)
-    private readonly locationRepo: Repository<LocationEntity>,
+    private readonly locationDbService: LocationDbService,
   ) {}
 
   public async findAll(
@@ -65,24 +66,8 @@ export class ConsumableService {
   }
 
   public async create(body: ConsumableCreateDto) {
-    // Extract locationIds from the body
-    const { locationIds, ...consumableData } = body;
-    
-    // Create the consumable entity first
-    const newEntity = await this.dbService.create(consumableData);
-    
-    // Handle location associations if provided
-    if (locationIds && locationIds.length > 0) {
-      const locations = await this.locationRepo.findByIds(locationIds);
-      if (locations.length > 0) {
-        await this.repo
-          .createQueryBuilder()
-          .relation(ConsumableEntity, 'locations')
-          .of(newEntity.id)
-          .add(locations.map(l => l.id));
-      }
-    }
-    
+    const newEntity = await this.dbService.create(body);
+
     const entity = await this.dbService.findOne(newEntity.id);
     if (!entity) {
       throw new InternalServerErrorException();
@@ -91,39 +76,8 @@ export class ConsumableService {
   }
 
   public async update(id: number, body: ConsumableUpdateDto) {
-    // Extract locationIds from the body
-    const { locationIds, ...consumableData } = body;
-    
-    // Update the consumable entity first
-    if (!(await this.dbService.update(id, consumableData))) {
+    if (!(await this.dbService.update(id, body))) {
       throw new NotFoundException();
-    }
-
-    // Handle location associations if provided
-    if (locationIds !== undefined) {
-      // First, remove all existing location associations
-      await this.repo
-        .createQueryBuilder()
-        .relation(ConsumableEntity, 'locations')
-        .of(id)
-        .remove(await this.repo
-          .createQueryBuilder('c')
-          .relation('locations')
-          .of(id)
-          .loadMany()
-        );
-      
-      // Then add new associations if any
-      if (locationIds.length > 0) {
-        const locations = await this.locationRepo.findByIds(locationIds);
-        if (locations.length > 0) {
-          await this.repo
-            .createQueryBuilder()
-            .relation(ConsumableEntity, 'locations')
-            .of(id)
-            .add(locations.map(l => l.id));
-        }
-      }
     }
 
     const entity = await this.dbService.findOne(id);
@@ -133,7 +87,7 @@ export class ConsumableService {
     return plainToInstance(ConsumableDto, entity);
   }
 
-  public async addLocation(id: number, locationId: number) {
+  public async addLocation(id: number, body: ConsumableLocationAddDto) {
     // Check if consumable exists
     const consumable = await this.dbService.findOne(id);
     if (!consumable) {
@@ -141,17 +95,13 @@ export class ConsumableService {
     }
 
     // Check if location exists
-    const location = await this.locationRepo.findOne({ where: { id: locationId } });
+    const location = await this.locationDbService.findOne(body.locationId);
     if (!location) {
       throw new NotFoundException('Location not found');
     }
 
     // Add the location to the consumable
-    await this.repo
-      .createQueryBuilder()
-      .relation(ConsumableEntity, 'locations')
-      .of(id)
-      .add(locationId);
+    await this.dbService.addLocation(id, body);
 
     const entity = await this.dbService.findOne(id);
     if (!entity) {
@@ -160,19 +110,44 @@ export class ConsumableService {
     return plainToInstance(ConsumableDto, entity);
   }
 
-  public async removeLocation(id: number, locationId: number) {
+  public async removeLocation(id: number, relationId: number) {
+    if (!(await this.dbService.removeLocation(id, relationId))) {
+      throw new NotFoundException();
+    }
+    const entity = await this.dbService.findOne(id);
+    if (!entity) {
+      throw new InternalServerErrorException();
+    }
+    return plainToInstance(ConsumableDto, entity);
+  }
+
+  public async updateLocation(
+    id: number,
+    relationId: number,
+    data: ConsumableLocationUpdateDto,
+  ) {
+    // Check if relation exists
+    const relation = await this.dbService.findLocationRelation(id, relationId);
+    if (!relation) {
+      throw new NotFoundException('Relation not found');
+    }
+
     // Check if consumable exists
     const consumable = await this.dbService.findOne(id);
     if (!consumable) {
       throw new NotFoundException('Consumable not found');
     }
 
-    // Remove the location from the consumable
-    await this.repo
-      .createQueryBuilder()
-      .relation(ConsumableEntity, 'locations')
-      .of(id)
-      .remove(locationId);
+    // Check if location exists
+    const location = await this.locationDbService.findOne(data.locationId);
+    if (!location) {
+      throw new NotFoundException('Location not found');
+    }
+
+    // Update the location relation
+    if (!(await this.dbService.updateLocation(id, relationId, data))) {
+      throw new BadRequestException('Failed to update location relation');
+    }
 
     const entity = await this.dbService.findOne(id);
     if (!entity) {

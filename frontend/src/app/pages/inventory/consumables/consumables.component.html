@@ -1,1 +1,17 @@
+<h1>Verbrauchsmaterial</h1>
+<div nz-row nzJustify="space-between">
+  <div nz-col>
+    <button nz-button nzType="primary" routerLink="create" *ofsHasRole="['consumable.manage']">
+      Verbrauchsmaterial anlegen
+    </button>
+  </div>
+  <div nz-col>
+    <nz-input-group [nzSuffix]="suffixIconSearch">
+      <input type="text" (input)="search($event)" nz-input placeholder="Suchen"/>
+    </nz-input-group>
+    <ng-template #suffixIconSearch>
+      <nz-icon nzType="search"/>
+    </ng-template>
+  </div>
+</div>
 <ofs-consumable-list></ofs-consumable-list>

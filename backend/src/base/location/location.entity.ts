@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { DeviceEntity } from '../../inventory/device/device.entity';
 import { ConsumableEntity } from '../../inventory/consumable/consumable.entity';
+import { ConsumableLocationEntity } from '../../inventory/consumable/consumable-location.entity';
 
 export enum LocationType {
   NONE = 0, // Keine Angabe
@@ -60,6 +61,6 @@ export class LocationEntity {
   @OneToMany(() => DeviceEntity, (x) => x.location)
   devices: DeviceEntity[];
 
-  @ManyToMany(() => ConsumableEntity, (consumable) => consumable.locations)
-  consumables: ConsumableEntity[];
+  @OneToMany(() => ConsumableLocationEntity, (x) => x.location)
+  consumableLocations: ConsumableLocationEntity[];
 }
