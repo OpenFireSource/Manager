@@ -33,6 +33,7 @@ services:
       - MINIO_NOTIFY_AMQP_QUEUE_LIMIT_AMQP=10000
     volumes:
       - minio:/data
+      - ./docker/certs:/root/.minio/certs
     command: server /data --console-address ":9001"
     networks:
       - queue

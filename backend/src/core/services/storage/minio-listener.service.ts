@@ -65,7 +65,7 @@ export class MinioListenerService implements OnApplicationBootstrap {
 
     if (key.startsWith('devices/')) {
       if (imageType) {
-        await services.imageService.processDevice(key, bucketObject);
+        await services.imageService.processDevice(key);
       }
     }
   }

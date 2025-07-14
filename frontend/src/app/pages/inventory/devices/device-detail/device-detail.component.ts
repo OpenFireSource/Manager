@@ -1,5 +1,5 @@
 import {Component, effect, OnDestroy, OnInit, Signal} from '@angular/core';
-import {interval, map, mergeMap, of, Subject, Subscription, takeUntil, takeWhile} from 'rxjs';
+import {interval, tap, mergeMap, Subject, Subscription, takeUntil, takeWhile} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
 import {InAppMessageService} from '../../../../shared/services/in-app-message.service';
 import {DeviceDetailService} from './device-detail.service';
@@ -12,7 +12,7 @@ import {
 } from 'ng-zorro-antd/form';
 import {NzSelectModule} from 'ng-zorro-antd/select';
 import {NzPopconfirmModule} from 'ng-zorro-antd/popconfirm';
-import {NgIf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {NzCheckboxModule} from 'ng-zorro-antd/checkbox';
 import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 import {NzSpinModule} from 'ng-zorro-antd/spin';
@@ -23,6 +23,13 @@ import {LocationDto} from '@backend/model/locationDto';
 import {NzTabsModule} from 'ng-zorro-antd/tabs';
 import {NzUploadChangeParam, NzUploadFile, NzUploadXHRArgs} from 'ng-zorro-antd/upload';
 import {ImageUploadAreaComponent} from '../../../../shared/image-upload-area/image-upload-area.component';
+import {DeviceDto} from '@backend/model/deviceDto';
+import {NzCardModule} from 'ng-zorro-antd/card';
+import {NzFlexModule} from 'ng-zorro-antd/flex';
+import {NzNotificationService} from 'ng-zorro-antd/notification';
+import {NzIconModule} from 'ng-zorro-antd/icon';
+import {NzDropDownModule} from 'ng-zorro-antd/dropdown';
+import {imageSizes} from '../../../../shared/config';
 
 interface DeviceDetailForm {
   name: FormControl<string | null>;
@@ -58,17 +65,24 @@ interface DeviceDetailForm {
     NzSpinModule,
     NzDatePickerModule,
     NzTabsModule,
+    NzCardModule,
+    NzFlexModule,
     ImageUploadAreaComponent,
+    NzIconModule,
+    NzDropDownModule,
+    NgForOf,
   ],
   templateUrl: './device-detail.component.html',
   styleUrl: './device-detail.component.less'
 })
 export class DeviceDetailComponent implements OnInit, OnDestroy {
+  imageSizes = imageSizes;
   notFound: Signal<boolean>;
   loading: Signal<boolean>;
   loadingError: Signal<boolean>;
   updateLoading: Signal<boolean>;
   deleteLoading: Signal<boolean>;
+  entity: Signal<DeviceDto | null>;
 
   private destroy$ = new Subject<void>();
 
@@ -125,6 +139,7 @@ export class DeviceDetailComponent implements OnInit, OnDestroy {
     private readonly activatedRoute: ActivatedRoute,
     private readonly service: DeviceDetailService,
     private readonly inAppMessagingService: InAppMessageService,
+    private readonly notification: NzNotificationService,
   ) {
     this.notFound = this.service.notFound;
     this.loading = this.service.loading;
@@ -137,6 +152,7 @@ export class DeviceDetailComponent implements OnInit, OnDestroy {
     this.deviceGroupsIsLoading = this.service.deviceGroupsIsLoading;
     this.locations = this.service.locations;
     this.locationsIsLoading = this.service.locationsIsLoading;
+    this.entity = this.service.entity;
 
     effect(() => {
       const entity = this.service.entity();
@@ -216,41 +232,23 @@ export class DeviceDetailComponent implements OnInit, OnDestroy {
 
   uploadImage(item: NzUploadXHRArgs): Subscription {
     const comp = (item.data as DeviceDetailComponent);
-    return comp.service.uploadImage(item.file.name, item);
+    return comp.service.uploadImage('test', item);
   }
 
   imageChanged(event: NzUploadChangeParam) {
-    // TODO Device neu laden und Bilder aktualisieren
-
     // Upload event handling, wenn sich etwas ändert
     if (event.type === "success") {
       let i = 0;
-      let pollInterval = 500;
+      const pollInterval = 500;
       interval(pollInterval)
         .pipe(
-          mergeMap(async () => {
-            //await this.equipmentService.findOne(this.entity.id);
-          }),
-          map(x => {
-            i++;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const filename = (event.file.originFileObj as any)?.filename ?? '';
-            /*if (x.documents.find(y => y.key === filename) !== undefined) {
-              // this.entity.documents = x.documents;
-              const i = this.imgList.findIndex(y => y.name === event.file.name);
-              if (i !== -1) {
-                this.imgList = this.imgList.slice(i, -1);
-              }
-              return true;
-            }*/
-            console.log(i);
-            return false;
-          }),
-          takeWhile(x => !x && i < 10 / (pollInterval / 1000)),
+          mergeMap(() => this.service.isImageUploaded(event.file.uid)),
+          tap(() => i++),
+          takeWhile(x => !x && i < 30 / (pollInterval / 1000)),
         )
         .subscribe({
           complete: () => {
-            // this.notification.create("success", "Hochgeladen", `Datei wurde erfolgreich hochgeladen!`);
+            this.notification.create("success", "Hochgeladen", `Datei wurde erfolgreich hochgeladen!`);
           }
         });
     } else if (event.type === 'error') {
@@ -258,7 +256,19 @@ export class DeviceDetailComponent implements OnInit, OnDestroy {
       if (index !== -1) {
         this.imgList.splice(index, 1);
       }
-      // this.notification.create("error", "Fehler", "Fehler beim hochladen");
+      this.notification.create("error", "Fehler", "Fehler beim hochladen");
     }
+  }
+
+  downloadImage(imageId: string, size: string) {
+    this.service.getDownloadUrl(imageId, size);
+  }
+
+  deleteImage(id: string) {
+    this.service.deleteImage(id);
+  }
+
+  updateDefaultImage(id: string) {
+    this.service.updateDefaultImage(id);
   }
 }

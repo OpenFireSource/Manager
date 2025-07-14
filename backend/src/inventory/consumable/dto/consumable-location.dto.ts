@@ -11,7 +11,6 @@ import {
 } from 'class-validator';
 import { LocationDto } from '../../../base/location/dto/location.dto';
 
-
 export class ConsumableLocationDto {
   @ApiProperty()
   @Expose()

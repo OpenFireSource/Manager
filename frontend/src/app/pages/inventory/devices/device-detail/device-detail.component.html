@@ -233,6 +233,34 @@
     </nz-tab>
 
     <nz-tab nzTitle="Bilder" nz-col nzSpan="24" nz-row>
+      <div nz-col nzSpan="24" class="btn-wrapper" nz-flex nzGap="middle" nzWrap="wrap">
+        <div *ngFor="let img of entity()?.images">
+          <nz-card nzHoverable style="width:220px" [nzCover]="coverTemplate"
+                   [class.highlight]="img.id === entity()?.defaultImageId">
+            <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzShape="circle">
+              <nz-icon nzType="download"/>
+            </button>
+            <button nz-button nzDanger nzShape="circle" nz-popconfirm (nzOnConfirm)="deleteImage(img.id)"
+                    nzPopconfirmTitle="Möchtest du das Bild unwideruflich löschen?">
+              <nz-icon nzType="delete"/>
+            </button>
+            <button nz-button *ngIf="img.id !== entity()?.defaultImageId" (click)="updateDefaultImage(img.id)">
+              Titelbild festlegen
+            </button>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu>
+                <li nz-menu-item *ngFor="let imgSize of imageSizes">
+                  <button nz-button nzType="link" (click)="downloadImage(img.id, imgSize.size)">{{ imgSize.name }}
+                  </button>
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+          </nz-card>
+          <ng-template #coverTemplate>
+            <img alt="example" style="margin: 1px;width: 215px" [src]="img.previewUrl"/>
+          </ng-template>
+        </div>
+      </div>
       <div nz-col nzSpan="24">
         <ofs-image-upload-area (nzChange)="imageChanged($event)"
                                [nzData]="this"

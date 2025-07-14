@@ -65,7 +65,9 @@ export class ConsumableGroupController {
     notFound: true,
     roles: [Role.ConsumableGroupManage],
   })
-  public create(@Body() body: ConsumableGroupCreateDto): Promise<ConsumableGroupDto> {
+  public create(
+    @Body() body: ConsumableGroupCreateDto,
+  ): Promise<ConsumableGroupDto> {
     return this.service.create(body);
   }
 

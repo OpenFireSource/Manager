@@ -7,7 +7,7 @@
   [nzShowUploadList]="{showRemoveIcon: false, showPreviewIcon: false, showDownloadIcon: false}"
   [nzData]="nzData"
   (nzChange)="nzChange.emit($event)"
-  nzAccept="image/*">
+  nzAccept="image/jpeg, image/png, image/tiff">
   <p class="ant-upload-drag-icon">
     <span nz-icon nzType="inbox"></span>
   </p>

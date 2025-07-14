@@ -1,4 +1,12 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { DeviceTypeEntity } from '../device-type/device-type.entity';
 import { DeviceGroupEntity } from '../device-group/device-group.entity';
 import { LocationEntity } from '../../base/location/location.entity';
@@ -80,4 +88,14 @@ export class DeviceEntity {
 
   @OneToMany(() => DeviceImageEntity, (x) => x.device, { onDelete: 'CASCADE' })
   images: DeviceImageEntity[];
+
+  @Column({ nullable: true })
+  defaultImageId?: string;
+  @JoinColumn()
+  @OneToOne(() => DeviceImageEntity, {
+    nullable: true,
+    cascade: true,
+    onDelete: 'SET NULL',
+  })
+  defaultImage?: DeviceImageEntity;
 }

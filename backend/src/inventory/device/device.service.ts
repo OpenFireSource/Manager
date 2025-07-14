@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -13,11 +15,14 @@ import { DeviceCreateDto } from './dto/device-create.dto';
 import { v4 } from 'uuid';
 import { MinioService } from '../../core/services/storage/minio.service';
 import { UploadUrlDto } from '../../shared/dto/upload-url.dto';
+import { ImageService } from '../../core/services/storage/image.service';
+import { DownloadUrlDto } from '../../shared/dto/download-url.dto';
 
 @Injectable()
 export class DeviceService {
   constructor(
     private readonly dbService: DeviceDbService,
+    @Inject(forwardRef(() => MinioService))
     private readonly minioService: MinioService,
   ) {}
 
@@ -49,10 +54,34 @@ export class DeviceService {
     if (!entity) {
       throw new NotFoundException();
     }
-    return plainToInstance(DeviceDto, entity);
+
+    const imgs: { id: string; previewUrl: string }[] = [];
+    const images = entity.images;
+    for (const img of images) {
+      const presignedUrl = await this.minioService.generatePresignedGetUrl(
+        'devices/' + id + '/images/' + img.id + ImageService.previewSuffix,
+      );
+      imgs.push({
+        id: img.id,
+        previewUrl: presignedUrl,
+      });
+    }
+
+    return plainToInstance(DeviceDto, { ...entity, images: imgs });
   }
 
   public async delete(id: number) {
+    const entity = await this.dbService.findOne(id);
+    if (!entity) {
+      throw new NotFoundException();
+    }
+
+    if (entity.images && entity.images.length > 0) {
+      await Promise.all(
+        entity.images.map((img) => this.deleteImage(id, img.id)),
+      );
+    }
+
     if (!(await this.dbService.delete(id))) {
       throw new NotFoundException();
     }
@@ -77,11 +106,7 @@ export class DeviceService {
       throw new NotFoundException();
     }
 
-    const entity = await this.dbService.findOne(id);
-    if (!entity) {
-      throw new NotFoundException();
-    }
-    return plainToInstance(DeviceDto, entity);
+    return this.findOne(id);
   }
 
   public async getImageUploadUrl(id: number, contentType: string) {
@@ -102,9 +127,11 @@ export class DeviceService {
       contentType,
       50, // 50 MB
     );
-    return plainToInstance(UploadUrlDto, url, {
-      excludeExtraneousValues: true,
-    });
+    return plainToInstance(
+      UploadUrlDto,
+      { ...url, id: uuid },
+      { excludeExtraneousValues: true },
+    );
   }
 
   async addImage(deviceId: number, imageId: string) {
@@ -119,5 +146,24 @@ export class DeviceService {
     }
 
     await this.dbService.addImage(device, imageId);
+  }
+
+  async downloadImage(deviceId: number, imageId: string, size: string) {
+    const image = await this.dbService.findImage(deviceId, imageId);
+    if (!image) {
+      throw new NotFoundException('Image not found');
+    }
+    const url = await this.minioService.generatePresignedGetUrl(
+      `devices/${deviceId}/images/${imageId}` + (size !== '' ? '-' + size : ''),
+    );
+    return plainToInstance(DownloadUrlDto, { url });
+  }
+
+  public async deleteImage(id: number, imageId: string) {
+    if (!(await this.dbService.deleteImage(id, imageId))) {
+      throw new NotFoundException('Image not found');
+    }
+
+    await this.minioService.deleteImages('devices', id, imageId);
   }
 }

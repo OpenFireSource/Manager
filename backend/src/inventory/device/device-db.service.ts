@@ -49,7 +49,7 @@ export class DeviceDbService {
       .leftJoinAndSelect('d.group', 'dg')
       .leftJoinAndSelect('d.location', 'l')
       .leftJoinAndSelect('l.parent', 'lp')
-      .leftJoinAndSelect('d.images', 'i');
+      .leftJoinAndSelect('d.defaultImage', 'di');
 
     if (searchTerm) {
       query = this.searchQueryBuilder(query, searchTerm);
@@ -99,6 +99,7 @@ export class DeviceDbService {
       .leftJoinAndSelect('d.location', 'l')
       .leftJoinAndSelect('l.parent', 'lp')
       .leftJoinAndSelect('d.images', 'i')
+      .leftJoinAndSelect('d.defaultImage', 'di')
       .where('d.id = :id', { id });
 
     return query.getOne();
@@ -118,7 +119,16 @@ export class DeviceDbService {
     return (result.affected ?? 0) > 0;
   }
 
-  async addImage(device: DeviceEntity, imageId: string) {
+  public async addImage(device: DeviceEntity, imageId: string) {
     await this.imageRepo.save({ device, id: imageId });
+  }
+
+  public async findImage(deviceId: number, imageId: string) {
+    return this.imageRepo.findOneBy({ deviceId, id: imageId });
+  }
+
+  async deleteImage(id: number, imageId: string) {
+    const result = await this.imageRepo.delete({ deviceId: id, id: imageId });
+    return (result.affected ?? 0) > 0;
   }
 }

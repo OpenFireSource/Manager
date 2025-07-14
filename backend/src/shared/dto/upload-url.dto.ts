@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Transform, Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 
 class FormData {
   @ApiProperty()
@@ -43,5 +43,9 @@ export class UploadUrlDto {
   @ApiProperty()
   @Expose()
   @Type(() => FormData)
-  formData: { [key: string]: any };
+  formData: FormData;
+
+  @ApiProperty()
+  @Expose()
+  id: string;
 }

@@ -76,7 +76,7 @@ export class UserController {
     roles: [Role.UserManage],
     noContent: true,
   })
-  public deleteUser(@Param() params: IdGuidDto): Observable<void> {
+  public deleteUser(@Param() params: IdGuidDto): Observable<unknown> {
     return this.userService.deleteUser(params.id);
   }
 

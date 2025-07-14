@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { BucketEventRecordS3Object } from './dto/minio-listener/bucket-event.dto';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { MinioService } from './minio.service';
 import * as sharp from 'sharp';
 import { Sharp } from 'sharp';
@@ -8,16 +7,17 @@ import { DeviceService } from '../../../inventory/device/device.service';
 @Injectable()
 export class ImageService {
   static readonly sizes = [200, 480, 800, 1200, 1600, 2000, 4000];
+  static readonly blurredSizes = [600];
+  static readonly previewSuffix = '-webp-480';
 
   constructor(
+    @Inject(forwardRef(() => MinioService))
     private readonly minioService: MinioService,
+    @Inject(forwardRef(() => DeviceService))
     private readonly deivceService: DeviceService,
   ) {}
 
-  public async processDevice(
-    key: string,
-    bucketObject: BucketEventRecordS3Object,
-  ) {
+  public async processDevice(key: string) {
     try {
       const img = await this.loadImage(key);
       await this.convertImage(key, img);
@@ -54,15 +54,20 @@ export class ImageService {
   }
 
   private async blurredImage(key: string, img: Sharp) {
-    const size = 600;
-    const buffer = await img
-      .resize(size, null, { fit: 'inside' })
-      .blur(40)
-      .toBuffer();
+    for (const size of ImageService.blurredSizes) {
+      const buffer = await img
+        .resize(size, null, { fit: 'inside' })
+        .blur(40)
+        .toBuffer();
 
-    await this.minioService.putObject(key + '-webp-' + size + '-blur', buffer, {
-      'Content-Type': 'image/webp',
-    });
+      await this.minioService.putObject(
+        key + '-webp-' + size + '-blur',
+        buffer,
+        {
+          'Content-Type': 'image/webp',
+        },
+      );
+    }
   }
 
   private async loadImage(key: string): Promise<Sharp> {

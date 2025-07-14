@@ -5,12 +5,12 @@ import { AsyncLocalStorage } from 'async_hooks';
 export class RequestContextService {
   private readonly als = new AsyncLocalStorage<Map<string, string>>();
 
-  run(callback: () => void, context: Record<string, any>) {
+  run(callback: () => void, context: Record<string, string>) {
     const store = new Map(Object.entries(context));
     this.als.run(store, callback);
   }
 
-  set(key: string, value: any) {
+  set(key: string, value: string) {
     const store = this.als.getStore();
     if (store) {
       store.set(key, value);

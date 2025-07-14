@@ -47,8 +47,8 @@ const MinioConfig = registerAs(ConfigKey.Minio, () => ({
   useSsl: process.env.MINIO_USE_SSL === 'true',
   accessKey: process.env.MINIO_ACCESS_KEY,
   secretKey: process.env.MINIO_SECRET_KEY,
-  uploadExpiry: process.env.MINIO_UPLOAD_EXPIRY,
-  downloadExpiry: process.env.MINIO_DOWNLOAD_EXPIRY,
+  uploadExpiry: Number(process.env.MINIO_UPLOAD_EXPIRY),
+  downloadExpiry: Number(process.env.MINIO_DOWNLOAD_EXPIRY),
   bucketName: process.env.MINIO_BUCKET_NAME,
 }));
 

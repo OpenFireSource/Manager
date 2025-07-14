@@ -10,6 +10,7 @@ import {
   IsOptional,
   IsPositive,
   IsString,
+  IsUUID,
   MaxLength,
 } from 'class-validator';
 import { LocationDto } from '../../../base/location/dto/location.dto';
@@ -149,8 +150,20 @@ export class DeviceDto {
   @Type(() => LocationDto)
   location?: LocationDto;
 
-  @ApiProperty({ required: false, nullable: true })
+  @ApiProperty({ required: false, nullable: true, type: [DeviceImageDto] })
   @Expose()
   @Type(() => DeviceImageDto)
   images?: DeviceImageDto[];
+
+  @ApiProperty({ required: false, nullable: true })
+  @Expose()
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  defaultImageId?: string;
+
+  @ApiProperty({ required: false, nullable: true, type: DeviceImageDto })
+  @Expose()
+  @Type(() => DeviceImageDto)
+  defaultImage?: DeviceImageDto;
 }

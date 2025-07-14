@@ -6,11 +6,9 @@ import {
   HttpClient,
   HttpErrorResponse,
   HttpEventType,
-  HttpHeaders,
-  HttpRequest,
   HttpResponse
 } from '@angular/common/http';
-import {BehaviorSubject, debounceTime, filter, mergeMap, of, Subject, switchMap} from 'rxjs';
+import {BehaviorSubject, debounceTime, filter, map, mergeMap, Observable, Subject, tap} from 'rxjs';
 import {DeviceDto} from '@backend/model/deviceDto';
 import {DeviceTypeDto} from '@backend/model/deviceTypeDto';
 import {DeviceUpdateDto} from '@backend/model/deviceUpdateDto';
@@ -51,6 +49,8 @@ export class DeviceDetailService {
   locationSearch = '';
   locations = signal<LocationDto[]>([]);
   locationsIsLoading = signal(false);
+
+  uploadIds: { imageId: string, fileId: string }[] = [];
 
   constructor(
     private readonly apiService: DeviceService,
@@ -124,6 +124,25 @@ export class DeviceDetailService {
     if (entity) {
       this.updateLoading.set(true);
       this.apiService.deviceControllerUpdate({id: entity.id, deviceUpdateDto: rawValue})
+        .subscribe({
+          next: (newEntity) => {
+            this.updateLoading.set(false);
+            this.entity.set(newEntity);
+            this.updateLoadingSuccess.next();
+          },
+          error: () => {
+            this.updateLoading.set(false);
+            this.updateLoadingError.next();
+          },
+        });
+    }
+  }
+
+  updateDefaultImage(defaultImageId: string) {
+    const entity = this.entity();
+    if (entity) {
+      this.updateLoading.set(true);
+      this.apiService.deviceControllerUpdate({id: entity.id, deviceUpdateDto: {...entity, defaultImageId}})
         .subscribe({
           next: (newEntity) => {
             this.updateLoading.set(false);
@@ -232,6 +251,7 @@ export class DeviceDetailService {
       contentType: data.file.type ?? '',
     }).pipe(
       mergeMap(uploadData => {
+        this.uploadIds.push({imageId: uploadData.id, fileId: data.file.uid});
         const formData = new FormData();
         Object.entries(uploadData.formData).forEach(([k, v]) => {
           formData.append(k, v as string);
@@ -258,6 +278,56 @@ export class DeviceDetailService {
             data.onError(err, data.file);
           }
         }
+      });
+  }
+
+  isImageUploaded(uid: string): Observable<boolean> {
+    return this.apiService
+      .deviceControllerGetOne({id: this.id!})
+      .pipe(
+        map((data) => {
+          const response = data.images!.some((x) => {
+            return this.uploadIds.some((y) => {
+              return y.imageId === x.id && y.fileId === uid;
+            });
+          }) ?? false;
+          if (response) {
+            // Remove the uploadId if the image is found
+            const index = this.uploadIds.findIndex(y => y.fileId === uid);
+            if (index !== -1) {
+              this.uploadIds.splice(index, 1);
+            }
+            this.entity.set({...this.entity()!, images: data.images});
+          }
+
+          return response;
+        }),
+      );
+  }
+
+  getDownloadUrl(imageId: string, size: string) {
+    this.apiService
+      .deviceControllerDownloadImage({id: this.id!, imageId, size})
+      .pipe(map(x => x.url))
+      .subscribe((url) => window.open(url, '_blank'));
+  }
+
+  deleteImage(id: string) {
+    this.apiService
+      .deviceControllerDeleteImage({id: this.id!, imageId: id})
+      .subscribe({
+        next: () => {
+          const entity = this.entity();
+          if (entity) {
+            this.entity.set({
+              ...entity,
+              images: entity.images?.filter(x => x.id !== id) ?? [],
+            });
+          }
+        },
+        error: (err: HttpErrorResponse) => {
+          console.error('Fehler beim Löschen des Bildes:', err);
+        },
       });
   }
 }

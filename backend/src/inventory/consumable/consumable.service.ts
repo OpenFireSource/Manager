@@ -4,12 +4,8 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import { CountDto } from '../../shared/dto/count.dto';
-import { LocationEntity } from '../../base/location/location.entity';
-import { ConsumableEntity } from './consumable.entity';
 import { ConsumableDbService } from './consumable-db.service';
 import { ConsumableDto } from './dto/consumable.dto';
 import { ConsumableCreateDto } from './dto/consumable-create.dto';

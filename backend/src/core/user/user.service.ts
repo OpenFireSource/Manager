@@ -83,7 +83,7 @@ export class UserService {
     );
   }
 
-  deleteUser(id: string): Observable<void> {
+  deleteUser(id: string): Observable<unknown> {
     return this.keycloakService.deleteUser(id).pipe(
       catchError((error: InternalErrorDto) => {
         if (error.code === 404) {

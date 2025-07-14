@@ -15,6 +15,9 @@ import { PaginationDto } from '../../shared/dto/pagination.dto';
 import { SearchDto } from '../../shared/dto/search.dto';
 import { UploadUrlDto } from '../../shared/dto/upload-url.dto';
 import { FilenameDto } from '../../shared/dto/filename.dto';
+import { DownloadUrlDto } from '../../shared/dto/download-url.dto';
+import { ImageIdGuidDto } from '../../shared/dto/image-id-guid.dto';
+import { ImageDownloadQuerysDto } from '../../shared/dto/image-download-querys.dto';
 
 @Controller('device')
 export class DeviceController {
@@ -111,5 +114,35 @@ export class DeviceController {
     @Query() querys: FilenameDto,
   ): Promise<UploadUrlDto> {
     return this.service.getImageUploadUrl(params.id, querys.contentType);
+  }
+
+  @Endpoint(EndpointType.GET, {
+    path: ':id/image/:imageId',
+    description: 'Gibt die Url zum herunterladen des Gerätebild zurück.',
+    notFound: true,
+    responseType: DownloadUrlDto,
+    roles: [Role.DeviceView],
+  })
+  public async downloadImage(
+    @Param() params: IdNumberDto,
+    @Param() imageId: ImageIdGuidDto,
+    @Query() querys: ImageDownloadQuerysDto,
+  ): Promise<DownloadUrlDto> {
+    return this.service.downloadImage(params.id, imageId.imageId, querys.size);
+  }
+
+  // TODO Delete image endpoint
+  @Endpoint(EndpointType.DELETE, {
+    path: ':id/image/:imageId',
+    description: 'Löscht ein Bild',
+    noContent: true,
+    notFound: true,
+    roles: [Role.DeviceManage],
+  })
+  public async deleteImage(
+    @Param() params: IdNumberDto,
+    @Param() imageId: ImageIdGuidDto,
+  ): Promise<void> {
+    await this.service.deleteImage(params.id, imageId.imageId);
   }
 }

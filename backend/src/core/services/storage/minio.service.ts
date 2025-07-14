@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Client, ItemBucketMetadata } from 'minio';
+import { ImageService } from './image.service';
 
 @Injectable()
 export class MinioService {
@@ -8,7 +9,6 @@ export class MinioService {
     'image/jpeg',
     'image/png',
     'image/tiff',
-    'image/heic',
   ];
 
   private client: Client;
@@ -21,6 +21,8 @@ export class MinioService {
   constructor(
     private readonly configService: ConfigService,
     private readonly logger: Logger,
+    @Inject(forwardRef(() => ImageService))
+    private readonly imageService: ImageService,
   ) {
     const accessKey = this.configService.get<string>('MINIO.accessKey');
     const secretKey = this.configService.get<string>('MINIO.secretKey');
@@ -63,6 +65,14 @@ export class MinioService {
     );
   }
 
+  public async generatePresignedGetUrl(file: string): Promise<string> {
+    return this.client.presignedGetObject(
+      this.bucketName,
+      file,
+      this.downloadExpiry,
+    );
+  }
+
   public async generatePresignedPostUrl(
     file: string,
     contentType: string,
@@ -70,7 +80,7 @@ export class MinioService {
   ): Promise<{
     postURL: string;
     formData: {
-      [key: string]: any;
+      [key: string]: unknown;
     };
   }> {
     const policy = this.client.newPostPolicy();
@@ -93,7 +103,11 @@ export class MinioService {
     return this.client.getObject(this.bucketName, key);
   }
 
-  public putObject(key: string, webpBuffer: Buffer, metaData?: ItemBucketMetadata) {
+  public putObject(
+    key: string,
+    webpBuffer: Buffer,
+    metaData?: ItemBucketMetadata,
+  ) {
     return this.client.putObject(
       this.bucketName,
       key,
@@ -101,5 +115,22 @@ export class MinioService {
       webpBuffer.length,
       metaData,
     );
+  }
+
+  public async deleteObject(key: string) {
+    await this.client.removeObject(this.bucketName, key);
+  }
+
+  async deleteImages(entity: string, id: number, imageId: string) {
+    await Promise.all([
+      ...ImageService.sizes.map(async (size) =>
+        this.deleteObject(`devices/${id}/images/${imageId}-webp-${size}`),
+      ),
+      ...ImageService.blurredSizes.map(async (size) =>
+        this.deleteObject(`devices/${id}/images/${imageId}-webp-${size}-blur`),
+      ),
+      this.deleteObject(`devices/${id}/images/${imageId}`),
+      this.deleteObject(`devices/${id}/images/${imageId}-webp`),
+    ]);
   }
 }
