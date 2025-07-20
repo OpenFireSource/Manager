@@ -55,6 +55,10 @@ export class DeviceDbService {
       query = this.searchQueryBuilder(query, searchTerm);
     }
 
+    if (searchTerm) {
+      query = this.searchQueryBuilder(query, searchTerm);
+    }
+
     if (sortCol) {
       if (sortCol.startsWith('type.')) {
         query = query.orderBy(

@@ -49,7 +49,6 @@ export class DeviceDetailService {
   locationSearch = '';
   locations = signal<LocationDto[]>([]);
   locationsIsLoading = signal(false);
-
   uploadIds: { imageId: string, fileId: string }[] = [];
 
   constructor(

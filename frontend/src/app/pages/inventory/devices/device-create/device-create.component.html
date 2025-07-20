@@ -88,8 +88,7 @@
         nzPlaceHolder="Geräte-Gruppe auswählen"
         nzAllowClear
         nzShowSearch
-        nzServerSearch
-        [nzLoading]="deviceGroupsIsLoading()">
+        nzServerSearch>
         @if (deviceGroupsIsLoading()) {
           <nz-spin></nz-spin>
         } @else {
