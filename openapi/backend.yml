@@ -2284,13 +2284,41 @@ components:
           nullable: true
       required:
         - state
+    FormData:
+      type: object
+      properties:
+        bucket:
+          type: string
+        key:
+          type: string
+        Content-Type:
+          type: string
+        x-amz-date:
+          type: string
+        x-amz-algorithm:
+          type: string
+        x-amz-credential:
+          type: string
+        x-amz-signature:
+          type: string
+        policy:
+          type: string
+      required:
+        - bucket
+        - key
+        - Content-Type
+        - x-amz-date
+        - x-amz-algorithm
+        - x-amz-credential
+        - x-amz-signature
+        - policy
     UploadUrlDto:
       type: object
       properties:
         postURL:
           type: string
         formData:
-          type: object
+          $ref: '#/components/schemas/FormData'
         id:
           type: string
       required:
@@ -2351,14 +2379,14 @@ components:
           nullable: true
         locationId:
           type: number
-          nullable: true
+          nullable: false
         location:
-          nullable: true
-          allOf:
-            - $ref: '#/components/schemas/LocationDto'
+          $ref: '#/components/schemas/LocationDto'
       required:
         - id
         - quantity
+        - locationId
+        - location
     ConsumableDto:
       type: object
       properties:
@@ -2427,9 +2455,10 @@ components:
           nullable: true
         locationId:
           type: number
-          nullable: true
+          nullable: false
       required:
         - quantity
+        - locationId
     ConsumableLocationUpdateDto:
       type: object
       properties:
@@ -2444,9 +2473,10 @@ components:
           nullable: true
         locationId:
           type: number
-          nullable: true
+          nullable: false
       required:
         - quantity
+        - locationId
     LocationCreateDto:
       type: object
       properties:

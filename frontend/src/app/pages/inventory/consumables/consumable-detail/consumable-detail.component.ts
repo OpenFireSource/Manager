@@ -1,11 +1,10 @@
 import {Component, effect, OnDestroy, OnInit, Signal} from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {Form, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Subject, takeUntil} from 'rxjs';
 import {ConsumableGroupDto} from '@backend/model/consumableGroupDto';
 import {ActivatedRoute} from '@angular/router';
-import {InAppMessageService} from '../../../../shared/services/in-app-message.service';
 import {ConsumableDetailService} from './consumable-detail.service';
-import {NgIf} from '@angular/common';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {NzInputModule} from 'ng-zorro-antd/input';
 import {NzButtonModule} from 'ng-zorro-antd/button';
 import {NzFormModule} from 'ng-zorro-antd/form';
@@ -16,11 +15,24 @@ import {NzCheckboxModule} from 'ng-zorro-antd/checkbox';
 import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 import {NzSpinModule} from 'ng-zorro-antd/spin';
 import {NzDatePickerModule} from 'ng-zorro-antd/date-picker';
+import {NzTabsModule} from 'ng-zorro-antd/tabs';
+import {NzTableModule} from 'ng-zorro-antd/table';
+import {ConsumableDto} from '@backend/model/consumableDto';
+import {LocationDto} from '@backend/model/locationDto';
+import {NzDrawerModule} from 'ng-zorro-antd/drawer';
+import {ConsumableLocationDto} from '@backend/model/consumableLocationDto';
 
 interface ConsumableUpdateForm {
   name: FormControl<string>;
   notice: FormControl<string | null>;
   groupId: FormControl<number | null>;
+}
+
+interface ConsumableLocationForm {
+  locationId: FormControl<number>;
+  quantity: FormControl<number>;
+  expirationDate: FormControl<Date | null>;
+  notice: FormControl<string | null>;
 }
 
 @Component({
@@ -37,8 +49,14 @@ interface ConsumableUpdateForm {
     NzInputNumberModule,
     NzSpinModule,
     NzDatePickerModule,
+    NzTabsModule,
+    NgForOf,
+    NzTableModule,
+    NzDrawerModule,
+    DatePipe,
   ],
   templateUrl: './consumable-detail.component.html',
+  standalone: true,
   styleUrl: './consumable-detail.component.less'
 })
 export class ConsumableDetailComponent implements OnInit, OnDestroy {
@@ -62,14 +80,34 @@ export class ConsumableDetailComponent implements OnInit, OnDestroy {
     }),
   });
 
+  formLocation = new FormGroup<ConsumableLocationForm>({
+    locationId: new FormControl<number>(0, {
+      validators: [Validators.required],
+      nonNullable: true,
+    }),
+    quantity: new FormControl<number>(1, {
+      validators: [Validators.required, Validators.min(1)],
+      nonNullable: true,
+    }),
+    expirationDate: new FormControl<Date | null>(null),
+    notice: new FormControl<string | null>('', {
+      validators: [Validators.maxLength(2000)]
+    }),
+  });
+
   consumableGroups: Signal<ConsumableGroupDto[]>;
   consumableGroupsIsLoading: Signal<boolean>;
+  locations: Signal<LocationDto[]>;
+  locationsIsLoading: Signal<boolean>;
+  entity: Signal<ConsumableDto | null>;
+  locationRelationFormVisible: Signal<boolean>;
+  locationRelationFormTitle: Signal<string>;
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly service: ConsumableDetailService,
-    private readonly inAppMessagingService: InAppMessageService,
   ) {
+    this.entity = this.service.entity;
     this.notFound = this.service.notFound;
     this.loading = this.service.loading;
     this.loadingError = this.service.loadingError;
@@ -78,30 +116,21 @@ export class ConsumableDetailComponent implements OnInit, OnDestroy {
 
     this.consumableGroups = this.service.consumableGroups;
     this.consumableGroupsIsLoading = this.service.consumableGroupsIsLoading;
+    this.locations = this.service.locations;
+    this.locationsIsLoading = this.service.locationsIsLoading;
+    this.locationRelationFormVisible = this.service.locationRelationFormVisible;
+    this.locationRelationFormTitle = this.service.locationRelationFormTitle;
 
     effect(() => {
       const entity = this.service.entity();
-      if (entity) this.form.patchValue(entity as any);
-    });
-
-    effect(() => {
-      const updateLoading = this.service.loadingError();
-      if (updateLoading) {
-        this.inAppMessagingService.showError('Fehler beim laden des Geräts.');
+      if (entity) {
+        this.form.patchValue(entity as any);
       }
     });
-    this.service.deleteLoadingError
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((x) => this.inAppMessagingService.showError(x));
-    this.service.deleteLoadingSuccess
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.inAppMessagingService.showSuccess('Gerät gelöscht'));
-    this.service.updateLoadingError
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.inAppMessagingService.showError('Fehler beim speichern.'));
-    this.service.updateLoadingSuccess
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.inAppMessagingService.showSuccess('Änderungen gespeichert'));
+    effect(() => {
+      this.service.resetLocationForm();
+      this.formLocation.reset();
+    });
   }
 
   ngOnDestroy(): void {
@@ -127,5 +156,48 @@ export class ConsumableDetailComponent implements OnInit, OnDestroy {
 
   onSearchGroup(search: string) {
     this.service.onSearchGroup(search);
+  }
+
+  getLocationName(location: LocationDto | null | undefined) {
+    return location?.name; // TODO maybe add parent location name if available
+  }
+
+  deleteConsumableLocation(id: number) {
+    this.service.deleteConsumableLocation(id);
+  }
+
+  locationRelationFormClose() {
+    this.service.locationRelationFormClose();
+    this.formLocation.reset();
+  }
+
+  locationRelationFormOpenNew() {
+    this.service.locationRelationFormOpenNew();
+  }
+
+  locationRelationFormSave() {
+    if (this.formLocation.invalid) {
+      return;
+    }
+
+    if (this.service.locationRelationId()) {
+      this.service.locationRelationUpdate(this.formLocation.getRawValue() as any);
+    } else {
+      this.service.locationRelationCreate(this.formLocation.getRawValue() as any);
+    }
+  }
+
+  onSearchLocation(value: string) {
+    this.service.onSearchLocation(value);
+  }
+
+  locationRelationFormEditOpen(value: ConsumableLocationDto) {
+    this.formLocation.patchValue({
+      locationId: value.locationId,
+      quantity: value.quantity,
+      expirationDate: value.expirationDate ? new Date(value.expirationDate) : null,
+      notice: value.notice || null,
+    });
+    this.service.locationRelationFormEditOpen(value.id);
   }
 }

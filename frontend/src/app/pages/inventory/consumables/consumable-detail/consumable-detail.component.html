@@ -6,46 +6,159 @@
   Verbrauchsmaterial wird geladen...
 </ng-container>
 <ng-container *ngIf="!loading() && !notFound()  && !loadingError()">
-  <form nz-form [formGroup]="form" (ngSubmit)="submit()">
+  <nz-tabset nz-col nzSpan="24" nz-row>
+    <nz-tab nzTitle="Allgemein" nz-col nzSpan="24" nz-row>
+      <form nz-form [formGroup]="form" (ngSubmit)="submit()">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7" nzRequired>Name</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="nameErrorTpl">
+            <input nz-input formControlName="name" placeholder="Name"/>
+            <ng-template #nameErrorTpl let-control>
+              @if (control.errors?.['required']) {
+                Bitte einen Namen eingeben.
+              }
+              @if (control.errors?.['minlength']) {
+                Bitte mindestens 1 Zeichen eingeben.
+              }
+              @if (control.errors?.['maxlength']) {
+                Bitte maximal 100 Zeichen eingeben.
+              }
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Verbrauchsmaterial-Gruppe</nz-form-label>
+          <nz-form-control [nzSpan]="12">
+            <nz-select
+              (nzOnSearch)="onSearchGroup($event)"
+              formControlName="groupId"
+              nzPlaceHolder="Geräte-Gruppe auswählen"
+              nzAllowClear
+              nzShowSearch
+              nzServerSearch>
+              @if (consumableGroupsIsLoading()) {
+                <nz-option nzDisabled nzCustomContent>
+                  <nz-icon nzType="loading" class="loading-icon"/>
+                  Laden...
+                </nz-option>
+              } @else {
+                @for (item of consumableGroups(); track item) {
+                  <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                }
+              }
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">Weitere Informationen</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="noticeErrorTpl">
+        <textarea nz-input nzAutosize formControlName="notice"
+                  placeholder="weitere Information (max 2000 Zeichen)"></textarea>
+            <ng-template #noticeErrorTpl let-control>
+              @if (control.errors?.['maxlength']) {
+                Bitte maximal 2000 Zeichen eingeben.
+              }
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-control [nzOffset]="7" [nzSpan]="12">
+            <button nz-button nzType="primary" [disabled]="!form.valid" [nzLoading]="updateLoading()">Speichern</button>
+            <button nz-button nzType="primary" nzDanger type="button" [nzLoading]="deleteLoading()" nz-popconfirm
+                    nzPopconfirmTitle="Bist du dir sicher?" (nzOnConfirm)="delete()">Löschen
+            </button>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </nz-tab>
+    <nz-tab nzTitle="Lagerung" nz-col nzSpan="24" nz-row>
+      <button nz-button nzType="primary" (click)="locationRelationFormOpenNew()">Material-Ort anlegen</button>
+      <nz-table [nzData]="entity()?.consumableLocations??[]">
+        <thead>
+        <tr>
+          <th>Ort</th>
+          <th>Anzahl</th>
+          <th>Ablaufdatum</th>
+          <th>Notiz</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let loc of entity()!.consumableLocations">
+          <td>{{ getLocationName(loc.location) }}</td>
+          <td>{{ loc.quantity }}</td>
+          <td>{{ loc.expirationDate | date }}</td>
+          <td>{{ loc.notice }}</td>
+          <td>
+            <button nz-button nzType="primary" (click)="locationRelationFormEditOpen(loc)">Bearbeiten</button>
+            <button nz-button nzType="primary" nzDanger nz-popconfirm (nzOnConfirm)="deleteConsumableLocation(loc.id)"
+                    nzPopconfirmTitle="Willst du das Material wirklich löschen?">
+              Löschen
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </nz-tab>
+  </nz-tabset>
+</ng-container>
+
+<nz-drawer
+  [nzBodyStyle]="{ overflow: 'auto' }"
+  [nzMaskClosable]="false"
+  [nzPlacement]="'right'"
+  [nzSize]="'large'"
+  [nzVisible]="locationRelationFormVisible()"
+  [nzTitle]="locationRelationFormTitle()"
+  [nzFooter]="locationRelationFormFooter"
+  (nzOnClose)="locationRelationFormClose()">
+
+  <form nz-form *nzDrawerContent [formGroup]="formLocation">
     <nz-form-item>
-      <nz-form-label [nzSpan]="7" nzRequired>Name</nz-form-label>
+      <nz-form-label [nzSpan]="7" nzRequired>Standort/Fahrzeug</nz-form-label>
+      <nz-form-control [nzSpan]="12">
+        <nz-select
+          (nzOnSearch)="onSearchLocation($event)"
+          formControlName="locationId"
+          nzPlaceHolder="Standort/Fahrzeug auswählen"
+          nzAllowClear
+          nzShowSearch
+          nzServerSearch>
+          @if (locationsIsLoading()) {
+            <nz-spin></nz-spin>
+          } @else {
+            @for (item of locations(); track item) {
+              <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+            }
+          }
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="7" nzRequired>Anzahl</nz-form-label>
       <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="nameErrorTpl">
-        <input nz-input formControlName="name" placeholder="Name"/>
+        <nz-input-number formControlName="quantity" nzMin="1" nzMax="100000" />
         <ng-template #nameErrorTpl let-control>
           @if (control.errors?.['required']) {
-            Bitte einen Namen eingeben.
-          }
-          @if (control.errors?.['minlength']) {
-            Bitte mindestens 1 Zeichen eingeben.
-          }
-          @if (control.errors?.['maxlength']) {
-            Bitte maximal 100 Zeichen eingeben.
+            Bitte eine Anzahl eingeben.
           }
         </ng-template>
       </nz-form-control>
     </nz-form-item>
 
     <nz-form-item>
-      <nz-form-label [nzSpan]="7">Verbrauchsmaterial-Gruppe</nz-form-label>
-      <nz-form-control [nzSpan]="12">
-        <nz-select
-          (nzOnSearch)="onSearchGroup($event)"
-          formControlName="groupId"
-          nzPlaceHolder="Geräte-Gruppe auswählen"
-          nzAllowClear
-          nzShowSearch
-          nzServerSearch>
-          @if (consumableGroupsIsLoading()) {
-            <nz-option nzDisabled nzCustomContent>
-              <nz-icon nzType="loading" class="loading-icon" />
-              Laden...
-            </nz-option>
-          } @else {
-            @for (item of consumableGroups(); track item) {
-              <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
-            }
+      <nz-form-label [nzSpan]="7">Ablaufdatum</nz-form-label>
+      <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="nameErrorTpl">
+        <nz-date-picker formControlName="expirationDate"></nz-date-picker>
+        <ng-template #nameErrorTpl let-control>
+          @if (control.errors?.['required']) {
+            Bitte eine Anzahl eingeben.
           }
-        </nz-select>
+        </ng-template>
       </nz-form-control>
     </nz-form-item>
 
@@ -61,14 +174,11 @@
         </ng-template>
       </nz-form-control>
     </nz-form-item>
-
-    <nz-form-item>
-      <nz-form-control [nzOffset]="7" [nzSpan]="12">
-        <button nz-button nzType="primary" [disabled]="!form.valid" [nzLoading]="updateLoading()">Speichern</button>
-        <button nz-button nzType="primary" nzDanger type="button" [nzLoading]="deleteLoading()" nz-popconfirm
-                nzPopconfirmTitle="Bist du dir sicher?" (nzOnConfirm)="delete()">Löschen
-        </button>
-      </nz-form-control>
-    </nz-form-item>
   </form>
-</ng-container>
+
+  <ng-template #locationRelationFormFooter>
+    <button nz-button nzType="primary" (click)="locationRelationFormSave()"
+            [disabled]="!formLocation.valid">Speichern</button>
+    <button nz-button (click)="locationRelationFormClose()">Verwerfen</button>
+  </ng-template>
+</nz-drawer>

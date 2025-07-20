@@ -1,7 +1,7 @@
 import {
   ApplicationConfig,
   provideZoneChangeDetection,
-  importProvidersFrom, provideAppInitializer, inject,
+  importProvidersFrom, provideAppInitializer, inject, LOCALE_ID,
 } from '@angular/core';
 import {provideRouter} from '@angular/router';
 
@@ -22,8 +22,10 @@ import {authModuleConfig} from './core/auth/auth-module-config';
 import {de as deDE} from 'date-fns/locale';
 import {registerLocaleData} from '@angular/common';
 import {provideAppConfigs} from './app.configs';
+import localeDe from '@angular/common/locales/de';
 
-registerLocaleData(de);
+// registerLocaleData(de);
+registerLocaleData(localeDe);
 
 // We need a factory since localStorage is not available at AOT build time
 export function storageFactory(): OAuthStorage {
@@ -39,6 +41,7 @@ export const appConfig: ApplicationConfig = {
     {provide: AuthConfig, useValue: authConfig},
     {provide: OAuthStorage, useFactory: storageFactory},
     {provide: NZ_DATE_LOCALE, useValue: deDE},
+    { provide: LOCALE_ID, useValue: 'de' },
     provideNzI18n(de_DE),
     provideOAuthClient(authModuleConfig),
     provideHttpClient(withInterceptorsFromDi()),

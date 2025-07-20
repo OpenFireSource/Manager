@@ -1,7 +1,6 @@
 import {
   Column,
   Entity,
-  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   Tree,
@@ -9,7 +8,6 @@ import {
   TreeParent,
 } from 'typeorm';
 import { DeviceEntity } from '../../inventory/device/device.entity';
-import { ConsumableEntity } from '../../inventory/consumable/consumable.entity';
 import { ConsumableLocationEntity } from '../../inventory/consumable/consumable-location.entity';
 
 export enum LocationType {

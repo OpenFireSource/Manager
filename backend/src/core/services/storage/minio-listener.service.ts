@@ -61,7 +61,7 @@ export class MinioListenerService implements OnApplicationBootstrap {
   ): Promise<void> {
     const key = decodeURIComponent(bucketObject.key);
     const imageType = this.imageRegex.test(key);
-    const docType = this.docRegex.test(key);
+    // const docType = this.docRegex.test(key);
 
     if (key.startsWith('devices/')) {
       if (imageType) {

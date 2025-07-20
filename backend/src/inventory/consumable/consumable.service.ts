@@ -123,7 +123,7 @@ export class ConsumableService {
     data: ConsumableLocationUpdateDto,
   ) {
     // Check if relation exists
-    const relation = await this.dbService.findLocationRelation(id, relationId);
+    const relation = await this.dbService.findLocationRelation(relationId, id);
     if (!relation) {
       throw new NotFoundException('Relation not found');
     }

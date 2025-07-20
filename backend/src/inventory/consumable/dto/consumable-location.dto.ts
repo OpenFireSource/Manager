@@ -40,14 +40,14 @@ export class ConsumableLocationDto {
   @IsDate()
   expirationDate?: Date;
 
-  @ApiProperty({ required: false, nullable: true })
+  @ApiProperty({ required: true, nullable: false })
   @Expose()
-  @IsOptional()
+  @IsDefined()
   @IsInt()
   @IsPositive()
   locationId: number;
 
-  @ApiProperty({ required: false, nullable: true, type: LocationDto })
+  @ApiProperty({ type: LocationDto })
   @Expose()
   @Type(() => LocationDto)
   location?: LocationDto;
