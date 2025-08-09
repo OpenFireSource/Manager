@@ -36,6 +36,8 @@ import { MinioListenerService } from './services/storage/minio-listener.service'
 import { ImageService } from './services/storage/image.service';
 import { DeviceImageEntity } from '../inventory/device/device-image.entity';
 import { InventoryModule } from '../inventory/inventory.module';
+import { InfoController } from './info/info.controller';
+import { InfoService } from './info/info.service';
 
 @Module({
   imports: [
@@ -99,6 +101,7 @@ import { InventoryModule } from '../inventory/inventory.module';
     AmqpService,
     MinioListenerService,
     ImageService,
+    InfoService,
   ],
   exports: [
     MinioService,
@@ -106,7 +109,7 @@ import { InventoryModule } from '../inventory/inventory.module';
     LoggerContextMiddleware,
     AmqpService,
   ],
-  controllers: [UserController, GroupController],
+  controllers: [UserController, GroupController, InfoController],
 })
 @Global()
 export class CoreModule implements NestModule {

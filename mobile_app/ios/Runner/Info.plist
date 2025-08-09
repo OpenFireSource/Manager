@@ -45,5 +45,23 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>name.vonkirschbaum.manager</string>
+            </array>
+        </dict>
+    </array>
+
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>This app needs local network access for debugging and communication.</string>
+    <key>NSBonjourServices</key>
+    <array>
+      <string>_dartobservatory._tcp</string>
+    </array>
 </dict>
 </plist>

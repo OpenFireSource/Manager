@@ -1,5 +1,24 @@
 openapi: 3.0.0
 paths:
+  /api/user/me:
+    get:
+      description: Gibt einen Benutzer zurück
+      operationId: UserController_getMe
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '401':
+          description: ''
+      security:
+        - bearer: []
+      summary: ''
+      tags:
+        - User
   /api/user/count:
     get:
       description: Gibt die Anzahl der Benutzer zurück
@@ -508,6 +527,21 @@ paths:
       summary: ''
       tags:
         - Group
+  /api/info:
+    get:
+      description: ''
+      operationId: InfoController_get
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoDto'
+      summary: ''
+      tags:
+        - Info
   /api/device-type/count:
     get:
       description: Gibt die Anzahl aller Device-Typen zurück
@@ -1806,13 +1840,6 @@ components:
           tokenUrl: >-
             https://127.0.0.1:20443/realms/openfiresource/protocol/openid-connect/token
   schemas:
-    CountDto:
-      type: object
-      properties:
-        count:
-          type: number
-      required:
-        - count
     UserDto:
       type: object
       properties:
@@ -1838,6 +1865,13 @@ components:
         - email
         - emailVerified
         - enabled
+    CountDto:
+      type: object
+      properties:
+        count:
+          type: number
+      required:
+        - count
     UserCreateDto:
       type: object
       properties:
@@ -1945,6 +1979,13 @@ components:
       required:
         - members
         - users
+    InfoDto:
+      type: object
+      properties:
+        keycloakUrl:
+          type: string
+      required:
+        - keycloakUrl
     DeviceTypeDto:
       type: object
       properties:

@@ -2,6 +2,14 @@
 
 Manager App
 
+## OpenApi Generator
+
+```bash
+docker run --rm -v ${PWD}/../:/local openapitools/openapi-generator-cli generate -i /local/openapi/backend.yml -g dart-dio -o /local/mobile_app/backend_client --additional-properties=pubName=backend_client,packageName=backend_client
+cd backend_client
+flutter pub run build_runner build --delete-conflicting-outputs
+```
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile_app/features/auth/auth_routes.dart';
 import 'package:mobile_app/features/onboarding/presentation/widgets/onboarding_page_1.dart';
 import 'package:mobile_app/features/onboarding/presentation/widgets/onboarding_page_2.dart';
 import 'package:mobile_app/features/onboarding/presentation/widgets/onboarding_page_3.dart';
@@ -35,12 +36,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeIn,
       );
     } else {
-      context.go('/auth/login');
+      context.go(addOrganisationScreen);
     }
   }
 
   void _skip() {
-    context.go('/auth/login');
+    context.go(addOrganisationScreen);
   }
 
   void _onNextPage(index) {

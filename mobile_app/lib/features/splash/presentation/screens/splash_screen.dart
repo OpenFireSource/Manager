@@ -14,7 +14,7 @@ class SplashScreenState extends State<SplashScreen> {
     super.initState();
     Future.delayed(const Duration(seconds: 2), () {
       // TODO wenn bereits eingeloggt dann zu home, sonst zum onboarding
-      context.go('/onboarding'); // oder: prüfe Login und ggf. weiterleiten
+      //context.go('/onboarding'); // oder: prüfe Login und ggf. weiterleiten
     });
   }
 

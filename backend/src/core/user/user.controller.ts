@@ -14,10 +14,22 @@ import { CountDto } from '../../shared/dto/count.dto';
 import { UserGetQueryDto } from './dto/user-get-query.dto';
 import { UserGroupQueryDto } from './dto/user-group-query.dto';
 import { UserGroupsDto } from './dto/user-groups.dto';
+import { UserId } from '../../shared/decorator/user-id.decorator';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Endpoint(EndpointType.GET, {
+    path: 'me',
+    description: 'Gibt einen Benutzer zurück',
+    roles: [],
+    responseType: UserDto,
+  })
+  public getMe(@UserId() userId: string): Observable<UserDto> {
+    console.log('getMe called with userId:', userId);
+    return this.userService.getUser(userId);
+  }
 
   @Endpoint(EndpointType.GET, {
     path: 'count',

@@ -1,9 +1,8 @@
 import 'package:go_router/go_router.dart';
-// import 'presentation/screens/home_screen.dart';
+import 'package:mobile_app/features/home/presentation/screens/home_screen.dart';
+
+const String homeScreen = '/';
 
 final List<GoRoute> homeRoutes = [
-  /*GoRoute(
-    path: '/',
-    builder: (context, state) => const HomeScreen(),
-  ),*/
+  GoRoute(path: homeScreen, builder: (context, state) => const HomeScreen()),
 ];
