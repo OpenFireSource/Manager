@@ -1,4 +1,4 @@
-package name.vonkirschbaum.manager.mobile_app
+package de.cordol.app
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -7,7 +7,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final FlutterAppAuth appAuth;
 
   static const _clientId = 'mobile-app';
-  static const _redirectUrl = 'name.vonkirschbaum.manager:/oauthredirect';
+  static const _redirectUrl = 'de.cordol.app:/oauthredirect';
   static const _scopes = [
     'openid', 'profile', 'email', 'offline_access'
   ];

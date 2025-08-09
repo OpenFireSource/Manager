@@ -16,7 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isBusy = false;
   final _controller = TextEditingController();
   final String _clientId = 'mobile-app';
-  final String _redirectUrl = 'name.vonkirschbaum.manager:/oauthredirect';
+  final String _redirectUrl = 'de.cordol.app:/oauthredirect';
   final String _discoveryUrl =
       'https://localhost:20443/realms/openfiresource/.well-known/openid-configuration';
 
