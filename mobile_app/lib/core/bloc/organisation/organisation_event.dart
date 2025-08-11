@@ -20,11 +20,11 @@ class OrganisationSelectedEvent extends OrganisationEvent {
   List<Object?> get props => [id];
 }
 
-class OrganisationAddEvent extends OrganisationEvent {
+class OrganisationNewEvent extends OrganisationEvent {
   final String name;
   final String serverUrl;
 
-  const OrganisationAddEvent({required this.name, required this.serverUrl});
+  const OrganisationNewEvent({required this.name, required this.serverUrl});
 
   @override
   List<Object?> get props => [name, serverUrl];

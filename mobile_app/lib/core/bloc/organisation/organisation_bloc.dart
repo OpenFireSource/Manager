@@ -7,7 +7,6 @@ import 'package:mobile_app/core/data/models/organisation_model.dart';
 import 'package:mobile_app/core/data/repositories/authentication_repo.dart';
 import 'package:mobile_app/core/data/repositories/organisation_repo.dart';
 import 'package:mobile_app/core/utils/debug.dart';
-import 'package:uuid/uuid.dart';
 
 class OrganisationBloc extends Bloc<OrganisationEvent, OrganisationState> {
   final OrganisationRepo _organisationRepo;
@@ -18,7 +17,6 @@ class OrganisationBloc extends Bloc<OrganisationEvent, OrganisationState> {
     _authenticationRepo.registerOrganisationBloc(this);
     on<OrganisationLoadEvent>(_onOrganisationLoad);
     on<OrganisationSelectedEvent>(_onOrganisationSelect);
-    on<OrganisationAddEvent>(_onOrganisationAdd);
     on<OrganisationRemoveEvent>(_onOrganisationRemove);
     on<OrganisationLoginEvent>(_onOrganisationLogin);
     on<OrganisationLogoutEvent>(_onOrganisationLogout);
@@ -69,37 +67,6 @@ class OrganisationBloc extends Bloc<OrganisationEvent, OrganisationState> {
 
     _organisationRepo.setSelectedOrganisation(event.id);
     emit(OrganisationSelectedState(organisations, organisations[event.id]!));
-  }
-
-  void _onOrganisationAdd(
-    OrganisationAddEvent event,
-    Emitter<OrganisationState> emit,
-  ) async {
-    if (state is OrganisationInitialState) {
-      add(OrganisationLoadEvent());
-      return;
-    }
-
-    // TODO handle errors
-    final id = Uuid().v4();
-    var priority = 1;
-
-    var organisations = _organisationRepo.organisations;
-    var priorities = organisations.values.map((x) => x.priority).toSet();
-    while (priorities.contains(priority)) {
-      priority++;
-    }
-
-    final newOrganisation = OrganisationModel(
-      id,
-      event.name,
-      event.serverUrl,
-      priority,
-      loginStatus: LoginStatus.loggedout,
-    );
-    organisations = await _organisationRepo.add(newOrganisation);
-
-    add(OrganisationSelectedEvent(id: newOrganisation.id));
   }
 
   void _onOrganisationRemove(

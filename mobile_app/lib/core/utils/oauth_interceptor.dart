@@ -32,8 +32,6 @@ class BearerInterceptor extends Interceptor {
     RequestInterceptorHandler handle,
   ) async {
     final token = await oauth.fetchOrRefreshAccessToken().catchError((err) {
-      print('ERROR');
-      print(err);
       if (onInvalid != null) {
         onInvalid!(err);
       }
@@ -48,25 +46,6 @@ class BearerInterceptor extends Interceptor {
   }
 }
 
-class RefreshTokenGrant {
-  String refreshToken;
-  String clientId;
-
-  RefreshTokenGrant({required this.refreshToken, required this.clientId});
-
-  /// Prepare Request
-  @override
-  RequestOptions handle(RequestOptions request) {
-    // request.data = "grant_type=refresh_token&refresh_token=${Uri.encodeComponent(refreshToken)}&client_id=${Uri.encodeComponent(clientId)}";
-    request.data = {
-      'grant_type': 'refresh_token',
-      'refresh_token': Uri.encodeComponent(refreshToken),
-      'client_id': Uri.encodeComponent(clientId),
-    };
-    return request;
-  }
-}
-
 /// Use to implement custom token storage
 abstract class OAuthStorage {
   /// Read token
@@ -77,28 +56,6 @@ abstract class OAuthStorage {
 
   /// Clear token
   Future<void> clear();
-}
-
-/// Save Token in Memory
-class OAuthMemoryStorage extends OAuthStorage {
-  OAuthToken? _token;
-
-  /// Read
-  @override
-  Future<OAuthToken?> fetch() async {
-    return _token;
-  }
-
-  /// Save
-  @override
-  Future<OAuthToken> save(OAuthToken token) async {
-    return _token = token;
-  }
-
-  /// Clear
-  Future<void> clear() async {
-    _token = null;
-  }
 }
 
 /// Token
@@ -148,57 +105,43 @@ class OAuth {
   OAuth({
     required this.tokenUrl,
     required this.clientId,
+    required this.storage,
     Dio? dio,
-    OAuthStorage? storage,
     OAuthTokenExtractor? extractor,
     OAuthTokenValidator? validator,
   }) : dio = dio ?? Dio(),
-       storage = storage ?? OAuthMemoryStorage(),
        extractor = extractor ?? ((res) => OAuthToken.fromMap(res.data)),
        validator =
            validator ??
-           ((token) async => //false); // TODO DEBUG
+           ((token) async =>
                token.accessToken != null &&
                !JwtDecoder.isExpired(token.accessToken!));
 
-  Future<OAuthToken> requestTokenAndSave(RefreshTokenGrant grantType) async {
-    return requestToken(grantType).then((token) => storage.save(token));
+  Future<OAuthToken> requestTokenAndSave(String refreshToken) async {
+    return requestToken(refreshToken).then((token) => storage.save(token));
   }
 
   /// Request a new Access Token using a strategy
-  Future<OAuthToken> requestToken(RefreshTokenGrant grantType) {
-    final request = grantType.handle(
-      RequestOptions(
-        method: 'POST',
-        // path: '/',
-        contentType: 'application/x-www-form-urlencoded',
-        // headers: {
-        //   "Authorization":
-        //   "Basic ${stringToBase64.encode('$clientId:$clientSecret')}"
-        // },
-      ),
-    );
-
-    print(tokenUrl);
-    return dio
-        .request(
-          tokenUrl,
-          data: request.data,
-          options: Options(
-            contentType: request.contentType,
-            headers: request.headers,
-            method: request.method,
-          ),
-        )
-        .then((res) => extractor(res));
-  }
+  Future<OAuthToken> requestToken(String refreshToken) => dio
+      .request(
+        tokenUrl,
+        data: {
+          'grant_type': 'refresh_token',
+          'refresh_token': Uri.encodeComponent(refreshToken),
+          'client_id': Uri.encodeComponent(clientId),
+        },
+        options: Options(
+          contentType: 'application/x-www-form-urlencoded',
+          method: 'POST',
+        ),
+      )
+      .then((res) => extractor(res));
 
   /// return current access token or refresh
   Future<OAuthToken?> fetchOrRefreshAccessToken() async {
     OAuthToken? token = await storage.fetch();
 
     if (token?.accessToken == null) {
-      print('Missing access token');
       throw OAuthException('missing_access_token', 'Missing access token!');
     }
 
@@ -210,13 +153,10 @@ class OAuth {
   /// Refresh Access Token
   Future<OAuthToken> refreshAccessToken() async {
     OAuthToken? token = await storage.fetch();
-    print('refesh token');
     if (token?.refreshToken == null) {
       throw OAuthException('missing_refresh_token', 'Missing refresh token!');
     }
 
-    return requestTokenAndSave(
-      RefreshTokenGrant(refreshToken: token!.refreshToken!, clientId: clientId),
-    );
+    return requestTokenAndSave(token!.refreshToken!);
   }
 }

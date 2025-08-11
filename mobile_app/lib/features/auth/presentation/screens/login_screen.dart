@@ -112,7 +112,7 @@ class _TokenTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      '$tokenName: ${token != null ? (token!.length > 30 ? token!.substring(0, 30) + '...' : token!) : 'kein $tokenName'}',
+      '$tokenName: ${token != null ? (token!.length > 30 ? '${token!.substring(0, 30)}...' : token!) : 'kein $tokenName'}',
       softWrap: true,
     );
   }
