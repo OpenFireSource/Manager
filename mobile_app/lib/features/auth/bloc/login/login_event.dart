@@ -5,13 +5,11 @@ abstract class LoginEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class LoginServerUrlChanged extends LoginEvent {
+class LoginSubmitted extends LoginEvent {
   final String serverUrl;
 
-  LoginServerUrlChanged(this.serverUrl);
+  LoginSubmitted(this.serverUrl);
 
   @override
   List<Object?> get props => [serverUrl];
 }
-
-class LoginSubmitted extends LoginEvent {}

@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class LoginState extends Equatable {
-  final String serverUrl;
   final bool isBusy;
   final String? accessToken;
   final String? idToken;
@@ -9,7 +8,6 @@ class LoginState extends Equatable {
   final String? error;
 
   const LoginState({
-    this.serverUrl = 'https://localhost:20443/realms/openfiresource',
     this.isBusy = false,
     this.accessToken,
     this.idToken,
@@ -26,7 +24,6 @@ class LoginState extends Equatable {
     String? error,
   }) {
     return LoginState(
-      serverUrl: serverUrl ?? this.serverUrl,
       isBusy: isBusy ?? this.isBusy,
       accessToken: accessToken ?? this.accessToken,
       idToken: idToken ?? this.idToken,
@@ -37,7 +34,6 @@ class LoginState extends Equatable {
 
   @override
   List<Object?> get props => [
-    serverUrl,
     isBusy,
     accessToken,
     idToken,

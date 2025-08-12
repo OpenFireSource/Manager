@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:backend_client/backend_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_app/core/data/models/organisation_model.dart';
+import 'package:mobile_app/core/data/repositories/authentication_repo.dart';
 import 'package:mobile_app/core/data/repositories/organisation_repo.dart';
 import 'package:mobile_app/features/auth/bloc/organisation_add/organisation_add_event.dart';
 import 'package:mobile_app/features/auth/bloc/organisation_add/organisation_add_state.dart';
@@ -12,21 +12,26 @@ import 'package:uuid/uuid.dart';
 class OrganisationAddBloc
     extends Bloc<OrganisationAddEvent, OrganisationAddState> {
   final OrganisationRepo _organisationRepo;
+  final AuthenticationRepo _authenticationRepo;
+
   int _lastRequest = 0;
   CancelToken? _previous;
 
-  OrganisationAddBloc(OrganisationRepo organisationRepo)
-    : _organisationRepo = organisationRepo,
-      super(
-        const OrganisationAddState(
-          name: '',
-          server: '',
-          nameValid: OrganisationAddNameState.untouched,
-          serverState: OrganisationAddServerState.untouched,
-          submitted: false,
-          organisationId: '',
-        ),
-      ) {
+  OrganisationAddBloc({
+    required OrganisationRepo organisationRepo,
+    required AuthenticationRepo authenticationRepo,
+  }) : _organisationRepo = organisationRepo,
+       _authenticationRepo = authenticationRepo,
+       super(
+         const OrganisationAddState(
+           name: '',
+           server: '',
+           nameValid: OrganisationAddNameState.untouched,
+           serverState: OrganisationAddServerState.untouched,
+           submitted: false,
+           organisationId: '',
+         ),
+       ) {
     on<OrganisationAddResetEvent>(_onOrganisationAddReset);
     on<OrganisationAddUpdateNameEvent>(_onOrganisationAddUpdateNameEvent);
     on<OrganisationAddUpdateServerEvent>(_onOrganisationAddUpdateServerEvent);
@@ -132,21 +137,10 @@ class OrganisationAddBloc
 
   Future<bool> _checkServer(String serverBasePath) async {
     try {
-      final bc = BackendClient(
-        dio: Dio(
-          BaseOptions(
-            connectTimeout: Duration(seconds: 5),
-            receiveTimeout: Duration(seconds: 5),
-            baseUrl: serverBasePath,
-          ),
-        ),
-      );
       _previous?.cancel();
       _previous = CancelToken();
-      final response = await bc.getInfoApi().infoControllerGet(
-        cancelToken: _previous,
-      );
-      return response.data != null;
+      final response = await _authenticationRepo.getServerInfo(serverBasePath);
+      return response != null;
     } catch (e) {
       return false;
     }

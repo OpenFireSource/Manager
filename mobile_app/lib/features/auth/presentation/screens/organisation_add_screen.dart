@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_app/core/bloc/organisation/organisation_bloc.dart';
 import 'package:mobile_app/core/bloc/organisation/organisation_event.dart';
+import 'package:mobile_app/core/data/repositories/authentication_repo.dart';
 import 'package:mobile_app/core/data/repositories/organisation_repo.dart';
 import 'package:mobile_app/features/auth/bloc/organisation_add/organisation_add_bloc.dart';
 import 'package:mobile_app/features/auth/bloc/organisation_add/organisation_add_event.dart';
@@ -13,7 +14,10 @@ class OrganisationAddScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (ctx) => OrganisationAddBloc(ctx.read<OrganisationRepo>()),
+      create: (ctx) => OrganisationAddBloc(
+        organisationRepo: ctx.read<OrganisationRepo>(),
+        authenticationRepo: ctx.read<AuthenticationRepo>(),
+      ),
       child: BlocListener<OrganisationAddBloc, OrganisationAddState>(
         listener: (ctx, state) {
           if (state.submitted) {
