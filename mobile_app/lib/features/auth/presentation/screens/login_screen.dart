@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile_app/core/bloc/organisation/organisation_bloc.dart';
 import 'package:mobile_app/core/bloc/organisation/organisation_event.dart';
 import 'package:mobile_app/core/bloc/organisation/organisation_state.dart';
 import 'package:mobile_app/core/data/repositories/authentication_repo.dart';
+import 'package:mobile_app/features/auth/auth_routes.dart';
 import 'package:mobile_app/features/auth/bloc/login/login_bloc.dart';
 import 'package:mobile_app/features/auth/bloc/login/login_event.dart';
 import 'package:mobile_app/features/auth/bloc/login/login_state.dart';
 
 class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
-
-  final TextEditingController _controller = TextEditingController();
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,24 @@ class LoginScreen extends StatelessWidget {
           }
         },
         child: Scaffold(
-          appBar: AppBar(title: const Text("Login")),
+          appBar: AppBar(
+            title: const Text("Login"),
+            actions: [
+              BlocBuilder<OrganisationBloc, OrganisationState>(
+                buildWhen: (previous, current) =>
+                    current is OrganisationSelectedState &&
+                    current.organisations.length > 1,
+                builder: (context, state) {
+                  if (state is! OrganisationSelectedState) return Container();
+
+                  return IconButton(
+                    onPressed: () => context.push(accountsScreen),
+                    icon: Icon(Icons.account_circle_outlined),
+                  );
+                },
+              ),
+            ],
+          ),
           body: Stack(
             children: [
               Padding(

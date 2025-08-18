@@ -4,6 +4,7 @@ import 'package:mobile_app/core/bloc/organisation/organisation_bloc.dart';
 import 'package:mobile_app/core/bloc/organisation/organisation_event.dart';
 import 'package:mobile_app/core/bloc/organisation/organisation_state.dart';
 import 'package:mobile_app/core/data/repositories/authentication_repo.dart';
+import 'package:mobile_app/features/home/presentation/widgets/home_drawer.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -12,6 +13,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Home')),
+      drawer: const HomeDrawer(),
       body: Column(
         children: [
           BlocBuilder<OrganisationBloc, OrganisationState>(
@@ -48,7 +50,7 @@ class HomeScreen extends StatelessWidget {
           FutureBuilder(
             future: context
                 .getBackendClient()
-                ?.getUserApi()
+                .getUserApi()
                 .userControllerGetMe(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
