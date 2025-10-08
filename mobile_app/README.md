@@ -10,6 +10,13 @@ cd backend_client
 flutter pub run build_runner build --delete-conflicting-outputs
 ```
 
+## Lizenzen der Pakete überprüfen
+
+```bash
+dart pub global activate license_checker
+lic_ck check-licenses --config license-check.yml
+```
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.

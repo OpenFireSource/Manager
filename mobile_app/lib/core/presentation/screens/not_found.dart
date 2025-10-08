@@ -6,6 +6,9 @@ class NotFoundScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO mehr Inhalt und vielleicht eine Grafik
-    return const Scaffold(body: Center(child: Text("Seite nicht gefunden")));
+    return Scaffold(
+      appBar: AppBar(title: Text('Seite nicht gefunden'),),
+      body: Center(child: Text("Upps! Da ist was schief gegangen.")),
+    );
   }
 }

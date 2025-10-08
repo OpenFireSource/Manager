@@ -18,9 +18,13 @@ class OrganisationSelectedState extends OrganisationState {
   final Map<String, OrganisationModel> organisations;
   final OrganisationModel selectedOrganisation;
   final DateTime updateTime;
+  final List<String>? roles;
 
-  OrganisationSelectedState(this.organisations, this.selectedOrganisation)
-    : updateTime = DateTime.now();
+  OrganisationSelectedState({
+    required this.organisations,
+    required this.selectedOrganisation,
+    this.roles,
+  }) : updateTime = DateTime.now();
 
   @override
   List<Object?> get props => [updateTime, organisations, selectedOrganisation];

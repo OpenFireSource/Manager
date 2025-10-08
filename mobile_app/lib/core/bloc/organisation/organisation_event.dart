@@ -57,3 +57,13 @@ class OrganisationLogoutEvent extends OrganisationEvent {
   @override
   List<Object?> get props => [organisationId];
 }
+
+class OrganisationRolesUpdateEvent extends OrganisationEvent {
+  final String organisationId;
+  final List<String>? roles;
+
+  const OrganisationRolesUpdateEvent(this.organisationId, this.roles);
+
+  @override
+  List<Object?> get props => [organisationId, roles];
+}

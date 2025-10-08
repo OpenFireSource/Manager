@@ -1,0 +1,15 @@
+permittedLicenses:
+  - MIT
+  - BSD-2-Clause
+  - BSD-3-Clause
+  - Zlib
+  - Apache-2.0
+
+approvedPackages:
+  no-file:
+    - backend_client
+    - flutter_test
+    - flutter_web_plugins
+
+rejectedLicenses:
+  - GPL

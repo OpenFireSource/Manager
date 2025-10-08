@@ -20,6 +20,7 @@ class OrganisationBloc extends Bloc<OrganisationEvent, OrganisationState> {
     on<OrganisationRemoveEvent>(_onOrganisationRemove);
     on<OrganisationLoginEvent>(_onOrganisationLogin);
     on<OrganisationLogoutEvent>(_onOrganisationLogout);
+    on<OrganisationRolesUpdateEvent>(_onOrganisationRolesUpdated);
   }
 
   Future<void> _onOrganisationLoad(
@@ -44,7 +45,13 @@ class OrganisationBloc extends Bloc<OrganisationEvent, OrganisationState> {
       await _organisationRepo.setSelectedOrganisation(selectedOrg.id);
     }
 
-    emit(OrganisationSelectedState(organisations, selectedOrg));
+    emit(
+      OrganisationSelectedState(
+        organisations: organisations,
+        selectedOrganisation: selectedOrg,
+        roles: _authenticationRepo.getRoles(selectedOrg.id),
+      ),
+    );
   }
 
   void _onOrganisationSelect(
@@ -66,7 +73,13 @@ class OrganisationBloc extends Bloc<OrganisationEvent, OrganisationState> {
     }
 
     _organisationRepo.setSelectedOrganisation(event.id);
-    emit(OrganisationSelectedState(organisations, organisations[event.id]!));
+    emit(
+      OrganisationSelectedState(
+        organisations: organisations,
+        selectedOrganisation: organisations[event.id]!,
+        roles: _authenticationRepo.getRoles(event.id),
+      ),
+    );
   }
 
   void _onOrganisationRemove(
@@ -96,8 +109,10 @@ class OrganisationBloc extends Bloc<OrganisationEvent, OrganisationState> {
     } else {
       emit(
         OrganisationSelectedState(
-          organisations,
-          (state as OrganisationSelectedState).selectedOrganisation,
+          organisations: organisations,
+          selectedOrganisation:
+              (state as OrganisationSelectedState).selectedOrganisation,
+          roles: (state as OrganisationSelectedState).roles,
         ),
       );
     }
@@ -121,8 +136,9 @@ class OrganisationBloc extends Bloc<OrganisationEvent, OrganisationState> {
 
     emit(
       OrganisationSelectedState(
-        currentState.organisations,
-        currentState.selectedOrganisation,
+        organisations: currentState.organisations,
+        selectedOrganisation: currentState.selectedOrganisation,
+        roles: _authenticationRepo.getRoles(currentState.selectedOrganisation.id),
       ),
     );
   }
@@ -148,9 +164,29 @@ class OrganisationBloc extends Bloc<OrganisationEvent, OrganisationState> {
 
     emit(
       OrganisationSelectedState(
-        currentState.organisations,
-        currentState.selectedOrganisation,
+        organisations: currentState.organisations,
+        selectedOrganisation: currentState.selectedOrganisation,
       ),
     );
+  }
+
+  void _onOrganisationRolesUpdated(
+    OrganisationRolesUpdateEvent event,
+    Emitter<OrganisationState> emit,
+  ) {
+    if (state is! OrganisationSelectedState) {
+      return;
+    }
+
+    final currentState = state as OrganisationSelectedState;
+    if (currentState.selectedOrganisation.id == event.organisationId) {
+      emit(
+        OrganisationSelectedState(
+          organisations: currentState.organisations,
+          selectedOrganisation: currentState.selectedOrganisation,
+          roles: event.roles,
+        ),
+      );
+    }
   }
 }

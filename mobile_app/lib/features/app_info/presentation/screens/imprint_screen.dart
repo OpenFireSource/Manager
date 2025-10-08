@@ -7,7 +7,6 @@ class ImprintScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('App Informationen')),
-      body: Text('Impressum'),
     );
   }
 }

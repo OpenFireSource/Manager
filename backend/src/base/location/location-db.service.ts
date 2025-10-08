@@ -38,6 +38,7 @@ export class LocationDbService {
     let query = this.repo
       .createQueryBuilder('l')
       .leftJoinAndSelect('l.parent', 'p')
+      .leftJoinAndSelect('p.parent', 'pp')
       .limit(limit ?? 100)
       .offset(offset ?? 0);
 

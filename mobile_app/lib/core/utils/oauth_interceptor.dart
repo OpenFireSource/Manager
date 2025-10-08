@@ -33,6 +33,7 @@ class BearerInterceptor extends Interceptor {
   ) async {
     final token = await oauth.fetchOrRefreshAccessToken().catchError((err) {
       if (onInvalid != null) {
+        // TODO only when refresh failed
         onInvalid!(err);
       }
       return null;
@@ -65,9 +66,6 @@ class OAuthToken {
   final String? accessToken;
   final String? refreshToken;
   final DateTime? expiration;
-
-  bool get isExpired =>
-      expiration != null && DateTime.now().isAfter(expiration!);
 
   factory OAuthToken.fromMap(Map<String, dynamic> map) {
     return OAuthToken(

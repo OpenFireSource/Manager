@@ -6,6 +6,6 @@ class LicenseScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO show licenses of libs
-    return Scaffold(appBar: AppBar(title: Text('Lizenzen')));
+    return LicensePage(applicationName: 'Cordol');
   }
 }

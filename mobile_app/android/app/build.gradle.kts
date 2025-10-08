@@ -28,9 +28,11 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        manifestPlaceholders += [
-            'appAuthRedirectScheme': 'de.cordol.app'
-        ]
+        manifestPlaceholders.putAll(
+            mapOf(
+                "appAuthRedirectScheme" to "de.cordol.app"
+            )
+        )
     }
 
     buildTypes {
